@@ -1,0 +1,210 @@
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String  @id @default(uuid())
+  email    String @db.VarChar(50) @unique
+  password String  @db.VarChar(50)
+  role     String
+  image    String?
+  is_penalty Boolean @default(false)
+
+  membership Membership?
+  cart     Cart[]
+  orders   Order[]
+  book_collections BookCollection[]
+  books_borrowed BookBorrowed[]
+  Book_selling BookSelling[]
+  Book_borrowing BookBorrowing[]
+}
+
+
+model Membership {
+  id       String @id @default(uuid())
+  type     String
+  start_date DateTime
+  end_date   DateTime
+
+  user_id   String @unique
+  user     User @relation(fields: [user_id], references: [id])
+}
+
+model Publisher {
+  id   String @id @default(uuid())
+  name String  @db.VarChar(255)
+
+  books_selling BookSelling[]
+  books_borrowing BookBorrowing[]
+}
+
+model Writer {
+  id   String @id @default(uuid())
+  name String @db.VarChar(255)
+
+  books_Selling BookSelling[]
+  books_borrowing BookBorrowing[]
+}
+
+model CategorySell {
+  id  String @id @default(uuid())
+  name String @db.VarChar(50)
+
+  books BookCategorySell[]
+
+}
+
+model BookCategorySell {
+  book_id String
+  category_id String
+
+  books_selling BookSelling @relation(fields: [book_id], references: [id])
+  categories CategorySell @relation(fields: [category_id], references: [id])
+  
+  @@id([book_id, category_id])
+}
+
+model CategoryBorrow {
+  id  String @id @default(uuid())
+  name String @db.VarChar(50)
+
+  books BookCategoryBorrow[]
+
+}
+
+model BookCategoryBorrow {
+  book_id String
+  category_id String
+
+  books_borrow BookBorrowing @relation(fields: [book_id], references: [id])
+  categories CategoryBorrow @relation(fields: [category_id], references: [id])
+  
+  @@id([book_id, category_id])
+}
+
+
+
+
+model BookSelling {
+  id          String @id @default(uuid())
+  title       String @db.VarChar(255) @unique
+  description String
+  language    String
+  stock       Int
+  created_at   DateTime @default(now())
+
+  user_id      String
+  publisher_id String
+  writer_id    String
+  carts       Cart[]
+  item_orders  ItemOrder[]
+  category BookCategorySell[]
+
+  user        User @relation(fields: [user_id], references: [id])
+  publisher   Publisher @relation(fields: [publisher_id], references: [id])
+  writer      Writer @relation(fields: [writer_id], references: [id])
+}
+
+model Cart {
+  quantity      Int
+  total_price    Int
+
+  user_id        String
+  book_selling_id String
+
+  user          User   @relation(fields: [user_id], references: [id])
+  book_selling   BookSelling @relation(fields: [book_selling_id], references: [id])
+
+  @@id([user_id, book_selling_id])
+}
+
+
+model Order {
+  id             String @id @default(uuid())
+  status         String
+  buy_key         String @db.VarChar(50)
+  buy_handled_by String
+  buy_date   DateTime?
+  total_price     Int
+  total_item      Int
+
+  userId         String
+  item_orders     ItemOrder[]
+
+  user           User @relation(fields: [userId], references: [id])
+}
+
+model ItemOrder {
+  id            String @id @default(uuid())
+  book_title     String @db.VarChar(255)
+  book_price     Int
+  quantity      Int
+
+  order_id       String
+  book_selling_id String
+
+  order         Order @relation(fields: [order_id], references: [id])
+  book_selling   BookSelling @relation(fields: [book_selling_id], references: [id])
+}
+
+
+model BookCollection {
+  user_id  String
+  book_id  String
+
+  book    BookBorrowing @relation(fields: [book_id], references: [id])
+  user    User @relation(fields: [user_id], references: [id])
+
+  @@id([user_id, book_id])
+}
+
+model BookBorrowing {
+  id          String @id @default(uuid())
+  title       String @db.VarChar(255) @unique
+  description String
+  book_position String @db.Char(10)
+  language    String
+  stock       Int
+  is_member    Boolean @default(false)
+  created_at   DateTime @default(now())
+
+  user_id      String
+  publisher_id String
+  writer_id    String
+  collections BookCollection[]
+  category BookCategoryBorrow[]
+
+  user        User @relation(fields: [user_id], references: [id])
+  publisher   Publisher @relation(fields: [publisher_id], references: [id])
+  writer      Writer @relation(fields: [writer_id], references: [id])
+}
+
+model BookBorrowed {
+  id             String @id @default(uuid())
+  status         String
+  loan_key        String @db.VarChar(50)
+  loan_handled_by  String
+  loan_date       DateTime
+  returned_key    String? @db.VarChar(50)
+  return_handled_by String?
+  date_returned   DateTime?
+
+  userId         String
+  items          ItemBorrowed[]
+
+  user           User @relation(fields: [userId], references: [id])
+}
+
+model ItemBorrowed {
+  id                String @id @default(uuid())
+
+  bookBorrowedItemId String
+  bookBorrowed      BookBorrowed @relation(fields: [bookBorrowedItemId], references: [id])
+}
