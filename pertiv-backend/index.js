@@ -1,6 +1,7 @@
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDoc = require('./lib/swagger/docApi.json');
+const { PORT_LISTEN } = require('./config/env');
 
 const app = express();
 
