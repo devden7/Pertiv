@@ -209,3 +209,10 @@ model ItemBorrowed {
   bookBorrowedItemId String
   bookBorrowed      BookBorrowed @relation(fields: [bookBorrowedItemId], references: [id])
 }
+
+model Log {
+  id        Int      @id @default(autoincrement())
+  level     String
+  message   String
+  createdAt DateTime @default(dbgenerated("timezone('Asia/Jakarta', now())"))
+}

@@ -23,6 +23,7 @@
     "express-validator": "^7.2.1",
     "nodemon": "^3.1.9",
     "prisma": "^6.4.1",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "winston": "^3.17.0"
   }
 }

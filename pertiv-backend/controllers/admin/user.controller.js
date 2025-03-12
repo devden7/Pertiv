@@ -1,9 +1,16 @@
 const { PrismaClient } = require('@prisma/client');
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
+const logger = require('../../lib/winston/winstonLogger');
 
 const createStaffAccount = async (req, res, next) => {
   try {
+    const { name, email, password } = req.body;
+
+    logger.info(
+      `Controller createStaffAccount - Create staff account Name : ${name} - Email : ${email}`
+    );
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const error = new Error();
@@ -12,7 +19,7 @@ const createStaffAccount = async (req, res, next) => {
       error.message = errors.array();
       throw error;
     }
-    const { name, email, password } = req.body;
+
     const prisma = new PrismaClient();
     await prisma.user.create({
       data: {
@@ -30,6 +37,10 @@ const createStaffAccount = async (req, res, next) => {
       message: 'Staff account created successfully',
     });
   } catch (error) {
+    logger.error(
+      `ERROR Controller createStaffAccount - ${JSON.stringify(error)}`
+    );
+
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -40,6 +51,8 @@ const createStaffAccount = async (req, res, next) => {
 
 const getStaffAccounts = async (req, res, next) => {
   try {
+    logger.info('Controller getStaffAccounts - Get all staff accounts');
+
     const prisma = new PrismaClient();
     const findDataQuery = await prisma.user.findMany({
       where: { role: 'staff' },
@@ -59,6 +72,8 @@ const getStaffAccounts = async (req, res, next) => {
       data: findDataQuery,
     });
   } catch (error) {
+    logger.error(`ERROR Controller getStaffAccounts  -  ${error}`);
+
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -70,6 +85,10 @@ const getStaffAccounts = async (req, res, next) => {
 const getStaffAccountDetail = async (req, res, next) => {
   try {
     const paramsId = req.params.id;
+
+    logger.info(
+      `Controller getStaffAccountDetail - Get staff account detail ID : ${paramsId}`
+    );
 
     const prisma = new PrismaClient();
 
@@ -98,6 +117,7 @@ const getStaffAccountDetail = async (req, res, next) => {
       data: staffDetailQuery,
     });
   } catch (error) {
+    logger.error(`ERROR Controller getStaffAccountDetail - ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -108,6 +128,13 @@ const getStaffAccountDetail = async (req, res, next) => {
 
 const updateStaffAccount = async (req, res, next) => {
   try {
+    const paramsId = req.params.id;
+    const { name, email, password } = req.body;
+
+    logger.info(
+      `Controller updateStaffAccount - Updating staff account with ID : ${paramsId} - Name : ${name} - Email : ${email}`
+    );
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const error = new Error();
@@ -116,9 +143,7 @@ const updateStaffAccount = async (req, res, next) => {
       error.message = errors.array();
       throw error;
     }
-    const paramsId = req.params.id;
 
-    const { name, email, password } = req.body;
     const prisma = new PrismaClient();
 
     const findStaffQuery = await prisma.user.findUnique({
@@ -156,6 +181,10 @@ const updateStaffAccount = async (req, res, next) => {
       message: 'Staff account updated successfully',
     });
   } catch (error) {
+    logger.error(
+      `ERROR Controller updateStaffAccount - ${JSON.stringify(error)}`
+    );
+
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -167,6 +196,9 @@ const updateStaffAccount = async (req, res, next) => {
 const deleteStaffAccount = async (req, res, next) => {
   try {
     const paramsId = req.params.id;
+    logger.info(
+      `Controller deleteStaffAccount - Deleting staff account with ID : ${paramsId}`
+    );
     const prisma = new PrismaClient();
     const findStaffQuery = await prisma.user.findUnique({
       where: { id: paramsId },
@@ -188,6 +220,8 @@ const deleteStaffAccount = async (req, res, next) => {
       message: 'Staff account deleted successfully',
     });
   } catch (error) {
+    logger.error(`ERROR Controller deleteStaffAccount - ${error}`);
+
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
