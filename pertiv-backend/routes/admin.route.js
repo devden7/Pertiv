@@ -3,6 +3,7 @@ const {
   createStaffAccount,
   getStaffAccounts,
   updateStaffAccount,
+  deleteStaffAccount,
 } = require('../controllers/admin/user.controller');
 const { body } = require('express-validator');
 const { PrismaClient } = require('@prisma/client');
@@ -71,5 +72,7 @@ router.put(
     .withMessage('Password must be at least 6 characters'),
   updateStaffAccount
 );
+
+router.delete('/delete-staff/:id', deleteStaffAccount);
 
 module.exports = router;
