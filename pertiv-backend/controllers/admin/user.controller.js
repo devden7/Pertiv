@@ -59,4 +59,56 @@ const getStaffAccounts = async (req, res, next) => {
   }
 };
 
-module.exports = { createStaffAccount, getStaffAccounts };
+const updateStaffAccount = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: errors.array(),
+      });
+    }
+    const paramsId = req.params.id;
+
+    const { name, email, password } = req.body;
+    const prisma = new PrismaClient();
+
+    const findStaff = await prisma.user.findUnique({
+      where: { id: paramsId },
+    });
+
+    if (!findStaff) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: 'Staff account not found',
+      });
+    }
+
+    const checkPassword = await bcrypt.compare(password, findStaff.password);
+
+    await prisma.user.update({
+      where: { id: paramsId },
+      data: {
+        name,
+        email,
+        password: !checkPassword
+          ? bcrypt.hashSync(password, 10)
+          : findStaff.password,
+        role: 'staff',
+        is_penalty: false,
+      },
+    });
+
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'Staff account updated successfully',
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+module.exports = { createStaffAccount, getStaffAccounts, updateStaffAccount };

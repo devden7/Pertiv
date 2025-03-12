@@ -125,6 +125,99 @@
           }
         }
       }
+    },
+    "/admin/update-staff/{id}": {
+      "put": {
+        "tags": ["Admin"],
+        "summary": "updating staff account",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "ID of the staff to update",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updating staff account with email and password",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "email": { "type": "string" },
+                "password": { "type": "string" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": { "type": "string" }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": { "type": "string" },
+                      "value": { "type": "string" },
+                      "msg": { "type": "string" },
+                      "path": { "type": "string" },
+                      "location": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error: Staff Not Found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
