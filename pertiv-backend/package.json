@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "Pertiv Backend",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
     "start": "nodemon index.js",
+    "seedAdmin": "node lib/prisma/seedAdmin",
+    "prisma:migrate": "npx prisma migrate dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "prisma": {
