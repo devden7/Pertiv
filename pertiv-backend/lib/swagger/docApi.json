@@ -6,10 +6,98 @@
     "description": "Documentation Pertiv Endpoint : Admin, Staff, User"
   },
   "servers": [
+    { "url": "http://localhost:3001/api/auth", "description": "Auth Server" },
     { "url": "http://localhost:3001/api/admin", "description": "Admin Server" }
   ],
-  "tags": [{ "name": "Admin", "description": "Endpoints for /admin" }],
+  "tags": [
+    { "name": "Auth", "description": "Endpoints for /auth" },
+    { "name": "Admin", "description": "Endpoints for /admin" }
+  ],
   "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Login account",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Login with email and password",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": { "type": "string" },
+                "password": { "type": "string" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": { "type": "string" },
+                "token": { "type": "string" }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": { "type": "string" },
+                      "value": { "type": "string" },
+                      "msg": { "type": "string" },
+                      "path": { "type": "string" },
+                      "location": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Error Login",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/admin/create-staff": {
       "post": {
         "tags": ["Admin"],
