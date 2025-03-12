@@ -16,8 +16,9 @@ const createAdminAccount = async () => {
 
     await prisma.user.create({
       data: {
+        name: 'admin',
         email: EMAIL_ADMIN,
-        password: bcrypt.hashSync(PASSWORD_ADMIN, 3),
+        password: bcrypt.hashSync(PASSWORD_ADMIN, 10),
         role: 'admin',
         is_penalty: false,
       },
