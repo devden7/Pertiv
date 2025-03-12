@@ -1,5 +1,8 @@
 const express = require('express');
-const { createStaffAccount } = require('../controllers/admin/user.controller');
+const {
+  createStaffAccount,
+  getStaffAccounts,
+} = require('../controllers/admin/user.controller');
 const { body } = require('express-validator');
 const { PrismaClient } = require('@prisma/client');
 const router = express.Router();
@@ -33,5 +36,7 @@ router.post(
     .withMessage('Password must be at least 6 characters'),
   createStaffAccount
 );
+
+router.get('/staffs', getStaffAccounts);
 
 module.exports = router;

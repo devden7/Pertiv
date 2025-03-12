@@ -34,4 +34,29 @@ const createStaffAccount = async (req, res, next) => {
   }
 };
 
-module.exports = { createStaffAccount };
+const getStaffAccounts = async (req, res, next) => {
+  try {
+    const prisma = new PrismaClient();
+    const data = await prisma.user.findMany({
+      where: { role: 'staff' },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        image: true,
+        is_penalty: true,
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      data,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+module.exports = { createStaffAccount, getStaffAccounts };
