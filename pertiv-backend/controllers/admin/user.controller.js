@@ -59,6 +59,42 @@ const getStaffAccounts = async (req, res, next) => {
   }
 };
 
+const getStaffAccountDetail = async (req, res) => {
+  try {
+    const paramsId = req.params.id;
+
+    const prisma = new PrismaClient();
+
+    const staffDetailQuery = await prisma.user.findUnique({
+      where: { id: paramsId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        image: true,
+        is_penalty: true,
+      },
+    });
+
+    if (!staffDetailQuery) {
+      return res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: 'Staff not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      data: staffDetailQuery,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 const updateStaffAccount = async (req, res, next) => {
   try {
     const errors = validationResult(req);
@@ -130,8 +166,7 @@ const deleteStaffAccount = async (req, res, next) => {
     await prisma.user.delete({
       where: { id: paramsId },
     });
-
-    res.status(201).json({
+    findStaffQuery.password = res.status(201).json({
       success: true,
       statusCode: 201,
       message: 'Staff account deleted successfully',
@@ -144,6 +179,7 @@ const deleteStaffAccount = async (req, res, next) => {
 module.exports = {
   createStaffAccount,
   getStaffAccounts,
+  getStaffAccountDetail,
   updateStaffAccount,
   deleteStaffAccount,
 };

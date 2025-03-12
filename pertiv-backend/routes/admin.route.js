@@ -4,6 +4,7 @@ const {
   getStaffAccounts,
   updateStaffAccount,
   deleteStaffAccount,
+  getStaffAccountDetail,
 } = require('../controllers/admin/user.controller');
 const { body } = require('express-validator');
 const { PrismaClient } = require('@prisma/client');
@@ -40,6 +41,7 @@ router.post(
 );
 
 router.get('/staffs', getStaffAccounts);
+router.get('/staff/:id', getStaffAccountDetail);
 
 router.put(
   '/update-staff/:id',
