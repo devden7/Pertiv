@@ -6,11 +6,11 @@ const createStaffAccount = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        statusCode: 400,
-        message: errors.array(),
-      });
+      const error = new Error();
+      error.success = false;
+      error.statusCode = 400;
+      error.message = errors.array();
+      throw error;
     }
     const { name, email, password } = req.body;
     const prisma = new PrismaClient();
@@ -30,7 +30,11 @@ const createStaffAccount = async (req, res, next) => {
       message: 'Staff account created successfully',
     });
   } catch (error) {
-    console.error(error);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
   }
 };
 
@@ -55,11 +59,15 @@ const getStaffAccounts = async (req, res, next) => {
       data: findDataQuery,
     });
   } catch (error) {
-    console.error(error);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
   }
 };
 
-const getStaffAccountDetail = async (req, res) => {
+const getStaffAccountDetail = async (req, res, next) => {
   try {
     const paramsId = req.params.id;
 
@@ -78,11 +86,10 @@ const getStaffAccountDetail = async (req, res) => {
     });
 
     if (!staffDetailQuery) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: 'Staff not found',
-      });
+      const error = new Error('Staff account not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
     }
 
     res.status(200).json({
@@ -91,7 +98,11 @@ const getStaffAccountDetail = async (req, res) => {
       data: staffDetailQuery,
     });
   } catch (error) {
-    console.error(error);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
   }
 };
 
@@ -99,11 +110,11 @@ const updateStaffAccount = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        statusCode: 400,
-        message: errors.array(),
-      });
+      const error = new Error();
+      error.success = false;
+      error.statusCode = 400;
+      error.message = errors.array();
+      throw error;
     }
     const paramsId = req.params.id;
 
@@ -115,14 +126,16 @@ const updateStaffAccount = async (req, res, next) => {
     });
 
     if (!findStaffQuery) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: 'Staff account not found',
-      });
+      const error = new Error('Staff account not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
     }
 
-    const checkPassword = await bcrypt.compare(password, findStaff.password);
+    const checkPassword = await bcrypt.compare(
+      password,
+      findStaffQuery.password
+    );
 
     await prisma.user.update({
       where: { id: paramsId },
@@ -131,7 +144,7 @@ const updateStaffAccount = async (req, res, next) => {
         email,
         password: !checkPassword
           ? bcrypt.hashSync(password, 10)
-          : findStaff.password,
+          : findStaffQuery.password,
         role: 'staff',
         is_penalty: false,
       },
@@ -143,7 +156,11 @@ const updateStaffAccount = async (req, res, next) => {
       message: 'Staff account updated successfully',
     });
   } catch (error) {
-    console.error(error);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
   }
 };
 
@@ -156,11 +173,10 @@ const deleteStaffAccount = async (req, res, next) => {
     });
 
     if (!findStaffQuery) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: 'Staff not found',
-      });
+      const error = new Error('Staff account not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
     }
 
     await prisma.user.delete({
@@ -172,7 +188,11 @@ const deleteStaffAccount = async (req, res, next) => {
       message: 'Staff account deleted successfully',
     });
   } catch (error) {
-    console.error(error);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
   }
 };
 

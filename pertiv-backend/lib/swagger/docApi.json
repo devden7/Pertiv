@@ -129,13 +129,13 @@
     "/admin/staff/{id}": {
       "get": {
         "tags": ["Admin"],
-        "summary": "updating staff account",
+        "summary": "Get detail staff account",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "required": true,
-            "description": "ID of the staff to update",
+            "description": "ID of the staff",
             "schema": {
               "type": "string"
             }
@@ -195,13 +195,13 @@
     "/admin/update-staff/{id}": {
       "put": {
         "tags": ["Admin"],
-        "summary": "Get staff account by ID",
+        "summary": "Updating staff account",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "required": true,
-            "description": "Params id of the staff",
+            "description": "ID of the staff",
             "schema": {
               "type": "string"
             }
@@ -288,13 +288,13 @@
     "/admin/delete-staff/{id}": {
       "delete": {
         "tags": ["Admin"],
-        "summary": "updating staff account",
+        "summary": "Deleting staff account",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "required": true,
-            "description": "ID of the staff to update",
+            "description": "ID of the staff",
             "schema": {
               "type": "string"
             }

@@ -29,7 +29,10 @@ router.post(
       );
 
       if (findEmailQuery) {
-        throw new Error('Email already exist');
+        const error = new Error('Email already exist');
+        error.success = false;
+        error.statusCode = 400;
+        throw error;
       }
 
       return true;
@@ -64,7 +67,10 @@ router.put(
       );
 
       if (findEmailQuery) {
-        throw new Error('Email already exist');
+        const error = new Error('Email already exist');
+        error.success = false;
+        error.statusCode = 400;
+        throw error;
       }
 
       return true;
