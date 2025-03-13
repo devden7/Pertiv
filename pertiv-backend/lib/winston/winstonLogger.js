@@ -1,13 +1,16 @@
 const { PrismaClient } = require('@prisma/client');
 const winston = require('winston');
 
+let getDate = () =>
+  new Date().toLocaleString('id-ID', {
+    timeZone: 'Asia/Jakarta',
+  });
+
 const logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
     winston.format.timestamp({
-      format: new Date().toLocaleString('id-ID', {
-        timeZone: 'Asia/Jakarta',
-      }),
+      format: getDate,
     }),
     winston.format.json()
   ),
