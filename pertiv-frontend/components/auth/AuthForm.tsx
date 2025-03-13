@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Form,
   FormControl,
@@ -14,32 +15,56 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '../ui/input';
+import { loginAuth } from '@/lib/actions/auth.action';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   email: z
     .string()
     .min(2, {
-      message: 'Invalid email address!',
+      message: 'Invalid email input',
     })
     .email(),
   password: z.string().min(6, {
-    message: 'Incorrect password!',
+    message: 'Password must be at least 6 characters',
   }),
+  errorField: z.string().optional(),
 });
 
 const AuthForm = () => {
+  const { toast } = useToast();
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: '',
       password: '',
+      errorField: '',
     },
   });
 
-  const { isSubmitting } = form.formState;
+  const { isSubmitting, errors } = form.formState;
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const response = await loginAuth(values.email, values.password);
+
+    if (!response) {
+      return toast({
+        variant: 'destructive',
+        title: 'Oh! Something went wrong!',
+        description: 'Internal server error',
+      });
+    }
+
+    if (!response.success && response.statusCode !== 201) {
+      form.setError('errorField', {
+        message: response.message,
+      });
+
+      return;
+    }
+
+    router.push('/admin/');
   };
 
   return (
@@ -75,6 +100,9 @@ const AuthForm = () => {
             </FormItem>
           )}
         />
+        <p className="text-red-500 font-medium text-sm">
+          {errors.errorField?.message}
+        </p>
         <Button
           type="submit"
           disabled={isSubmitting}
