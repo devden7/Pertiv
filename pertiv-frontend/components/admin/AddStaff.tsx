@@ -17,7 +17,7 @@ const AddStaff = () => {
         title="Add Staff"
         description="Add a new staff"
       >
-        <StaffForm setIsOpen={setIsOpen} />
+        <StaffForm setIsOpen={setIsOpen} type="Add" />
       </DialogComponent>
     </>
   );

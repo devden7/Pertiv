@@ -38,3 +38,28 @@ export const createStaff = async (
     console.log('Error from loginAuth action', error);
   }
 };
+
+export const updateStaff = async (
+  id: string,
+  name: string,
+  email: string,
+  password = ''
+) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/admin/update-staff/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, email, password }),
+    });
+    const data = await response.json();
+
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from loginAuth action', error);
+  }
+};

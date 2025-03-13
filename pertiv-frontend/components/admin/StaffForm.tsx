@@ -13,35 +13,44 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { createStaff } from '@/lib/actions/admin/admin.action';
+import { createStaff, updateStaff } from '@/lib/actions/admin/admin.action';
 import { useToast } from '@/hooks/use-toast';
 
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(3, { message: 'Name must be at least 3 characters' })
-    .max(255, { message: 'Name must be max 255 characters' }),
-  email: z.string().email({
-    message: 'Invalid email input',
-  }),
-  password: z
-    .string()
-    .min(6, { message: 'Password must be at least 6 characters' })
-    .max(20, { message: 'Password must be max 20 characters' }),
-  errorField: z.string().optional(),
-});
-
 interface Props {
+  email?: string;
+  name?: string;
+  id?: string;
+  type: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const StaffForm = ({ setIsOpen }: Props) => {
+const StaffForm = ({ email, name, id = '', type, setIsOpen }: Props) => {
   const { toast } = useToast();
+
+  const formSchema = z.object({
+    name: z
+      .string()
+      .min(3, { message: 'Name must be at least 3 characters' })
+      .max(255, { message: 'Name must be max 255 characters' }),
+    email: z.string().email({
+      message: 'Invalid email input',
+    }),
+
+    password:
+      type === 'Add'
+        ? z
+            .string()
+            .min(6, { message: 'Password must be at least 6 characters' })
+            .max(20, { message: 'Password must be max 20 characters' })
+        : z.string().optional(),
+    errorField: z.string().optional(),
+  });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      email: '',
+      name: name || '',
+      email: email || '',
       password: '',
       errorField: '',
     },
@@ -50,11 +59,17 @@ const StaffForm = ({ setIsOpen }: Props) => {
   const { isSubmitting, errors } = form.formState;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const response = await createStaff(
-      values.name,
-      values.email,
-      values.password
-    );
+    let response;
+    if (type === 'Add') {
+      response = await createStaff(values.name, values.email, values.password!);
+    } else {
+      response = await updateStaff(
+        id,
+        values.name,
+        values.email,
+        values.password
+      );
+    }
 
     if (!response) {
       return toast({

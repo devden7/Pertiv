@@ -167,9 +167,10 @@ const updateStaffAccount = async (req, res, next) => {
       data: {
         name,
         email,
-        password: !checkPassword
-          ? bcrypt.hashSync(password, 10)
-          : findStaffQuery.password,
+        password:
+          password !== '' && !checkPassword
+            ? bcrypt.hashSync(password, 10)
+            : findStaffQuery.password,
         role: 'staff',
         is_penalty: false,
       },

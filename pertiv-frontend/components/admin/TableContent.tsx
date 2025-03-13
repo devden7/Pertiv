@@ -27,6 +27,7 @@ const TableContent = ({ data }: Props) => {
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Role</TableHead>
+            <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableList data={data} />

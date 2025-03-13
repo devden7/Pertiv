@@ -75,9 +75,13 @@ router.put(
 
       return true;
     }),
-  body('password')
-    .isLength({ min: 6, max: 20 })
-    .withMessage('Password must be at least 6 characters'),
+  body('password').custom((value) => {
+    if (!value) return true;
+    if (value.length < 6 || value.length > 20) {
+      throw new Error('Password must be between 6 and 20 characters');
+    }
+    return true;
+  }),
   updateStaffAccount
 );
 
