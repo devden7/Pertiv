@@ -1,9 +1,40 @@
+'use server';
+
+import { ENV } from '@/utils/config';
+import { revalidatePath } from 'next/cache';
+
 export const getStaffs = async () => {
   try {
-    const response = await fetch('http://localhost:3001/admin/staffs');
+    const response = await fetch(`${ENV.API_URL}/admin/staffs`, {
+      cache: 'no-store',
+    });
     const data = await response.json();
     return data;
   } catch (error) {
     console.log('Error from getStaffs action ', error);
+  }
+};
+
+export const createStaff = async (
+  name: string,
+  email: string,
+  password: string
+) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/admin/create-staff`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, email, password }),
+    });
+    const data = await response.json();
+
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from loginAuth action', error);
   }
 };

@@ -1,11 +1,12 @@
 'use server';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
+import { ENV } from '@/utils/config';
 
 export const loginAuth = async (email: string, password: string) => {
   console.log('From login auth action', email, ' ', password);
   try {
-    const response = await fetch('http://localhost:3001/auth/login', {
+    const response = await fetch(`${ENV.API_URL}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
