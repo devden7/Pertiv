@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const path = require('path');
 const winston = require('winston');
 
 let getDate = () =>
@@ -14,7 +15,12 @@ const logger = winston.createLogger({
     }),
     winston.format.json()
   ),
-  transports: [new winston.transports.Console()],
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({
+      filename: path.resolve(__dirname, 'logInformation.log'),
+    }),
+  ],
 });
 
 logger.on('data', (info) => {
