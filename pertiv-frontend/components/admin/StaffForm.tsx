@@ -21,10 +21,11 @@ interface Props {
   name?: string;
   id?: string;
   type: string;
+  token?: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const StaffForm = ({ email, name, id = '', type, setIsOpen }: Props) => {
+const StaffForm = ({ email, name, id = '', type, token, setIsOpen }: Props) => {
   const { toast } = useToast();
 
   const formSchema = z.object({
@@ -67,7 +68,8 @@ const StaffForm = ({ email, name, id = '', type, setIsOpen }: Props) => {
         id,
         values.name,
         values.email,
-        values.password
+        values.password,
+        token
       );
     }
 

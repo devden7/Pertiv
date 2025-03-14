@@ -9,11 +9,22 @@ import StaffForm from './StaffForm';
 import { deleteStaff } from '@/lib/actions/admin/admin.action';
 import { useToast } from '@/hooks/use-toast';
 
-const TableItem = ({ index = 0, id, email, name, role, image }: IStaff) => {
+interface Props extends IStaff {
+  token?: string;
+}
+const TableItem = ({
+  index = 0,
+  id,
+  email,
+  name,
+  role,
+  image,
+  token,
+}: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   const deleteStaffHandler = async (id: string) => {
-    const response = await deleteStaff(id);
+    const response = await deleteStaff(id, token);
     if (!response) {
       return toast({
         variant: 'destructive',

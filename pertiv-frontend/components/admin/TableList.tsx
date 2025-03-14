@@ -4,9 +4,10 @@ import TableItem from './TableItem';
 
 interface Props {
   data: IStaff[];
+  token?: string;
 }
 
-const TableList = ({ data }: Props) => {
+const TableList = ({ data, token }: Props) => {
   return (
     <TableBody>
       {data.map((item, index) => (
@@ -18,6 +19,7 @@ const TableList = ({ data }: Props) => {
           role={item.role}
           image={item.image}
           index={index}
+          token={token}
         />
       ))}
     </TableBody>

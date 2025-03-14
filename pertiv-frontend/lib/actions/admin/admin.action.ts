@@ -3,9 +3,12 @@
 import { ENV } from '@/utils/config';
 import { revalidatePath } from 'next/cache';
 
-export const getStaffs = async () => {
+export const getStaffs = async (token?: string) => {
   try {
     const response = await fetch(`${ENV.API_URL}/admin/staffs`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       cache: 'no-store',
     });
     const data = await response.json();
@@ -18,13 +21,15 @@ export const getStaffs = async () => {
 export const createStaff = async (
   name: string,
   email: string,
-  password: string
+  password: string,
+  token?: string
 ) => {
   try {
     const response = await fetch(`${ENV.API_URL}/admin/create-staff`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ name, email, password }),
     });
@@ -43,13 +48,15 @@ export const updateStaff = async (
   id: string,
   name: string,
   email: string,
-  password = ''
+  password = '',
+  token?: string
 ) => {
   try {
     const response = await fetch(`${ENV.API_URL}/admin/update-staff/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ name, email, password }),
     });
@@ -64,10 +71,13 @@ export const updateStaff = async (
   }
 };
 
-export const deleteStaff = async (id: string) => {
+export const deleteStaff = async (id: string, token?: string) => {
   try {
     const response = await fetch(`${ENV.API_URL}/admin/delete-staff/${id}`, {
       method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     const data = await response.json();
 

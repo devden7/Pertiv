@@ -8,10 +8,12 @@ const {
 } = require('../controllers/admin/user.controller');
 const { body } = require('express-validator');
 const { PrismaClient } = require('@prisma/client');
+const adminMiddleware = require('../middleware/adminAuth');
 const router = express.Router();
 
 router.post(
   '/create-staff',
+  adminMiddleware,
   body('name')
     .trim()
     .isLength({ min: 3, max: 255 })
@@ -43,11 +45,12 @@ router.post(
   createStaffAccount
 );
 
-router.get('/staffs', getStaffAccounts);
-router.get('/staff/:id', getStaffAccountDetail);
+router.get('/staffs', adminMiddleware, getStaffAccounts);
+router.get('/staff/:id', adminMiddleware, getStaffAccountDetail);
 
 router.put(
   '/update-staff/:id',
+  adminMiddleware,
   body('name')
     .trim()
     .isLength({ min: 3, max: 255 })
@@ -85,6 +88,6 @@ router.put(
   updateStaffAccount
 );
 
-router.delete('/delete-staff/:id', deleteStaffAccount);
+router.delete('/delete-staff/:id', adminMiddleware, deleteStaffAccount);
 
 module.exports = router;

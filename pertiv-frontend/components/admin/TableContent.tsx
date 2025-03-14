@@ -11,9 +11,10 @@ import AddStaff from './AddStaff';
 
 interface Props {
   data: IStaff[];
+  token?: string;
 }
 
-const TableContent = ({ data }: Props) => {
+const TableContent = ({ data, token }: Props) => {
   return (
     <section className="container">
       <h1 className="text-xl font-semibold">List staff</h1>
@@ -32,7 +33,7 @@ const TableContent = ({ data }: Props) => {
               <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
-          <TableList data={data} />
+          <TableList data={data} token={token} />
         </Table>
       )}
     </section>

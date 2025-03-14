@@ -4,7 +4,6 @@ import { cookies } from 'next/headers';
 import { ENV } from '@/utils/config';
 
 export const loginAuth = async (email: string, password: string) => {
-  console.log('From login auth action', email, ' ', password);
   try {
     const response = await fetch(`${ENV.API_URL}/auth/login`, {
       method: 'POST',
@@ -28,4 +27,11 @@ export const loginAuth = async (email: string, password: string) => {
   } catch (error) {
     console.log('Error from loginAuth action', error);
   }
+};
+
+export const getUserToken = () => {
+  const cookieStore = cookies();
+  const getToken = cookieStore.get('token');
+
+  return getToken.value;
 };
