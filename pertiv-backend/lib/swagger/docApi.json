@@ -482,7 +482,14 @@
                 "language": { "type": "string" },
                 "stock": { "type": "number" },
                 "publisherName": { "type": "string" },
-                "writerName": { "type": "string" }
+                "writerName": { "type": "string" },
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["Development", "Tech"]
+                }
               }
             }
           }
@@ -642,6 +649,96 @@
                 "statusCode": { "type": "number" },
                 "message": {
                   "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/staff/update-book-selling/{id}": {
+      "put": {
+        "tags": ["Staff"],
+        "summary": "Update a book for selling",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "ID of the book Selling",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "field required for update a book for selling",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": { "type": "string" },
+                "description": { "type": "string" },
+                "language": { "type": "string" },
+                "stock": { "type": "number" },
+                "publisherName": { "type": "string" },
+                "writerName": { "type": "string" },
+                "categories": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": ["Development", "Tech"]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": { "type": "string" }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": { "type": "string" },
+                      "value": { "type": "string" },
+                      "msg": { "type": "string" },
+                      "path": { "type": "string" },
+                      "location": { "type": "string" }
+                    }
+                  }
                 }
               }
             }
