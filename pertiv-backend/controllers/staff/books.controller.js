@@ -83,7 +83,7 @@ const addBookSelling = async (req, res, next) => {
 
 const getBooksSelling = async (req, res, next) => {
   try {
-    logger.info('Controller getBooksSelling - Get all staff accounts');
+    logger.info('Controller getBooksSelling - Get all book selling');
 
     const prisma = new PrismaClient();
     const findDataQuery = await prisma.bookSelling.findMany();
@@ -104,7 +104,44 @@ const getBooksSelling = async (req, res, next) => {
   }
 };
 
+const getDetailBookSelling = async (req, res, next) => {
+  try {
+    const paramsId = req.params.id;
+
+    logger.info(
+      `Controller getDetailBookSelling - Get detail books selling ID : ${paramsId}`
+    );
+
+    const prisma = new PrismaClient();
+
+    const bookSellingQuery = await prisma.bookSelling.findUnique({
+      where: { id: paramsId },
+    });
+
+    if (!bookSellingQuery) {
+      const error = new Error('Book Selling not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      data: bookSellingQuery,
+    });
+  } catch (error) {
+    logger.error(`ERROR Controller getDetailBookSelling - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   addBookSelling,
   getBooksSelling,
+  getDetailBookSelling,
 };
