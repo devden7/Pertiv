@@ -537,6 +537,60 @@
           }
         }
       }
+    },
+    "/staff/books-selling": {
+      "get": {
+        "tags": ["Staff"],
+        "summary": "Get list books selling",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "title": { "type": "string" },
+                      "description": { "type": "string" },
+                      "language": { "type": "string" },
+                      "stock": { "type": "number" },
+                      "imageUrl": { "type": "string", "nullable": true },
+                      "created_at": { "type": "boolean" },
+                      "user_id": { "type": "boolean" },
+                      "publisher_id": { "type": "boolean" },
+                      "writer_id": { "type": "boolean" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

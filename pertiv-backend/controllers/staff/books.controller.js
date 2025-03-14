@@ -81,6 +81,30 @@ const addBookSelling = async (req, res, next) => {
   }
 };
 
+const getBooksSelling = async (req, res, next) => {
+  try {
+    logger.info('Controller getBooksSelling - Get all staff accounts');
+
+    const prisma = new PrismaClient();
+    const findDataQuery = await prisma.bookSelling.findMany();
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      data: findDataQuery,
+    });
+  } catch (error) {
+    logger.error(`ERROR Controller getBooksSelling  -  ${error}`);
+
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   addBookSelling,
+  getBooksSelling,
 };

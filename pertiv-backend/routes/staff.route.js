@@ -1,6 +1,9 @@
 const express = require('express');
 const { body } = require('express-validator');
-const { addBookSelling } = require('../controllers/staff/books.controller');
+const {
+  addBookSelling,
+  getBooksSelling,
+} = require('../controllers/staff/books.controller');
 const { PrismaClient } = require('@prisma/client');
 
 const router = express.Router();
@@ -57,8 +60,9 @@ router.post(
         'Writer Name must be at least 3 characters & max 255 characters'
       ),
   ],
-
   addBookSelling
 );
+
+router.get('/books-selling', getBooksSelling);
 
 module.exports = router;
