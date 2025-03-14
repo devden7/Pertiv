@@ -4,6 +4,7 @@ const swaggerDoc = require('./lib/swagger/docApi.json');
 const { PORT_LISTEN } = require('./config/env');
 const adminRoutes = require('./routes/admin.route');
 const authRoutes = require('./routes/auth.route');
+const staffRoutes = require('./routes/staff.route');
 const cors = require('cors');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -19,8 +20,11 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 //Auth routes
 app.use('/auth', authRoutes);
 
-//Admim routes
+//Admin routes
 app.use('/admin', adminRoutes);
+
+//Staff routes
+app.use('/staff', staffRoutes);
 
 //Error handling
 app.use(errorHandler);

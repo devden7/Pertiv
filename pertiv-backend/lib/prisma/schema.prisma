@@ -40,7 +40,7 @@ model Membership {
 
 model Publisher {
   id   String @id @default(uuid())
-  name String  @db.VarChar(255)
+  name String  @db.VarChar(255) @unique
 
   books_selling BookSelling[]
   books_borrowing BookBorrowing[]
@@ -48,7 +48,7 @@ model Publisher {
 
 model Writer {
   id   String @id @default(uuid())
-  name String @db.VarChar(255)
+  name String @db.VarChar(255) @unique
 
   books_Selling BookSelling[]
   books_borrowing BookBorrowing[]
@@ -99,6 +99,7 @@ model BookSelling {
   description String
   language    String
   stock       Int
+  imageUrl String?
   created_at   DateTime @default(now())
 
   user_id      String
@@ -173,6 +174,7 @@ model BookBorrowing {
   book_position String @db.Char(10)
   language    String
   stock       Int
+  imageUrl String?
   is_member    Boolean @default(false)
   created_at   DateTime @default(now())
 

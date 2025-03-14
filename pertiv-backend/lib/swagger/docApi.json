@@ -7,11 +7,13 @@
   },
   "servers": [
     { "url": "http://localhost:3001/api/auth", "description": "Auth Server" },
-    { "url": "http://localhost:3001/api/admin", "description": "Admin Server" }
+    { "url": "http://localhost:3001/api/admin", "description": "Admin Server" },
+    { "url": "http://localhost:3001/api/staff", "description": "Admin Server" }
   ],
   "tags": [
     { "name": "Auth", "description": "Endpoints for /auth" },
-    { "name": "Admin", "description": "Endpoints for /admin" }
+    { "name": "Admin", "description": "Endpoints for /admin" },
+    { "name": "Staff", "description": "Endpoints for /staff" }
   ],
   "securityDefinitions": {
     "bearerAuth": {
@@ -442,6 +444,80 @@
                 "statusCode": { "type": "number" },
                 "message": {
                   "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/staff/add-book-selling": {
+      "post": {
+        "tags": ["Staff"],
+        "summary": "Add a book for selling",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Add a book for selling",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": { "type": "string" },
+                "description": { "type": "string" },
+                "language": { "type": "string" },
+                "stock": { "type": "number" },
+                "publisherName": { "type": "string" },
+                "writerName": { "type": "string" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": { "type": "string" }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": { "type": "string" },
+                      "value": { "type": "string" },
+                      "msg": { "type": "string" },
+                      "path": { "type": "string" },
+                      "location": { "type": "string" }
+                    }
+                  }
                 }
               }
             }
