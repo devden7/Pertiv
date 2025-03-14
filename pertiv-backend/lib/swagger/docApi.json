@@ -13,6 +13,14 @@
     { "name": "Auth", "description": "Endpoints for /auth" },
     { "name": "Admin", "description": "Endpoints for /admin" }
   ],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "Enter your JWT token as: Bearer {your_token}"
+    }
+  },
   "paths": {
     "/auth/login": {
       "post": {
@@ -118,6 +126,11 @@
             }
           }
         ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "201": {
             "description": "Success",
@@ -173,6 +186,11 @@
       "get": {
         "tags": ["Admin"],
         "summary": "Get list staff accounts",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -227,6 +245,11 @@
             "schema": {
               "type": "string"
             }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
           }
         ],
         "responses": {
@@ -309,6 +332,11 @@
             }
           }
         ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "201": {
             "description": "Success",
@@ -386,6 +414,11 @@
             "schema": {
               "type": "string"
             }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
           }
         ],
         "responses": {
