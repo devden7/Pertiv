@@ -62,7 +62,12 @@ const StaffForm = ({ email, name, id = '', type, token, setIsOpen }: Props) => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     let response;
     if (type === 'Add') {
-      response = await createStaff(values.name, values.email, values.password!);
+      response = await createStaff(
+        values.name,
+        values.email,
+        values.password!,
+        token
+      );
     } else {
       response = await updateStaff(
         id,

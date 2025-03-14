@@ -19,7 +19,7 @@ const TableContent = ({ data, token }: Props) => {
     <section className="container">
       <h1 className="text-xl font-semibold">List staff</h1>
       <p className="text-sm text-slate-500 mb-3">all list of staffs</p>
-      <AddStaff />
+      <AddStaff token={token} />
       {data.length === 0 && <p className="text-center">No data</p>}
       {data.length !== 0 && (
         <Table>

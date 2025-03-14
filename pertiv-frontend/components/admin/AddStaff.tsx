@@ -4,7 +4,10 @@ import { Button } from '../ui/button';
 import StaffForm from './StaffForm';
 import DialogComponent from '../DialogComponent';
 
-const AddStaff = () => {
+interface Props {
+  token?: string;
+}
+const AddStaff = ({ token }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
@@ -17,7 +20,7 @@ const AddStaff = () => {
         title="Add Staff"
         description="Add a new staff"
       >
-        <StaffForm setIsOpen={setIsOpen} type="Add" />
+        <StaffForm setIsOpen={setIsOpen} type="Add" token={token} />
       </DialogComponent>
     </>
   );

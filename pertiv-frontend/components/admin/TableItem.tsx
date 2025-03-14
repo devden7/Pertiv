@@ -67,6 +67,7 @@ const TableItem = ({
                 name={name}
                 id={id}
                 type="Edit"
+                token={token}
               />
             </DialogComponent>
           </div>
