@@ -76,6 +76,7 @@ const StaffForm = ({ email, name, id = '', type, setIsOpen }: Props) => {
         variant: 'destructive',
         title: 'Oh! Something went wrong!',
         description: 'Internal server error',
+        duration: 2000,
       });
     }
 
@@ -88,6 +89,7 @@ const StaffForm = ({ email, name, id = '', type, setIsOpen }: Props) => {
     setIsOpen(false);
     toast({
       description: response.message,
+      duration: 2000,
     });
   };
 

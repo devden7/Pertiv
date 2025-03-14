@@ -19,19 +19,22 @@ const TableContent = ({ data }: Props) => {
       <h1 className="text-xl font-semibold">List staff</h1>
       <p className="text-sm text-slate-500 mb-3">all list of staffs</p>
       <AddStaff />
-      <Table>
-        <TableCaption>A list of your staffs.</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">No</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Action</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableList data={data} />
-      </Table>
+      {data.length === 0 && <p className="text-center">No data</p>}
+      {data.length !== 0 && (
+        <Table>
+          <TableCaption>A list of your staffs.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">No</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableList data={data} />
+        </Table>
+      )}
     </section>
   );
 };
