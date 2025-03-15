@@ -468,6 +468,11 @@
       "post": {
         "tags": ["Staff"],
         "summary": "Add a book for selling",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "formData",
@@ -629,6 +634,11 @@
       "get": {
         "tags": ["Staff"],
         "summary": "Get detail book selling",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -699,6 +709,11 @@
       "put": {
         "tags": ["Staff"],
         "summary": "Update a book for selling",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",
@@ -815,6 +830,11 @@
       "delete": {
         "tags": ["Staff"],
         "summary": "Deleting book selling",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "parameters": [
           {
             "in": "path",

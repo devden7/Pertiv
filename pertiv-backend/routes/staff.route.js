@@ -8,11 +8,13 @@ const {
   deleteBookSelling,
 } = require('../controllers/staff/books.controller');
 const { PrismaClient } = require('@prisma/client');
+const staffMiddleware = require('../middleware/staffAuth');
 
 const router = express.Router();
 
 router.post(
   '/add-book-selling',
+  staffMiddleware,
   [
     body('title')
       .trim()
@@ -66,11 +68,12 @@ router.post(
   addBookSelling
 );
 
-router.get('/books-selling', getBooksSelling);
-router.get('/book-selling/:id', getDetailBookSelling);
+router.get('/books-selling', staffMiddleware, getBooksSelling);
+router.get('/book-selling/:id', staffMiddleware, getDetailBookSelling);
 
 router.put(
   '/update-book-selling/:id',
+  staffMiddleware,
   [
     body('title')
       .trim()
@@ -126,6 +129,6 @@ router.put(
   updateBookSelling
 );
 
-router.delete('/delete-book-selling/:id', deleteBookSelling);
+router.delete('/delete-book-selling/:id', staffMiddleware, deleteBookSelling);
 
 module.exports = router;
