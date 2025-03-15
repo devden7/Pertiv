@@ -470,28 +470,54 @@
         "summary": "Add a book for selling",
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "description": "Add a book for selling",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "title": { "type": "string" },
-                "description": { "type": "string" },
-                "language": { "type": "string" },
-                "stock": { "type": "number" },
-                "publisherName": { "type": "string" },
-                "writerName": { "type": "string" },
-                "categories": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "example": ["Development", "Tech"]
-                }
-              }
-            }
+            "in": "formData",
+            "name": "title",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "description",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "language",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "stock",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "publisherName",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "writerName",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "categories",
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi",
+            "example": ["Fiction", "Drama", "Science"]
+          },
+          {
+            "in": "formData",
+            "name": "image",
+            "type": "file",
+            "description": "Gambar buku (PNG/JPG)"
           }
         ],
         "responses": {
@@ -684,28 +710,54 @@
             }
           },
           {
-            "in": "body",
-            "name": "body",
-            "description": "field required for update a book for selling",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "title": { "type": "string" },
-                "description": { "type": "string" },
-                "language": { "type": "string" },
-                "stock": { "type": "number" },
-                "publisherName": { "type": "string" },
-                "writerName": { "type": "string" },
-                "categories": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "example": ["Development", "Tech"]
-                }
-              }
-            }
+            "in": "formData",
+            "name": "title",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "description",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "language",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "stock",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "publisherName",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "writerName",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "categories",
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi",
+            "example": ["Fiction", "Drama", "Science"]
+          },
+          {
+            "in": "formData",
+            "name": "image",
+            "type": "file",
+            "description": "Gambar buku (PNG/JPG)"
           }
         ],
         "responses": {

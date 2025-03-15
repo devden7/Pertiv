@@ -1,6 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
 const { validationResult } = require('express-validator');
 const logger = require('../../lib/winston/winstonLogger');
+const { saveImgToFileSystem } = require('../../lib/multer/multer');
 
 const addBookSelling = async (req, res, next) => {
   try {
@@ -13,6 +14,10 @@ const addBookSelling = async (req, res, next) => {
       writerName,
       categories,
     } = req.body;
+
+    const imageUrl = req.file
+      ? `/uploads/${Date.now()}-${req.file.originalname}`
+      : null;
 
     logger.info(
       `Controller addBookSelling - Create book selling title : ${title}`
@@ -58,7 +63,8 @@ const addBookSelling = async (req, res, next) => {
         title: title.toLowerCase(),
         description,
         language,
-        stock,
+        stock: parseInt(stock),
+        imageUrl,
         user_id: 'fa8c4b3e-6fc7-476a-afb7-98c30374625f', // STILL HARDCODE FOR ID STAFF
         publisher_id: publisher.id,
         writer_id: writer.id,
@@ -72,6 +78,8 @@ const addBookSelling = async (req, res, next) => {
         category: true,
       },
     });
+
+    saveImgToFileSystem(req.file.originalname, req.file.buffer);
 
     res.status(201).json({
       success: true,
@@ -161,6 +169,10 @@ const updateBookSelling = async (req, res, next) => {
       categories,
     } = req.body;
 
+    const imageUrl = req.file
+      ? `/uploads/${Date.now()}-${req.file.originalname}`
+      : null;
+
     logger.info(
       `Controller updateBookSelling - Updating Book Selling with ID : ${paramsId} - Title : ${title}`
     );
@@ -217,7 +229,8 @@ const updateBookSelling = async (req, res, next) => {
         title: title?.toLowerCase() || findBookSellingQuery.title,
         description: description || findBookSellingQuery.description,
         language: language || findBookSellingQuery.language,
-        stock: stock ?? findBookSellingQuery.stock,
+        stock: parseInt(stock) ?? findBookSellingQuery.stock,
+        imageUrl,
         publisher_id: publisher.id,
         writer_id: writer.id,
         category: {
@@ -231,6 +244,8 @@ const updateBookSelling = async (req, res, next) => {
         category: true,
       },
     });
+
+    saveImgToFileSystem(req.file.originalname, req.file.buffer);
 
     res.status(201).json({
       success: true,
