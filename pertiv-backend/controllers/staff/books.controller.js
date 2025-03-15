@@ -250,9 +250,57 @@ const updateBookSelling = async (req, res, next) => {
   }
 };
 
+const deleteBookSelling = async (req, res, next) => {
+  try {
+    const paramsId = req.params.id;
+
+    logger.info(
+      `Controller deleteBookSelling - Delete book selling with ID: ${paramsId}`
+    );
+
+    const prisma = new PrismaClient();
+
+    const findBookQuery = await prisma.bookSelling.findUnique({
+      where: { id: paramsId },
+    });
+
+    if (!findBookQuery) {
+      const error = new Error('Book selling not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    // Hapus relasi di BookCategorySell
+    await prisma.bookCategorySell.deleteMany({
+      where: { book_id: paramsId },
+    });
+
+    // Hapus buku di BookSelling
+    await prisma.bookSelling.delete({
+      where: { id: paramsId },
+    });
+
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'The book has been deleted successfully.',
+    });
+  } catch (error) {
+    logger.error(`ERROR Controller deleteBookSelling - ${error}`);
+
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   addBookSelling,
   getBooksSelling,
   getDetailBookSelling,
   updateBookSelling,
+  deleteBookSelling,
 };

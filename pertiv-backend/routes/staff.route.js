@@ -5,6 +5,7 @@ const {
   getBooksSelling,
   getDetailBookSelling,
   updateBookSelling,
+  deleteBookSelling,
 } = require('../controllers/staff/books.controller');
 const { PrismaClient } = require('@prisma/client');
 
@@ -124,5 +125,7 @@ router.put(
   ],
   updateBookSelling
 );
+
+router.delete('/delete-book-selling/:id', deleteBookSelling);
 
 module.exports = router;
