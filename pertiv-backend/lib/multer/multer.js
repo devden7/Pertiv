@@ -5,7 +5,9 @@ const logger = require('../winston/winstonLogger');
 
 const uploadDir = path.join(__dirname, '../../uploads');
 
-fs.mkdirSync(uploadDir, { recursive: true });
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 const storage = multer.memoryStorage();
 
@@ -28,8 +30,7 @@ const upload = multer({
 });
 
 const saveImgToFileSystem = (pathImage, fileImage) => {
-  const fileName = `${Date.now()}-${pathImage}`;
-  fs.writeFile(path.join(uploadDir, fileName), fileImage, (err) => {
+  fs.writeFile(path.join(uploadDir, pathImage), fileImage, (err) => {
     if (err) {
       logger.error('Error when save image to file system');
     }

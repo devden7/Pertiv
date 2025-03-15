@@ -15,9 +15,10 @@ const addBookSelling = async (req, res, next) => {
       categories,
     } = req.body;
 
-    const imageUrl = req.file
-      ? `/uploads/${Date.now()}-${req.file.originalname}`
+    const fileNameImage = req.file
+      ? Date.now() + '-' + req.file.originalname
       : null;
+    const imageUrl = req.file ? `/uploads/${fileNameImage}` : null;
 
     logger.info(
       `Controller addBookSelling - Create book selling title : ${title}`
@@ -79,7 +80,9 @@ const addBookSelling = async (req, res, next) => {
       },
     });
 
-    saveImgToFileSystem(req.file.originalname, req.file.buffer);
+    if (req.file) {
+      saveImgToFileSystem(fileNameImage, req.file.buffer);
+    }
 
     res.status(201).json({
       success: true,
@@ -87,6 +90,7 @@ const addBookSelling = async (req, res, next) => {
       message: 'The book has been added successfully.',
     });
   } catch (error) {
+    console.log(error);
     logger.error(`ERROR Controller addBookSelling - ${JSON.stringify(error)}`);
 
     if (!error.statusCode) {
@@ -169,9 +173,9 @@ const updateBookSelling = async (req, res, next) => {
       categories,
     } = req.body;
 
-    const imageUrl = req.file
-      ? `/uploads/${Date.now()}-${req.file.originalname}`
-      : null;
+    const fileNameImage = Date.now() + '-' + req.file.originalname;
+
+    const imageUrl = req.file ? `/uploads/${fileNameImage}` : null;
 
     logger.info(
       `Controller updateBookSelling - Updating Book Selling with ID : ${paramsId} - Title : ${title}`
@@ -245,7 +249,7 @@ const updateBookSelling = async (req, res, next) => {
       },
     });
 
-    saveImgToFileSystem(req.file.originalname, req.file.buffer);
+    saveImgToFileSystem(fileNameImage, req.file.buffer);
 
     res.status(201).json({
       success: true,

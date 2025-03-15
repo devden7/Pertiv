@@ -1,7 +1,5 @@
-import React from 'react';
-
 const StaffHomePage = () => {
-  return <div>StaffHomePage</div>;
+  return <p>Dashboard</p>;
 };
 
 export default StaffHomePage;
