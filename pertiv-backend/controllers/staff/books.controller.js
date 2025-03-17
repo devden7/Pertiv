@@ -14,7 +14,7 @@ const addBookSelling = async (req, res, next) => {
       writerName,
       categories,
     } = req.body;
-
+    const listCategories = JSON.parse(categories);
     const fileNameImage = req.file
       ? Date.now() + '-' + req.file.originalname
       : null;
@@ -50,7 +50,7 @@ const addBookSelling = async (req, res, next) => {
     ]);
 
     const categoriesQuery = await Promise.all(
-      categories.map(async (name) =>
+      listCategories.map(async (name) =>
         prisma.categorySell.upsert({
           where: { name },
           update: {},

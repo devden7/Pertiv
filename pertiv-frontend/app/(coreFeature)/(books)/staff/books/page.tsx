@@ -1,3 +1,4 @@
+import AddBook from '@/components/books/staff/AddBook';
 import BooksContent from '@/components/books/staff/BooksContent';
 import { getUserToken } from '@/lib/actions/auth.action';
 import { getBooksSelling } from '@/lib/actions/staff.action';
@@ -11,7 +12,7 @@ const StaffBooks = async () => {
       <p className=" text-slate-500 mb-3">
         As a Staff, you can manage this book collection.
       </p>
-
+      <AddBook token={userToken} />
       <BooksContent data={data.data} />
     </section>
   );

@@ -22,7 +22,7 @@ const DialogComponent = ({
 }: Props) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen} modal>
-      <DialogContent>
+      <DialogContent className="overflow-auto max-h-[500px]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

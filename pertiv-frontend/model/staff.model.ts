@@ -2,6 +2,7 @@ export interface IBooksSelling {
   id: string;
   title: string;
   description: string;
+  price: number;
   language: string;
   stock: number;
   imageUrl: string | null;
