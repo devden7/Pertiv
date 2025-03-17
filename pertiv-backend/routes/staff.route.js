@@ -64,6 +64,7 @@ router.post(
       .withMessage(
         'Writer Name must be at least 3 characters & max 255 characters'
       ),
+    body('categories').trim().notEmpty().withMessage('Please input a category'),
   ],
   addBookSelling
 );
@@ -124,7 +125,7 @@ router.put(
       .withMessage(
         'Writer Name must be at least 3 characters & max 255 characters'
       ),
-    body('categories').isArray().withMessage('Categories must be an array'),
+    body('categories').trim().notEmpty().withMessage('Please input a category'),
   ],
   updateBookSelling
 );

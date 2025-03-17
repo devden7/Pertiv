@@ -106,12 +106,47 @@ const getBooksSelling = async (req, res, next) => {
     logger.info('Controller getBooksSelling - Get all book selling');
 
     const prisma = new PrismaClient();
-    const findDataQuery = await prisma.bookSelling.findMany();
+    const findDataQuery = await prisma.bookSelling.findMany({
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        language: true,
+        stock: true,
+        imageUrl: true,
+        created_at: true,
+        user_id: true,
+        publisher: {
+          select: {
+            name: true,
+          },
+        },
+        writer: {
+          select: {
+            name: true,
+          },
+        },
+        category: {
+          select: {
+            categories: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const formatQuery = findDataQuery.map((book) => ({
+      ...book,
+      category: book.category.map((c) => c.categories.name),
+    }));
 
     res.status(200).json({
       success: true,
       statusCode: 200,
-      data: findDataQuery,
+      data: formatQuery,
     });
   } catch (error) {
     logger.error(`ERROR Controller getBooksSelling  -  ${error}`);
@@ -169,13 +204,16 @@ const updateBookSelling = async (req, res, next) => {
       language,
       stock,
       publisherName,
+      image,
       writerName,
       categories,
     } = req.body;
+    const listCategories = JSON.parse(categories);
 
-    const fileNameImage = Date.now() + '-' + req.file.originalname;
+    const fileNameImage =
+      !res.file && image ? image : Date.now() + '-' + req.file.originalname;
 
-    const imageUrl = req.file ? `/uploads/${fileNameImage}` : null;
+    const imageUrl = !req.file && image ? image : `/uploads/${fileNameImage}`;
 
     logger.info(
       `Controller updateBookSelling - Updating Book Selling with ID : ${paramsId} - Title : ${title}`
@@ -218,7 +256,7 @@ const updateBookSelling = async (req, res, next) => {
     ]);
 
     const categoriesQuery = await Promise.all(
-      categories.map(async (name) =>
+      listCategories.map(async (name) =>
         prisma.categorySell.upsert({
           where: { name },
           update: {},
@@ -249,7 +287,9 @@ const updateBookSelling = async (req, res, next) => {
       },
     });
 
-    saveImgToFileSystem(fileNameImage, req.file.buffer);
+    if (req.file) {
+      saveImgToFileSystem(fileNameImage, req.file.buffer);
+    }
 
     res.status(201).json({
       success: true,
@@ -290,12 +330,10 @@ const deleteBookSelling = async (req, res, next) => {
       throw error;
     }
 
-    // Hapus relasi di BookCategorySell
     await prisma.bookCategorySell.deleteMany({
       where: { book_id: paramsId },
     });
 
-    // Hapus buku di BookSelling
     await prisma.bookSelling.delete({
       where: { id: paramsId },
     });
