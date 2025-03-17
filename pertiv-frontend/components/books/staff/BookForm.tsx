@@ -12,14 +12,39 @@ import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { addBookSelling } from '@/lib/actions/staff.action';
+import { addBookSelling, updateBookSelling } from '@/lib/actions/staff.action';
 import { useToast } from '@/hooks/use-toast';
 
 interface Props {
+  type: string;
   token?: string;
+  id?: string;
+  title?: string;
+  description?: string;
+  language?: string;
+  stock?: number;
+  imageUrl: string | null;
+  user_id?: string;
+  publisher?: string;
+  writer?: string;
+  category?: string[];
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const BookForm = ({ token, setIsOpen }: Props) => {
+const BookForm = ({
+  type,
+  token,
+  id,
+  title,
+  description,
+  language,
+  stock,
+  imageUrl,
+  user_id,
+  publisher,
+  writer,
+  category,
+  setIsOpen,
+}: Props) => {
   const { toast } = useToast();
   const bookSchema = z.object({
     title: z
@@ -70,21 +95,22 @@ const BookForm = ({ token, setIsOpen }: Props) => {
         }
       ),
       z.null(),
+      z.string(),
     ]),
   });
 
   const form = useForm<z.infer<typeof bookSchema>>({
     resolver: zodResolver(bookSchema),
     defaultValues: {
-      title: '',
-      description: '',
+      title: title ?? '',
+      description: description ?? '',
       price: 0,
-      language: '',
-      stock: 0,
-      publisherName: '',
-      writerName: '',
-      categories: [],
-      image: null,
+      language: language ?? '',
+      stock: stock ?? 0,
+      publisherName: publisher ?? '',
+      writerName: writer ?? '',
+      categories: category ?? [],
+      image: imageUrl ?? null,
     },
   });
 
@@ -96,22 +122,22 @@ const BookForm = ({ token, setIsOpen }: Props) => {
   ) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      const tagInput = e.currentTarget.value.trim();
+      const categoryItem = e.currentTarget.value.trim();
 
       if (
-        tagInput &&
-        tagInput.length <= 15 &&
-        !field.value.includes(tagInput)
+        categoryItem &&
+        categoryItem.length <= 15 &&
+        !field.value.includes(categoryItem)
       ) {
-        form.setValue('categories', [...field.value, tagInput]);
+        form.setValue('categories', [...field.value, categoryItem]);
         e.currentTarget.value = '';
         form.clearErrors('categories');
-      } else if (tagInput.length > 15) {
+      } else if (categoryItem.length > 15) {
         form.setError('categories', {
           type: 'manual',
           message: 'Tag should be less than 15 characters',
         });
-      } else if (field.value.includes(tagInput)) {
+      } else if (field.value.includes(categoryItem)) {
         form.setError('categories', {
           type: 'manual',
           message: 'Tag already exists',
@@ -145,7 +171,10 @@ const BookForm = ({ token, setIsOpen }: Props) => {
       formData.append('image', values.image);
     }
 
-    const response = await addBookSelling(formData, token);
+    const response =
+      type === 'Add'
+        ? await addBookSelling(formData, token)
+        : await updateBookSelling(id!, formData, token);
 
     if (!response) {
       return toast({
@@ -296,16 +325,14 @@ const BookForm = ({ token, setIsOpen }: Props) => {
                 <Input
                   type="file"
                   name={field.name}
-                  onChange={(e) => {
-                    console.log(e.target.files);
-                    return field.onChange(e.target.files?.[0] || null);
-                  }}
+                  onChange={(e) => field.onChange(e.target.files?.[0] || null)}
                 />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
+
         <Button type="submit" variant="outline" disabled={isSubmitting}>
           Add Book
         </Button>

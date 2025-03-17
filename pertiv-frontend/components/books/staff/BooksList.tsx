@@ -4,9 +4,10 @@ import { IBooksSelling } from '@/model/staff.model';
 
 interface Props {
   data: IBooksSelling[];
+  token: string;
 }
 
-const BooksList = ({ data }: Props) => {
+const BooksList = ({ data, token }: Props) => {
   return (
     <div className="mb-10 flex flex-wrap items-center justify-start gap-4">
       {data.map((item) => (
@@ -20,8 +21,10 @@ const BooksList = ({ data }: Props) => {
           imageUrl={item.imageUrl}
           created_at={item.created_at}
           user_id={item.user_id}
-          publisher_id={item.publisher_id}
-          writed_id={item.writed_id}
+          publisher={item.publisher}
+          writer={item.writer}
+          token={token}
+          category={item.category}
         />
       ))}
     </div>

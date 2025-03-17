@@ -8,6 +8,11 @@ export interface IBooksSelling {
   imageUrl: string | null;
   created_at: string;
   user_id: string;
-  publisher_id: string;
-  writed_id: string;
+  publisher: {
+    name: string;
+  };
+  writer: {
+    name: string;
+  };
+  category: string[];
 }

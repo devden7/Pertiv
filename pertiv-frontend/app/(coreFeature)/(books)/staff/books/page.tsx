@@ -13,7 +13,7 @@ const StaffBooks = async () => {
         As a Staff, you can manage this book collection.
       </p>
       <AddBook token={userToken} />
-      <BooksContent data={data.data} />
+      <BooksContent data={data.data} token={userToken} />
     </section>
   );
 };

@@ -21,7 +21,7 @@ const AddBook = ({ token }: Props) => {
         title="Add book"
         description="Add a new book"
       >
-        <BookForm token={token} setIsOpen={setIsOpen} />
+        <BookForm token={token} setIsOpen={setIsOpen} type="Add" />
       </DialogComponent>
     </>
   );
