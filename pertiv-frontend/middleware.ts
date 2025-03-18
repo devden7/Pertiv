@@ -10,7 +10,7 @@ export async function middleware(request: NextRequest) {
 
   const token = request.cookies.get('token');
 
-  if (!token && pathname !== '/login') {
+  if (!token && pathname !== '/login' && pathname !== '/register') {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 

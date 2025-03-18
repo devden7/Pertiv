@@ -52,3 +52,27 @@ export const getUserToken = async () => {
 export const deleteCookie = () => {
   cookies().delete('token');
 };
+
+export const regiterAccount = async (
+  name: string,
+  email: string,
+  password: string
+) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/user/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, email, password }),
+    });
+    const data = await response.json();
+
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from loginAuth action', error);
+  }
+};
