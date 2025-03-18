@@ -71,3 +71,25 @@ export const updateBookSelling = async (
     console.log('Error from addBookSelling action ', error);
   }
 };
+
+export const deleteBookSelling = async (id: string, token?: string) => {
+  try {
+    const response = await fetch(
+      `${ENV.API_URL}/staff/delete-book-selling/${id}`,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const data = await response.json();
+
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from deleteStaff action', error);
+  }
+};

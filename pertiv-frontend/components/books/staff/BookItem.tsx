@@ -14,6 +14,8 @@ import {
 import { Ellipsis } from 'lucide-react';
 import DialogComponent from '@/components/DialogComponent';
 import BookForm from './BookForm';
+import { deleteBookSelling } from '@/lib/actions/staff.action';
+import { useToast } from '@/hooks/use-toast';
 
 interface Props extends IBooksSelling {
   token: string;
@@ -33,6 +35,25 @@ const BookItem = ({
   category,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { toast } = useToast();
+  const deleteBookHandler = async (id) => {
+    const response = await deleteBookSelling(id, token);
+    if (!response) {
+      return toast({
+        variant: 'destructive',
+        title: 'Oh! Something went wrong!',
+        description: 'Internal server error',
+      });
+    }
+    if (!response.success && response.statusCode !== 201) {
+      return console.log('Error Response ', response.message);
+    }
+
+    toast({
+      description: response.message,
+      duration: 2000,
+    });
+  };
   return (
     <>
       <DialogComponent
@@ -79,7 +100,10 @@ const BookItem = ({
             >
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => deleteBookHandler(id)}
+            >
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
