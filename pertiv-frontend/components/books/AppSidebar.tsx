@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Book } from 'lucide-react';
 import Link from 'next/link';
+import LogoutButton from './staff/LogoutButton';
 
 const AppSidebar = () => {
   return (
@@ -32,7 +33,9 @@ const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <LogoutButton />
+      </SidebarFooter>
     </Sidebar>
   );
 };
