@@ -5,6 +5,7 @@ const { PrismaClient } = require('@prisma/client');
 const { JWT_SECRET } = require('../../config/env');
 const { validationResult } = require('express-validator');
 
+const prisma = new PrismaClient();
 const loginAuth = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -12,7 +13,6 @@ const loginAuth = async (req, res, next) => {
     const errors = validationResult(req);
 
     logger.info(`Controller loginAuth - Login informaton email : ${email}`);
-    const prisma = new PrismaClient();
 
     if (!errors.isEmpty()) {
       const error = new Error();
@@ -74,6 +74,52 @@ const loginAuth = async (req, res, next) => {
   }
 };
 
+const registerAccount = async (req, res, next) => {
+  try {
+    const { email, name, password } = req.body;
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const error = new Error();
+      error.success = false;
+      error.statusCode = 400;
+      error.message = errors.array();
+      throw error;
+    }
+
+    logger.info(
+      `Controller registerAccount - Registration information email : ${email}`
+    );
+
+    await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: bcrypt.hashSync(password, 10),
+        role: 'user',
+        image: null,
+        is_penalty: false,
+      },
+    });
+
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'User registered successfully',
+    });
+  } catch (error) {
+    console.log(error);
+    logger.error(`ERROR Controller registerAccount - ${JSON.stringify(error)}`);
+
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   loginAuth,
+  registerAccount,
 };
