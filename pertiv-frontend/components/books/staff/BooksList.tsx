@@ -19,6 +19,7 @@ const BooksList = ({ data, token }: Props) => {
           language={item.language}
           stock={item.stock}
           imageUrl={item.imageUrl}
+          price={item.price}
           created_at={item.created_at}
           user_id={item.user_id}
           publisher={item.publisher}

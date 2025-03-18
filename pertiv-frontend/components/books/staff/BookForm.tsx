@@ -24,6 +24,7 @@ interface Props {
   language?: string;
   stock?: number;
   imageUrl: string | null;
+  price?: number;
   user_id?: string;
   publisher?: string;
   writer?: string;
@@ -39,6 +40,7 @@ const BookForm = ({
   language,
   stock,
   imageUrl,
+  price,
   user_id,
   publisher,
   writer,
@@ -57,6 +59,7 @@ const BookForm = ({
       .max(255, { message: 'description must be max 255 characters' }),
     price: z.coerce
       .number()
+      .int()
       .min(1000, { message: 'price must be at least RP 1000' })
       .max(1000000, { message: 'price must be max RP 1.000.000' }),
     language: z
@@ -104,7 +107,7 @@ const BookForm = ({
     defaultValues: {
       title: title ?? '',
       description: description ?? '',
-      price: 0,
+      price: price || 0,
       language: language ?? '',
       stock: stock ?? 0,
       publisherName: publisher ?? '',
@@ -161,7 +164,7 @@ const BookForm = ({
     const formData = new FormData();
     formData.append('title', values.title);
     formData.append('description', values.description);
-    formData.append('price', values.price.toLocaleString());
+    formData.append('price', values.price.toString());
     formData.append('language', values.language);
     formData.append('stock', values.stock.toLocaleString());
     formData.append('publisherName', values.publisherName);

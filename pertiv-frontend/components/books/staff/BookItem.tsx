@@ -28,6 +28,7 @@ const BookItem = ({
   language,
   stock,
   imageUrl,
+  price,
   user_id,
   publisher,
   writer,
@@ -36,7 +37,7 @@ const BookItem = ({
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
-  const deleteBookHandler = async (id) => {
+  const deleteBookHandler = async (id: string) => {
     const response = await deleteBookSelling(id, token);
     if (!response) {
       return toast({
@@ -69,6 +70,7 @@ const BookItem = ({
           language={language}
           stock={stock}
           imageUrl={imageUrl}
+          price={price}
           user_id={user_id}
           publisher={publisher.name}
           writer={writer.name}

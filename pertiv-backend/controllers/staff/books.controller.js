@@ -3,6 +3,8 @@ const { validationResult } = require('express-validator');
 const logger = require('../../lib/winston/winstonLogger');
 const { saveImgToFileSystem } = require('../../lib/multer/multer');
 
+const prisma = new PrismaClient();
+
 const addBookSelling = async (req, res, next) => {
   try {
     const {
@@ -10,6 +12,7 @@ const addBookSelling = async (req, res, next) => {
       description,
       language,
       stock,
+      price,
       publisherName,
       writerName,
       categories,
@@ -23,8 +26,6 @@ const addBookSelling = async (req, res, next) => {
     logger.info(
       `Controller addBookSelling - Create book selling title : ${title}`
     );
-
-    const prisma = new PrismaClient();
 
     const errors = validationResult(req);
 
@@ -66,6 +67,7 @@ const addBookSelling = async (req, res, next) => {
         language,
         stock: parseInt(stock),
         imageUrl,
+        price: parseInt(price),
         user_id: 'fa8c4b3e-6fc7-476a-afb7-98c30374625f', // STILL HARDCODE FOR ID STAFF
         publisher_id: publisher.id,
         writer_id: writer.id,
@@ -90,7 +92,6 @@ const addBookSelling = async (req, res, next) => {
       message: 'The book has been added successfully.',
     });
   } catch (error) {
-    console.log(error);
     logger.error(`ERROR Controller addBookSelling - ${JSON.stringify(error)}`);
 
     if (!error.statusCode) {
@@ -105,7 +106,6 @@ const getBooksSelling = async (req, res, next) => {
   try {
     logger.info('Controller getBooksSelling - Get all book selling');
 
-    const prisma = new PrismaClient();
     const findDataQuery = await prisma.bookSelling.findMany({
       select: {
         id: true,
@@ -114,6 +114,7 @@ const getBooksSelling = async (req, res, next) => {
         language: true,
         stock: true,
         imageUrl: true,
+        price: true,
         created_at: true,
         user_id: true,
         publisher: {
@@ -167,8 +168,6 @@ const getDetailBookSelling = async (req, res, next) => {
       `Controller getDetailBookSelling - Get detail books selling ID : ${paramsId}`
     );
 
-    const prisma = new PrismaClient();
-
     const bookSellingQuery = await prisma.bookSelling.findUnique({
       where: { id: paramsId },
     });
@@ -205,6 +204,7 @@ const updateBookSelling = async (req, res, next) => {
       stock,
       publisherName,
       image,
+      price,
       writerName,
       categories,
     } = req.body;
@@ -218,8 +218,6 @@ const updateBookSelling = async (req, res, next) => {
     logger.info(
       `Controller updateBookSelling - Updating Book Selling with ID : ${paramsId} - Title : ${title}`
     );
-
-    const prisma = new PrismaClient();
 
     const errors = validationResult(req);
 
@@ -271,8 +269,9 @@ const updateBookSelling = async (req, res, next) => {
         title: title?.toLowerCase() || findBookSellingQuery.title,
         description: description || findBookSellingQuery.description,
         language: language || findBookSellingQuery.language,
-        stock: parseInt(stock) ?? findBookSellingQuery.stock,
+        stock: parseInt(stock) || findBookSellingQuery.stock,
         imageUrl,
+        price: parseInt(price) || findBookSellingQuery.price,
         publisher_id: publisher.id,
         writer_id: writer.id,
         category: {
@@ -316,8 +315,6 @@ const deleteBookSelling = async (req, res, next) => {
     logger.info(
       `Controller deleteBookSelling - Delete book selling with ID: ${paramsId}`
     );
-
-    const prisma = new PrismaClient();
 
     const findBookQuery = await prisma.bookSelling.findUnique({
       where: { id: paramsId },

@@ -52,6 +52,11 @@ router.post(
     body('stock')
       .isInt({ min: 0 })
       .withMessage('Stock must be a number and at least 0'),
+    body('price')
+      .isInt({ min: 1000, max: 1000000 })
+      .withMessage(
+        'price must be a number and at least RP 1000 and max RP 1.000.000'
+      ),
     body('publisherName')
       .trim()
       .isLength({ min: 3, max: 255 })
@@ -113,6 +118,11 @@ router.put(
     body('stock')
       .isInt({ min: 0 })
       .withMessage('Stock must be a number and at least 0'),
+    body('price')
+      .isInt({ min: 1000, max: 1000000 })
+      .withMessage(
+        'price must be a number and at least RP 1000 and max RP 1.000.000'
+      ),
     body('publisherName')
       .trim()
       .isLength({ min: 3, max: 255 })

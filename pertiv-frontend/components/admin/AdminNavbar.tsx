@@ -13,10 +13,7 @@ const AdminNavbar = () => {
   const router = useRouter();
   const logoutHandler = async () => {
     await deleteCookie();
-    console.log('before redirect');
     router.push('/login');
-
-    console.log('after redirect');
   };
   return (
     <header>

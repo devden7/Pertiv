@@ -100,6 +100,7 @@ model BookSelling {
   language    String
   stock       Int
   imageUrl String?
+  price Int
   created_at   DateTime @default(now())
 
   user_id      String

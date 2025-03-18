@@ -16,7 +16,7 @@ export const loginAuth = async (email: string, password: string) => {
 
     if (response.ok) {
       cookies().set('token', data.token, {
-        maxAge: 3600,
+        maxAge: 3600 * 24,
         httpOnly: true,
         secure: true,
       });
