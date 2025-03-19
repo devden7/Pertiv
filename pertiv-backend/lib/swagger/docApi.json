@@ -992,13 +992,159 @@
                     "type": "object",
                     "properties": {
                       "id": { "type": "string" },
-                      "name": { "type": "string" },
-                      "email": { "type": "string" },
-                      "role": { "type": "string" },
-                      "image": { "type": "string", "nullable": true },
-                      "is_penalty": { "type": "boolean" }
+                      "title": { "type": "string" },
+                      "description": { "type": "string" },
+                      "language": { "type": "string" },
+                      "stock": { "type": "number" },
+                      "imageUrl": { "type": "string", "nullable": true },
+                      "price": { "type": "number" },
+                      "created_at": { "type": "string" },
+                      "user_id": { "type": "string" },
+                      "publisher_id": { "type": "string" },
+                      "writer_id": { "type": "string" },
+                      "user": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "name": { "type": "string" },
+                          "email": { "type": "string" }
+                        }
+                      },
+                      "publisher": {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" }
+                        }
+                      },
+                      "writer": {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" }
+                        }
+                      },
+                      "category": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "categories": {
+                              "type": "object",
+                              "properties": {
+                                "id": { "type": "string" },
+                                "name": { "type": "string" }
+                              }
+                            }
+                          }
+                        }
+                      }
                     }
                   }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/book-selling/{id}": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get detail book selling",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "ID of the book selling",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "title": { "type": "string" },
+                    "description": { "type": "string" },
+                    "language": { "type": "string" },
+                    "stock": { "type": "number" },
+                    "imageUrl": { "type": "string", "nullable": true },
+                    "price": { "type": "number" },
+                    "created_at": { "type": "string" },
+                    "user_id": { "type": "string" },
+                    "publisher_id": { "type": "string" },
+                    "writer_id": { "type": "string" },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string" },
+                        "name": { "type": "string" },
+                        "email": { "type": "string" }
+                      }
+                    },
+                    "publisher": {
+                      "type": "object",
+                      "properties": {
+                        "name": { "type": "string" }
+                      }
+                    },
+                    "writer": {
+                      "type": "object",
+                      "properties": {
+                        "name": { "type": "string" }
+                      }
+                    },
+                    "category": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "categories": {
+                            "type": "object",
+                            "properties": {
+                              "id": { "type": "string" },
+                              "name": { "type": "string" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error: Staff Not Found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
                 }
               }
             }

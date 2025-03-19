@@ -2,7 +2,10 @@ const express = require('express');
 const { registerAccount } = require('../controllers/auth/auth.controller');
 const { body } = require('express-validator');
 const { PrismaClient } = require('@prisma/client');
-const { getBookListSelling } = require('../controllers/user/books.controller');
+const {
+  getBookListSelling,
+  getBookSellingDetail,
+} = require('../controllers/user/books.controller');
 
 const router = express.Router();
 
@@ -48,5 +51,6 @@ router.post(
 );
 
 router.get('/books-selling', getBookListSelling);
+router.get('/book-selling/:id', getBookSellingDetail);
 
 module.exports = router;
