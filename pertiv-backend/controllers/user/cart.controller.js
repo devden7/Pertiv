@@ -75,6 +75,62 @@ const AddToCart = async (req, res, next) => {
   }
 };
 
+const getCartList = async (req, res, next) => {
+  try {
+    logger.info(`Controller USER GetCartList - Cart: `);
+    const cart = await prisma.cart.findUnique({
+      where: { user_id: '6c1827d3-d46f-4f5e-b0fe-d430d2ea57f0' }, // STILL HARD CODED
+      include: {
+        cart_items: {
+          include: {
+            book_selling: {
+              select: {
+                title: true,
+                description: true,
+                language: true,
+                stock: true,
+                imageUrl: true,
+                price: true,
+                created_at: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const finalCart = {
+      user_id: cart.user_id,
+      cart_items: cart.cart_items.map((item) => ({
+        id: item.book_selling_id,
+        quantity: item.quantity,
+        title: item.book_selling.title,
+        description: item.book_selling.description,
+        language: item.book_selling.language,
+        stock: item.book_selling.stock,
+        imageUrl: item.book_selling.imageUrl,
+        price: item.book_selling.price,
+        created_at: item.book_selling.created_at,
+      })),
+    };
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'Cart Items fetched successfully.',
+      data: finalCart,
+    });
+  } catch (error) {
+    logger.error(`ERROR USER Controller GetCartList - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   AddToCart,
+  getCartList,
 };

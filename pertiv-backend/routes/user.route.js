@@ -6,7 +6,10 @@ const {
   getBookListSelling,
   getBookSellingDetail,
 } = require('../controllers/user/books.controller');
-const { AddToCart } = require('../controllers/user/cart.controller');
+const {
+  AddToCart,
+  getCartList,
+} = require('../controllers/user/cart.controller');
 
 const router = express.Router();
 
@@ -55,5 +58,6 @@ router.get('/books-selling', getBookListSelling);
 router.get('/book-selling/:id', getBookSellingDetail);
 
 router.post('/add-to-cart', AddToCart);
+router.get('/cart', getCartList);
 
 module.exports = router;
