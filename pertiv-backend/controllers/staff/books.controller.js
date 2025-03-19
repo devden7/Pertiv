@@ -68,7 +68,7 @@ const addBookSelling = async (req, res, next) => {
         stock: parseInt(stock),
         imageUrl,
         price: parseInt(price),
-        user_id: 'fa8c4b3e-6fc7-476a-afb7-98c30374625f', // STILL HARDCODE FOR ID STAFF
+        user_id: '6c686f2b-aeb9-4125-9a2c-a69e9aa47326', // STILL HARDCODE FOR ID STAFF
         publisher_id: publisher.id,
         writer_id: writer.id,
         category: {

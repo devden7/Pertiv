@@ -106,7 +106,7 @@ model BookSelling {
   user_id      String
   publisher_id String
   writer_id    String
-  carts       Cart[]
+  cart_item     CartItem[]
   item_orders  ItemOrder[]
   category BookCategorySell[]
 
@@ -116,16 +116,23 @@ model BookSelling {
 }
 
 model Cart {
-  quantity      Int
-  total_price    Int
+  id          String @id @default(uuid())
 
-  user_id        String
-  book_selling_id String
+  user_id        String @unique
 
   user          User   @relation(fields: [user_id], references: [id])
-  book_selling   BookSelling @relation(fields: [book_selling_id], references: [id])
+  cart_items   CartItem[]
+}
 
-  @@id([user_id, book_selling_id])
+model CartItem {
+  quantity    Int
+
+  cart_id      String
+  book_selling_id   String
+
+  cart Cart      @relation(fields: [cart_id], references: [id])
+  book_selling BookSelling @relation(fields: [book_selling_id], references: [id])
+   @@id([cart_id, book_selling_id])
 }
 
 
