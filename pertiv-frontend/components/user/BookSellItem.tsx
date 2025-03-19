@@ -2,16 +2,18 @@ import Image from 'next/image';
 
 import { ImageHandler } from '@/utils/imageHandler';
 import { Badge } from '../ui/badge';
+import Link from 'next/link';
 
 interface Props {
+  id: string;
   title: string;
   imageUrl: string | null;
   price: number;
   category: { categories: { name: string } }[];
 }
-const BookSellItem = ({ title, imageUrl, price, category }: Props) => {
+const BookSellItem = ({ id, title, imageUrl, price, category }: Props) => {
   return (
-    <div className=" group cursor-pointer transition-all duration-500 ">
+    <Link href={`/book-selling/${id}`}>
       <div className="relative w-full aspect-square rounded-2xl overflow-hidden">
         <Image
           src={ImageHandler(imageUrl)}
@@ -29,7 +31,7 @@ const BookSellItem = ({ title, imageUrl, price, category }: Props) => {
             {price}
           </h6>
         </div>
-        <div className="mt-2 font-normal text-sm leading-6 text-gray-500 flex gap-2">
+        <div className="mt-2 flex gap-2">
           {category.map((cat) => (
             <Badge variant="outline" key={cat.categories.name}>
               {cat.categories.name}
@@ -37,7 +39,7 @@ const BookSellItem = ({ title, imageUrl, price, category }: Props) => {
           ))}
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

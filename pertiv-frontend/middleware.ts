@@ -28,7 +28,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    if (role === 'user' && pathname === ROLE_PATHS.user) {
+    if (role === 'user' && pathname.startsWith(ROLE_PATHS.user)) {
       return NextResponse.next();
     }
 

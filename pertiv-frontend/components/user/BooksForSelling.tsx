@@ -17,6 +17,7 @@ const BooksForSelling = ({ data }: Props) => {
           {data.map((book: IBookForSelling) => (
             <BookSellItem
               key={book.id}
+              id={book.id}
               title={book.title}
               imageUrl={book.imageUrl}
               price={book.price}
