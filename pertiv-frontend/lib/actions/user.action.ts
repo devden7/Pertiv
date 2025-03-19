@@ -1,4 +1,7 @@
+'use server';
+
 import { ENV } from '@/utils/config';
+import { revalidatePath } from 'next/cache';
 
 export const getBooksSellingUser = async (limit: number) => {
   try {
@@ -19,5 +22,24 @@ export const getBookSellingDetail = async (id: string) => {
     return data;
   } catch (error) {
     console.log('Error from getBooksSelling action ', error);
+  }
+};
+
+export const addBookToCart = async (bookId: string) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/user/add-to-cart`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ book_id: bookId }),
+    });
+    const data = await response.json();
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from addBookToCart action ', error);
   }
 };

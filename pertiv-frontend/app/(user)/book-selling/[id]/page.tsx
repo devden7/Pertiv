@@ -12,6 +12,7 @@ const BookSellingDetail = async ({ params }: Params) => {
   return (
     <>
       <BookSellingDetailInformation
+        id={data.data.id}
         title={data.data.title}
         description={data.data.description}
         stock={data.data.stock}

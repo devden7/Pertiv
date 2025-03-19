@@ -1,10 +1,15 @@
+'use client';
+
 import Image from 'next/image';
-import React from 'react';
+import React, { useState } from 'react';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { ImageHandler } from '@/utils/imageHandler';
+import { addBookToCart } from '@/lib/actions/user.action';
+import { useToast } from '@/hooks/use-toast';
 
 interface Props {
+  id: string;
   title: string;
   description: string;
   stock: number;
@@ -16,6 +21,7 @@ interface Props {
 }
 
 const BookSellingDetailInformation = ({
+  id,
   title,
   description,
   stock,
@@ -25,6 +31,26 @@ const BookSellingDetailInformation = ({
   writerName,
   category,
 }: Props) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+  const addToCartHandler = async (bookId: string) => {
+    setIsLoading(true);
+    const response = await addBookToCart(bookId);
+    if (!response) {
+      return toast({
+        variant: 'destructive',
+        title: 'Oh! Something went wrong!',
+        description: 'Internal server error',
+        duration: 2000,
+      });
+    }
+
+    toast({
+      description: response.message,
+      duration: 2000,
+    });
+    setIsLoading(false);
+  };
   return (
     <>
       <section className="p-3">
@@ -68,7 +94,12 @@ const BookSellingDetailInformation = ({
 
                 <div className="flex gap-2 justify-center mt-3">
                   <Button className="bg-primary-600">Order</Button>
-                  <Button variant="outline" className="text-primary-500">
+                  <Button
+                    variant="outline"
+                    className="text-primary-500"
+                    onClick={() => addToCartHandler(id)}
+                    disabled={isLoading}
+                  >
                     Add to Cart
                   </Button>
                 </div>
