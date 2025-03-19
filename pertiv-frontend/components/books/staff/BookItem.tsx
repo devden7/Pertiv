@@ -3,8 +3,6 @@
 import { IBooksSelling } from '@/model/staff.model';
 import Image from 'next/image';
 import React, { useState } from 'react';
-import noImage from '../../../public/assets/no-image.png';
-import { ENV } from '@/utils/config';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +14,7 @@ import DialogComponent from '@/components/DialogComponent';
 import BookForm from './BookForm';
 import { deleteBookSelling } from '@/lib/actions/staff.action';
 import { useToast } from '@/hooks/use-toast';
+import { ImageHandler } from '@/utils/imageHandler';
 
 interface Props extends IBooksSelling {
   token: string;
@@ -83,7 +82,7 @@ const BookItem = ({
       <div className="relative flex w-full gap-3 border-b-2 border-slate-100 p-3 last:border-b-0 md:w-2/5 md:rounded-2xl md:border-2 md:border-slate-100 md:last:border-b-2 lg:h-[395px] lg:w-[22%] lg:flex-col lg:items-center lg:rounded-2xl lg:border-2 lg:p-2">
         <div className="relative h-40 w-48 overflow-hidden rounded-xl md:w-56 lg:h-[600px] lg:w-full">
           <Image
-            src={imageUrl ? `${ENV.API_URL}${imageUrl}` : noImage}
+            src={ImageHandler(imageUrl)}
             alt={title}
             width={500}
             height={500}

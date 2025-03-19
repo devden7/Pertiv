@@ -1,10 +1,13 @@
+import BooksForSelling from '@/components/user/BooksForSelling';
 import Hero from '@/components/user/Hero';
-import React from 'react';
+import { getBooksSellingUser } from '@/lib/actions/user.action';
 
-const UserHomePage = () => {
+const UserHomePage = async () => {
+  const data = await getBooksSellingUser(5);
   return (
     <>
       <Hero />
+      <BooksForSelling data={data.data} />
     </>
   );
 };
