@@ -43,3 +43,15 @@ export const addBookToCart = async (bookId: string) => {
     console.log('Error from addBookToCart action ', error);
   }
 };
+
+export const getBookCart = async () => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/user/cart`, {
+      cache: 'no-store',
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Error from getBookCart action ', error);
+  }
+};
