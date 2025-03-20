@@ -80,6 +80,19 @@ const getCartList = async (req, res, next) => {
   try {
     const { id } = req.user;
     logger.info(`Controller USER GetCartList - Cart: `);
+
+    const findCartQuery = await prisma.cart.findUnique({
+      where: { user_id: id },
+    });
+
+    if (!findCartQuery) {
+      await prisma.cart.create({
+        data: {
+          user_id: id,
+        },
+      });
+    }
+
     const cart = await prisma.cart.findUnique({
       where: { user_id: id },
 
