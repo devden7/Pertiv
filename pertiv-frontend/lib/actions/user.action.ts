@@ -55,3 +55,41 @@ export const getBookCart = async () => {
     console.log('Error from getBookCart action ', error);
   }
 };
+
+export const removeBookFromCart = async (bookId: string) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/user/remove-item-cart`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ book_id: bookId }),
+    });
+    const data = await response.json();
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from removeBookFromCart action ', error);
+  }
+};
+
+export const decreaseBookFromCart = async (bookId: string) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/user/decrease-item-cart`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ book_id: bookId }),
+    });
+    const data = await response.json();
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from decreaseBookFromCart action ', error);
+  }
+};

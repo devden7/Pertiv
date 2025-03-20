@@ -1,6 +1,17 @@
+'use client';
+
 import Image from 'next/image';
-import { Minus, Plus } from 'lucide-react';
+import { Minus, Plus, Trash } from 'lucide-react';
 import { ImageHandler } from '@/utils/imageHandler';
+import { Button } from '../ui/button';
+import {
+  addBookToCart,
+  decreaseBookFromCart,
+  removeBookFromCart,
+} from '@/lib/actions/user.action';
+import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
+
 interface Props {
   id: string;
   quantity: number;
@@ -17,6 +28,50 @@ const CartItem = ({
   imageUrl,
   price,
 }: Props) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
+
+  const removeItemCartHandler = async (bookId: string, type: string) => {
+    setIsLoading(true);
+    const response =
+      type === 'remove'
+        ? await removeBookFromCart(bookId)
+        : await decreaseBookFromCart(bookId);
+    if (!response) {
+      return toast({
+        variant: 'destructive',
+        title: 'Oh! Something went wrong!',
+        description: 'Internal server error',
+        duration: 2000,
+      });
+    }
+
+    toast({
+      description: response.message,
+      duration: 2000,
+    });
+    setIsLoading(false);
+  };
+
+  const addToCartHandler = async (bookId: string) => {
+    setIsLoading(true);
+    const response = await addBookToCart(bookId);
+    if (!response) {
+      return toast({
+        variant: 'destructive',
+        title: 'Oh! Something went wrong!',
+        description: 'Internal server error',
+        duration: 2000,
+      });
+    }
+
+    toast({
+      description: response.message,
+      duration: 2000,
+    });
+    setIsLoading(false);
+  };
+
   return (
     <div className="mb-4 flex justify-between items-center border-b-[1.5px] border-gray-200">
       <div className="relative mb-4 size-24 overflow-hidden rounded-xl">
@@ -39,17 +94,35 @@ const CartItem = ({
       </div>
       <div>
         <div className="mb-3 flex justify-between gap-2">
-          <button className="flex size-6 items-center justify-center border border-gray-200">
+          <Button
+            variant="outline"
+            className="text-primary-500 size-6 hover:text-primary-600"
+            disabled={isLoading}
+            onClick={() => removeItemCartHandler(id, 'decrease')}
+          >
             <Minus />
-          </button>
+          </Button>
           <div>
-            <span>1</span>
+            <span>{quantity}</span>
           </div>
-          <button className="flex size-6 items-center justify-center border border-gray-200">
+          <Button
+            variant="outline"
+            className="text-primary-500 size-6 hover:text-primary-600"
+            disabled={isLoading}
+            onClick={() => addToCartHandler(id)}
+          >
             <Plus />
-          </button>
+          </Button>
         </div>
-        <p className="text-primary-600 text-center">Remove</p>
+        <Button
+          variant="outline"
+          className="text-primary-500 hover:text-primary-600"
+          onClick={() => removeItemCartHandler(id, 'remove')}
+          disabled={isLoading}
+        >
+          <Trash />
+          Remove
+        </Button>
       </div>
     </div>
   );

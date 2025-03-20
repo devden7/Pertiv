@@ -15,7 +15,6 @@ interface Props {
   };
 }
 const CartContent = ({ data }: Props) => {
-  console.log(data);
   return (
     <section>
       <div className="container">

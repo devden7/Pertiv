@@ -80,8 +80,14 @@ const getCartList = async (req, res, next) => {
     logger.info(`Controller USER GetCartList - Cart: `);
     const cart = await prisma.cart.findUnique({
       where: { user_id: '6c1827d3-d46f-4f5e-b0fe-d430d2ea57f0' }, // STILL HARD CODED
+
       include: {
         cart_items: {
+          orderBy: {
+            book_selling: {
+              created_at: 'desc',
+            },
+          },
           include: {
             book_selling: {
               select: {
