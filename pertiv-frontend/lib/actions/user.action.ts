@@ -25,12 +25,13 @@ export const getBookSellingDetail = async (id: string) => {
   }
 };
 
-export const addBookToCart = async (bookId: string) => {
+export const addBookToCart = async (bookId: string, token?: string) => {
   try {
     const response = await fetch(`${ENV.API_URL}/user/add-to-cart`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ book_id: bookId }),
     });
@@ -44,9 +45,12 @@ export const addBookToCart = async (bookId: string) => {
   }
 };
 
-export const getBookCart = async () => {
+export const getBookCart = async (token?: string) => {
   try {
     const response = await fetch(`${ENV.API_URL}/user/cart`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       cache: 'no-store',
     });
     const data = await response.json();
@@ -56,12 +60,13 @@ export const getBookCart = async () => {
   }
 };
 
-export const removeBookFromCart = async (bookId: string) => {
+export const removeBookFromCart = async (bookId: string, token?: string) => {
   try {
     const response = await fetch(`${ENV.API_URL}/user/remove-item-cart`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ book_id: bookId }),
     });
@@ -75,12 +80,13 @@ export const removeBookFromCart = async (bookId: string) => {
   }
 };
 
-export const decreaseBookFromCart = async (bookId: string) => {
+export const decreaseBookFromCart = async (bookId: string, token?: string) => {
   try {
     const response = await fetch(`${ENV.API_URL}/user/decrease-item-cart`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ book_id: bookId }),
     });

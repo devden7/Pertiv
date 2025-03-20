@@ -12,6 +12,7 @@ const {
   removeItemFromCart,
   decreaseItemFromCart,
 } = require('../controllers/user/cart.controller');
+const userMiddleware = require('../middleware/userAuth');
 
 const router = express.Router();
 
@@ -59,9 +60,9 @@ router.post(
 router.get('/books-selling', getBookListSelling);
 router.get('/book-selling/:id', getBookSellingDetail);
 
-router.post('/add-to-cart', AddToCart);
-router.get('/cart', getCartList);
-router.post('/remove-item-cart', removeItemFromCart);
-router.post('/decrease-item-cart', decreaseItemFromCart);
+router.post('/add-to-cart', userMiddleware, AddToCart);
+router.get('/cart', userMiddleware, getCartList);
+router.post('/remove-item-cart', userMiddleware, removeItemFromCart);
+router.post('/decrease-item-cart', userMiddleware, decreaseItemFromCart);
 
 module.exports = router;

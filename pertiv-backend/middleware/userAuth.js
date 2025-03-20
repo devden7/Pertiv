@@ -1,12 +1,11 @@
-const jwt = require('jsonwebtoken');
 const logger = require('../lib/winston/winstonLogger');
+const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../config/env');
 
-const adminMiddleware = (req, res, next) => {
+const userMiddleware = (req, res, next) => {
   try {
-    logger.info('Accesing admin middleware');
+    logger.info('Accesing staff middleware');
     const token = req.headers.authorization?.split(' ')[1];
-
     if (!token) {
       const error = new Error('Bad request!');
       error.success = false;
@@ -16,7 +15,7 @@ const adminMiddleware = (req, res, next) => {
 
     const user = jwt.verify(token, JWT_SECRET);
 
-    if (user.role !== 'admin') {
+    if (user.role !== 'user') {
       const error = new Error('Bad request!');
       error.success = false;
       error.statusCode = 400;
@@ -26,9 +25,9 @@ const adminMiddleware = (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    logger.error(`ERROR Middleware adminMiddleware - ${error}`);
+    logger.error(`ERROR Middleware userMiddleware - ${error}`);
     next(error);
   }
 };
 
-module.exports = adminMiddleware;
+module.exports = userMiddleware;

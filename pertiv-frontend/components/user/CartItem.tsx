@@ -19,6 +19,7 @@ interface Props {
   description: string;
   imageUrl: string | null;
   price: number;
+  token?: string;
 }
 const CartItem = ({
   id,
@@ -27,6 +28,7 @@ const CartItem = ({
   description,
   imageUrl,
   price,
+  token,
 }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -35,40 +37,51 @@ const CartItem = ({
     setIsLoading(true);
     const response =
       type === 'remove'
-        ? await removeBookFromCart(bookId)
-        : await decreaseBookFromCart(bookId);
-    if (!response) {
-      return toast({
+        ? await removeBookFromCart(bookId, token)
+        : await decreaseBookFromCart(bookId, token);
+
+    if (!response || !response.success) {
+      toast({
         variant: 'destructive',
         title: 'Oh! Something went wrong!',
         description: 'Internal server error',
         duration: 2000,
       });
+
+      setIsLoading(false);
+      return;
     }
 
     toast({
       description: response.message,
       duration: 2000,
     });
+
     setIsLoading(false);
   };
 
   const addToCartHandler = async (bookId: string) => {
     setIsLoading(true);
-    const response = await addBookToCart(bookId);
-    if (!response) {
-      return toast({
+
+    const response = await addBookToCart(bookId, token);
+
+    if (!response || !response.success) {
+      toast({
         variant: 'destructive',
         title: 'Oh! Something went wrong!',
         description: 'Internal server error',
         duration: 2000,
       });
+
+      setIsLoading(false);
+      return;
     }
 
     toast({
       description: response.message,
       duration: 2000,
     });
+
     setIsLoading(false);
   };
 

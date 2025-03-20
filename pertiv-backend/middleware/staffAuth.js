@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const logger = require('../lib/winston/winstonLogger');
+const { JWT_SECRET } = require('../config/env');
 
 const staffMiddleware = (req, res, next) => {
   try {
@@ -13,7 +14,7 @@ const staffMiddleware = (req, res, next) => {
       throw error;
     }
 
-    const user = jwt.verify(token, process.env.JWT_SECRET);
+    const user = jwt.verify(token, JWT_SECRET);
 
     if (user.role !== 'staff') {
       const error = new Error('Bad request!');

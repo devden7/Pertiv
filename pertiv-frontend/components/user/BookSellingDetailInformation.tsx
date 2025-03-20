@@ -18,6 +18,7 @@ interface Props {
   publisherName: string;
   writerName: string;
   category: { categories: { name: string } }[];
+  token?: string;
 }
 
 const BookSellingDetailInformation = ({
@@ -30,19 +31,23 @@ const BookSellingDetailInformation = ({
   publisherName,
   writerName,
   category,
+  token,
 }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const addToCartHandler = async (bookId: string) => {
     setIsLoading(true);
-    const response = await addBookToCart(bookId);
-    if (!response) {
-      return toast({
+    const response = await addBookToCart(bookId, token);
+
+    if (!response || !response.success) {
+      toast({
         variant: 'destructive',
         title: 'Oh! Something went wrong!',
         description: 'Internal server error',
         duration: 2000,
       });
+      setIsLoading(false);
+      return;
     }
 
     toast({

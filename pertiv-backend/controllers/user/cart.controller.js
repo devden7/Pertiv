@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 const AddToCart = async (req, res, next) => {
   try {
     const { book_id } = req.body;
+    const { id } = req.user;
     logger.info(`Controller USER AddToCart - Add Book : ${book_id}`);
     const findBookQuery = await prisma.bookSelling.findUnique({
       where: { id: book_id },
@@ -19,9 +20,9 @@ const AddToCart = async (req, res, next) => {
     }
 
     const cart = await prisma.cart.upsert({
-      where: { user_id: '6c1827d3-d46f-4f5e-b0fe-d430d2ea57f0' }, // STILL HARD CODED
+      where: { user_id: id },
       update: {},
-      create: { user_id: '6c1827d3-d46f-4f5e-b0fe-d430d2ea57f0' }, // STILL HARD CODED
+      create: { user_id: id },
     });
 
     const existingCartItem = await prisma.cartItem.findUnique({
@@ -77,9 +78,10 @@ const AddToCart = async (req, res, next) => {
 
 const getCartList = async (req, res, next) => {
   try {
+    const { id } = req.user;
     logger.info(`Controller USER GetCartList - Cart: `);
     const cart = await prisma.cart.findUnique({
-      where: { user_id: '6c1827d3-d46f-4f5e-b0fe-d430d2ea57f0' }, // STILL HARD CODED
+      where: { user_id: id },
 
       include: {
         cart_items: {
@@ -139,6 +141,7 @@ const getCartList = async (req, res, next) => {
 const removeItemFromCart = async (req, res, next) => {
   try {
     const { book_id } = req.body;
+    const { id } = req.user;
     logger.info(
       `Controller USER removeItemFromCart - Remove Book : ${book_id}`
     );
@@ -154,7 +157,7 @@ const removeItemFromCart = async (req, res, next) => {
     }
 
     const cart = await prisma.cart.findUnique({
-      where: { user_id: '6c1827d3-d46f-4f5e-b0fe-d430d2ea57f0' }, // STILL HARD CODED
+      where: { user_id: id },
     });
 
     const existingCartItem = await prisma.cartItem.findUnique({
@@ -200,6 +203,7 @@ const removeItemFromCart = async (req, res, next) => {
 const decreaseItemFromCart = async (req, res, next) => {
   try {
     const { book_id } = req.body;
+    const { id } = req.user;
     logger.info(
       `Controller USER decreaseItemFromCart - Remove Book : ${book_id}`
     );
@@ -215,7 +219,7 @@ const decreaseItemFromCart = async (req, res, next) => {
     }
 
     const cart = await prisma.cart.findUnique({
-      where: { user_id: '6c1827d3-d46f-4f5e-b0fe-d430d2ea57f0' }, // STILL HARD CODED
+      where: { user_id: id },
     });
 
     const existingCartItem = await prisma.cartItem.findUnique({

@@ -13,8 +13,9 @@ interface Props {
       price: number;
     }[];
   };
+  token?: string;
 }
-const CartContent = ({ data }: Props) => {
+const CartContent = ({ data, token }: Props) => {
   return (
     <section>
       <div className="container">
@@ -31,6 +32,7 @@ const CartContent = ({ data }: Props) => {
                   description={item.description}
                   imageUrl={item.imageUrl}
                   price={item.price}
+                  token={token}
                 />
               ))}
             </div>

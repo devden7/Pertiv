@@ -1183,6 +1183,11 @@
             }
           }
         ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "201": {
             "description": "Success",
@@ -1192,6 +1197,19 @@
                 "success": { "type": "boolean" },
                 "statusCode": { "type": "number" },
                 "message": { "type": "string" }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
               }
             }
           },
@@ -1228,7 +1246,11 @@
       "get": {
         "tags": ["User"],
         "summary": "Get list cart",
-
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -1267,6 +1289,19 @@
               }
             }
           },
+          "400": {
+            "description": "Error: Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Internal Server Error",
             "schema": {
@@ -1301,6 +1336,11 @@
             }
           }
         ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "201": {
             "description": "Success",
@@ -1310,6 +1350,19 @@
                 "success": { "type": "boolean" },
                 "statusCode": { "type": "number" },
                 "message": { "type": "string" }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
               }
             }
           },
@@ -1360,6 +1413,11 @@
             }
           }
         ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "201": {
             "description": "Success",
@@ -1369,6 +1427,19 @@
                 "success": { "type": "boolean" },
                 "statusCode": { "type": "number" },
                 "message": { "type": "string" }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
               }
             }
           },
