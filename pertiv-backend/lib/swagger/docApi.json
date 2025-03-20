@@ -1195,25 +1195,15 @@
               }
             }
           },
-          "400": {
-            "description": "Error: Bad Request",
+          "404": {
+            "description": "Error: Book Not Found",
             "schema": {
               "type": "object",
               "properties": {
                 "success": { "type": "boolean" },
                 "statusCode": { "type": "number" },
                 "message": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": { "type": "string" },
-                      "value": { "type": "string" },
-                      "msg": { "type": "string" },
-                      "path": { "type": "string" },
-                      "location": { "type": "string" }
-                    }
-                  }
+                  "type": "string"
                 }
               }
             }
@@ -1273,6 +1263,124 @@
                       }
                     }
                   }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/remove-item-cart": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Remove item from cart",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Add a bookSelling id to cart",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "book_id": { "type": "string" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": { "type": "string" }
+              }
+            }
+          },
+          "404": {
+            "description": "Error: Book/Cart Not Found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/decrease-item-cart": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Decrease item from cart",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Add a bookSelling id to cart",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "book_id": { "type": "string" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": { "type": "string" }
+              }
+            }
+          },
+          "404": {
+            "description": "Error: Book/Cart Not Found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
                 }
               }
             }

@@ -130,7 +130,144 @@ const getCartList = async (req, res, next) => {
   }
 };
 
+const removeItemFromCart = async (req, res, next) => {
+  try {
+    const { book_id } = req.body;
+    logger.info(
+      `Controller USER removeItemFromCart - Remove Book : ${book_id}`
+    );
+    const findBookQuery = await prisma.bookSelling.findUnique({
+      where: { id: book_id },
+    });
+
+    if (!findBookQuery) {
+      const error = new Error('Book not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const cart = await prisma.cart.findUnique({
+      where: { user_id: '6c1827d3-d46f-4f5e-b0fe-d430d2ea57f0' }, // STILL HARD CODED
+    });
+
+    const existingCartItem = await prisma.cartItem.findUnique({
+      where: {
+        cart_id_book_selling_id: {
+          cart_id: cart.id,
+          book_selling_id: book_id,
+        },
+      },
+    });
+
+    if (!existingCartItem) {
+      const error = new Error('Cart Item not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    await prisma.cartItem.delete({
+      where: {
+        cart_id_book_selling_id: {
+          cart_id: cart.id,
+          book_selling_id: book_id,
+        },
+      },
+    });
+
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'The book has been removed from cart successfully.',
+    });
+  } catch (error) {
+    logger.error(`ERROR USER Controller removeItemFromCart - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
+const decreaseItemFromCart = async (req, res, next) => {
+  try {
+    const { book_id } = req.body;
+    logger.info(
+      `Controller USER decreaseItemFromCart - Remove Book : ${book_id}`
+    );
+    const findBookQuery = await prisma.bookSelling.findUnique({
+      where: { id: book_id },
+    });
+
+    if (!findBookQuery) {
+      const error = new Error('Book not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const cart = await prisma.cart.findUnique({
+      where: { user_id: '6c1827d3-d46f-4f5e-b0fe-d430d2ea57f0' }, // STILL HARD CODED
+    });
+
+    const existingCartItem = await prisma.cartItem.findUnique({
+      where: {
+        cart_id_book_selling_id: {
+          cart_id: cart.id,
+          book_selling_id: book_id,
+        },
+      },
+    });
+
+    if (!existingCartItem) {
+      const error = new Error('Cart Item not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    if (existingCartItem.quantity === 1) {
+      await prisma.cartItem.delete({
+        where: {
+          cart_id_book_selling_id: {
+            cart_id: cart.id,
+            book_selling_id: book_id,
+          },
+        },
+      });
+    } else {
+      await prisma.cartItem.update({
+        where: {
+          cart_id_book_selling_id: {
+            cart_id: cart.id,
+            book_selling_id: book_id,
+          },
+        },
+        data: {
+          quantity: existingCartItem.quantity - 1,
+        },
+      });
+    }
+
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'The book has been decreased from cart successfully.',
+    });
+  } catch (error) {
+    logger.error(`ERROR USER Controller decreaseItemFromCart - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
 module.exports = {
   AddToCart,
   getCartList,
+  removeItemFromCart,
+  decreaseItemFromCart,
 };

@@ -9,6 +9,8 @@ const {
 const {
   AddToCart,
   getCartList,
+  removeItemFromCart,
+  decreaseItemFromCart,
 } = require('../controllers/user/cart.controller');
 
 const router = express.Router();
@@ -59,5 +61,7 @@ router.get('/book-selling/:id', getBookSellingDetail);
 
 router.post('/add-to-cart', AddToCart);
 router.get('/cart', getCartList);
+router.post('/remove-item-cart', removeItemFromCart);
+router.post('/decrease-item-cart', decreaseItemFromCart);
 
 module.exports = router;
