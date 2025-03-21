@@ -13,7 +13,10 @@ const {
   decreaseItemFromCart,
 } = require('../controllers/user/cart.controller');
 const userMiddleware = require('../middleware/userAuth');
-const { createOrderBook } = require('../controllers/user/order.controller');
+const {
+  createOrderBook,
+  paymentBookDetail,
+} = require('../controllers/user/order.controller');
 
 const router = express.Router();
 
@@ -67,5 +70,5 @@ router.post('/remove-item-cart', userMiddleware, removeItemFromCart);
 router.post('/decrease-item-cart', userMiddleware, decreaseItemFromCart);
 
 router.post('/order-book', userMiddleware, createOrderBook);
-
+router.get('/payment-detail/:id', userMiddleware, paymentBookDetail);
 module.exports = router;

@@ -74,6 +74,65 @@ const createOrderBook = async (req, res, next) => {
   }
 };
 
+const paymentBookDetail = async (req, res, next) => {
+  try {
+    const paramsId = req.params.id;
+    const { id } = req.user;
+
+    logger.info(
+      `Controller USER paymentBookDetail -  Order ID : ${paramsId}  User ID : ${id}`
+    );
+
+    const findOrderQuery = await prisma.order.findUnique({
+      where: {
+        id: paramsId,
+        userId: id,
+      },
+      include: {
+        item_orders: true,
+      },
+    });
+
+    if (!findOrderQuery) {
+      const error = new Error('Order not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const data = {
+      id: findOrderQuery.id,
+      status: findOrderQuery.status,
+      total_price: findOrderQuery.total_price,
+      created_at: findOrderQuery.created_at,
+      ended_at: findOrderQuery.ended_at,
+      item_Order: findOrderQuery.item_orders.map((item) => ({
+        id: item.id,
+        book_title: item.book_title,
+        book_description: item.book_description,
+        book_imageUrl: item.book_imageUrl,
+        book_price: item.book_price,
+        quantity: item.quantity,
+      })),
+    };
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'Success get payment detail of the order',
+      data,
+    });
+  } catch (error) {
+    logger.error(`ERROR USER Controller paymentBookDetail - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   createOrderBook,
+  paymentBookDetail,
 };
