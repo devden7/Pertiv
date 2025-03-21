@@ -1475,7 +1475,7 @@
     "/user/order-book": {
       "post": {
         "tags": ["User"],
-        "summary": "Decrease item from cart",
+        "summary": "order books",
         "security": [
           {
             "bearerAuth": []
@@ -1485,7 +1485,7 @@
           {
             "in": "body",
             "name": "body",
-            "description": "Add a bookSelling id to cart",
+            "description": "Add a bookSelling id and quantity to order",
             "required": true,
             "schema": {
               "type": "object",
@@ -1515,7 +1515,13 @@
               "properties": {
                 "success": { "type": "boolean" },
                 "statusCode": { "type": "number" },
-                "message": { "type": "string" }
+                "message": { "type": "string" },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "string" }
+                  }
+                }
               }
             }
           },

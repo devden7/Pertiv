@@ -25,7 +25,7 @@ const createOrderBook = async (req, res, next) => {
       return book ? acc + book.price * item.quantity : acc;
     }, 0);
 
-    await prisma.order.create({
+    const orderQuery = await prisma.order.create({
       data: {
         id: generateOrderId(),
         userId: id,
@@ -53,10 +53,17 @@ const createOrderBook = async (req, res, next) => {
       },
     });
 
+    await prisma.cartItem.deleteMany({
+      where: {
+        book_selling_id: { in: findBooksSellingQuery.map((item) => item.id) },
+      },
+    });
+
     res.status(201).json({
       success: true,
       statusCode: 201,
       message: 'Order created successfully.',
+      data: { id: orderQuery.id },
     });
   } catch (error) {
     logger.error(`ERROR USER Controller CreateOrderBook - ${error}`);

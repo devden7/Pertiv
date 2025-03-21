@@ -5,8 +5,9 @@ import React, { useState } from 'react';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { ImageHandler } from '@/utils/imageHandler';
-import { addBookToCart } from '@/lib/actions/user.action';
+import { addBookToCart, createOrder } from '@/lib/actions/user.action';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   id: string;
@@ -35,6 +36,7 @@ const BookSellingDetailInformation = ({
 }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
   const addToCartHandler = async (bookId: string) => {
     setIsLoading(true);
     const response = await addBookToCart(bookId, token);
@@ -56,6 +58,36 @@ const BookSellingDetailInformation = ({
     });
     setIsLoading(false);
   };
+
+  const orderHandler = async () => {
+    setIsLoading(true);
+    const cartItem = [];
+
+    cartItem.push({ book_id: id, quantity: 1 });
+
+    const response = await createOrder(cartItem, token);
+
+    if (!response || !response.success) {
+      toast({
+        variant: 'destructive',
+        title: 'Oh! Something went wrong!',
+        description: response.message || 'Internal server error',
+        duration: 2000,
+      });
+
+      setIsLoading(false);
+      return;
+    }
+
+    const splitOrderId = response.data.id.split('#');
+
+    router.push(`/payment/${splitOrderId[1]}`);
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+  };
+
   return (
     <>
       <section className="p-3">
@@ -98,7 +130,13 @@ const BookSellingDetailInformation = ({
                 </div>
 
                 <div className="flex gap-2 justify-center mt-3">
-                  <Button className="bg-primary-600">Order</Button>
+                  <Button
+                    className="bg-primary-500 hover:bg-primary-600"
+                    onClick={() => orderHandler()}
+                    disabled={isLoading}
+                  >
+                    Order
+                  </Button>
                   <Button
                     variant="outline"
                     className="text-primary-500"

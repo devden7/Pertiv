@@ -99,3 +99,26 @@ export const decreaseBookFromCart = async (bookId: string, token?: string) => {
     console.log('Error from decreaseBookFromCart action ', error);
   }
 };
+
+export const createOrder = async (
+  cartItem: { book_id: string; quantity: number }[],
+  token?: string
+) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/user/order-book`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ cartItem }),
+    });
+    const data = await response.json();
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from decreaseBookFromCart action ', error);
+  }
+};

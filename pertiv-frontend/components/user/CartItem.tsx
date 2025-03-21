@@ -1,5 +1,3 @@
-'use client';
-
 import Image from 'next/image';
 import { Minus, Plus, Trash } from 'lucide-react';
 import { ImageHandler } from '@/utils/imageHandler';

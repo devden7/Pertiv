@@ -1,7 +1,13 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import { Card } from '../ui/card';
 import CartItem from './CartItem';
 import { calcTotalPrice } from '@/utils/calcTotalPrice';
+import { Button } from '../ui/button';
+import { createOrder } from '@/lib/actions/user.action';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 
 interface Props {
   data: {
@@ -18,6 +24,41 @@ interface Props {
 }
 
 const CartContent = ({ data, token }: Props) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const { toast } = useToast();
+  const orderHandler = async () => {
+    setIsLoading(true);
+    const cartItem = data.cart_items.map((item) => {
+      return {
+        book_id: item.id,
+        quantity: item.quantity,
+      };
+    });
+
+    const response = await createOrder(cartItem, token);
+
+    if (!response || !response.success) {
+      toast({
+        variant: 'destructive',
+        title: 'Oh! Something went wrong!',
+        description: 'Internal server error',
+        duration: 2000,
+      });
+
+      setIsLoading(false);
+      return;
+    }
+
+    const splitOrderId = response.data.id.split('#');
+
+    router.push(`/payment/${splitOrderId[1]}`);
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+  };
+
   return (
     <section>
       <div className="container">
@@ -43,6 +84,15 @@ const CartContent = ({ data, token }: Props) => {
               <div className="font-medium">
                 {calcTotalPrice(data.cart_items)}
               </div>
+            </div>
+            <div className="mt-3 flex justify-center">
+              <Button
+                className="bg-primary-500 hover:bg-primary-600"
+                disabled={isLoading}
+                onClick={() => orderHandler()}
+              >
+                Order Now
+              </Button>
             </div>
           </Card>
         </div>
