@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card } from '../ui/card';
 import CartItem from './CartItem';
+import { calcTotalPrice } from '@/utils/calcTotalPrice';
 
 interface Props {
   data: {
@@ -15,6 +16,7 @@ interface Props {
   };
   token?: string;
 }
+
 const CartContent = ({ data, token }: Props) => {
   return (
     <section>
@@ -35,6 +37,12 @@ const CartContent = ({ data, token }: Props) => {
                   token={token}
                 />
               ))}
+            </div>
+            <div className="flex justify-between">
+              <div className="font-medium">Total</div>
+              <div className="font-medium">
+                {calcTotalPrice(data.cart_items)}
+              </div>
             </div>
           </Card>
         </div>

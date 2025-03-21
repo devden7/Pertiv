@@ -22,8 +22,11 @@ const UserNavbar = () => {
       <nav className="bg-blue-700">
         <div className="container px-2 sm:px-6 lg:px-8">
           <div className="relative flex h-16 items-center justify-between">
-            <div className="flex space-x-4">
-              <p className="text-white">Hi, User</p>
+            <div className="flex items-center space-x-4 text-white tracking-wide">
+              <Link href="/" className="text-lg">
+                PERTIV
+              </Link>
+              <p>Hi, User</p>
             </div>
             <div className="flex gap-4 items-center">
               <Link href="/cart">
