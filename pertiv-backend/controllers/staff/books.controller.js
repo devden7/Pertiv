@@ -17,6 +17,7 @@ const addBookSelling = async (req, res, next) => {
       writerName,
       categories,
     } = req.body;
+    const { id } = req.user;
     const listCategories = JSON.parse(categories);
     const fileNameImage = req.file
       ? Date.now() + '-' + req.file.originalname
@@ -68,7 +69,7 @@ const addBookSelling = async (req, res, next) => {
         stock: parseInt(stock),
         imageUrl,
         price: parseInt(price),
-        user_id: '6c686f2b-aeb9-4125-9a2c-a69e9aa47326', // STILL HARDCODE FOR ID STAFF
+        user_id: id,
         publisher_id: publisher.id,
         writer_id: writer.id,
         category: {

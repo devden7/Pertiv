@@ -139,11 +139,13 @@ model CartItem {
 model Order {
   id             String @id @default(uuid())
   status         String
-  buy_key         String @db.VarChar(50)
-  buy_handled_by String
+  buy_key         String? @db.VarChar(50) @unique
+  buy_handled_by String?
   buy_date   DateTime?
   total_price     Int
-  total_item      Int
+  created_at      DateTime @default(dbgenerated("timezone('Asia/Jakarta', now())"))
+  ended_at        DateTime?
+  canceled_at     DateTime?
 
   userId         String
   item_orders     ItemOrder[]
@@ -154,14 +156,16 @@ model Order {
 model ItemOrder {
   id            String @id @default(uuid())
   book_title     String @db.VarChar(255)
+  book_description String
+  book_imageUrl String?
   book_price     Int
   quantity      Int
 
   order_id       String
-  book_selling_id String
+  book_selling_id String?
 
   order         Order @relation(fields: [order_id], references: [id])
-  book_selling   BookSelling @relation(fields: [book_selling_id], references: [id])
+  book_selling   BookSelling? @relation(fields: [book_selling_id], references: [id], onDelete: SetNull)
 }
 
 
