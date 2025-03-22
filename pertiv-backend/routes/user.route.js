@@ -72,5 +72,5 @@ router.post('/decrease-item-cart', userMiddleware, decreaseItemFromCart);
 
 router.post('/order-book', userMiddleware, createOrderBook);
 router.get('/payment-detail/:id', userMiddleware, paymentBookDetail);
-router.post('/purchase/:id', purchaseBook);
+router.post('/purchase/:id', userMiddleware, purchaseBook);
 module.exports = router;

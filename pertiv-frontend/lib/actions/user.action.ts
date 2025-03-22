@@ -11,7 +11,7 @@ export const getBooksSellingUser = async (limit: number) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.log('Error from getBooksSelling action ', error);
+    console.log('Error from getBooksSellingUser action ', error);
   }
 };
 
@@ -119,7 +119,7 @@ export const createOrder = async (
     }
     return data;
   } catch (error) {
-    console.log('Error from decreaseBookFromCart action ', error);
+    console.log('Error from createOrder action ', error);
   }
 };
 
@@ -134,6 +134,25 @@ export const paymentOrderDetail = async (id: string, token?: string) => {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.log('Error from getBooksSelling action ', error);
+    console.log('Error from paymentOrderDetail action ', error);
+  }
+};
+
+export const purchaseBook = async (bookId: string, token?: string) => {
+  try {
+    console.log(bookId);
+    const response = await fetch(`${ENV.API_URL}/user/purchase/${bookId}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from purchaseBook action ', error);
   }
 };

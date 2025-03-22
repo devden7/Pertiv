@@ -17,7 +17,7 @@ const Payment = async ({ params }: Params) => {
   }
   return (
     <>
-      <PaymentContent data={response.data} />
+      <PaymentContent data={response.data} token={user.token} />
     </>
   );
 };

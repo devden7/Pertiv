@@ -151,7 +151,7 @@ const paymentBookDetail = async (req, res, next) => {
 const purchaseBook = async (req, res, next) => {
   try {
     const paramsId = req.params.id;
-    const id = '39ec9e8a-76ef-4d4b-a686-896765a87427';
+    const { id } = req.user;
     logger.info(
       `ERROR USER Controller purchaseBook -  Order ID : ${paramsId}  User ID : ${id}`
     );
@@ -206,6 +206,7 @@ const purchaseBook = async (req, res, next) => {
       data: {
         status: 'paid',
         buy_key: generateOrderKey(),
+        paid_at: formatISO(new Date()),
       },
     });
     res.json({

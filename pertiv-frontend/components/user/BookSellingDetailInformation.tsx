@@ -71,7 +71,7 @@ const BookSellingDetailInformation = ({
       toast({
         variant: 'destructive',
         title: 'Oh! Something went wrong!',
-        description: response.message || 'Internal server error',
+        description: 'Internal server error',
         duration: 2000,
       });
 

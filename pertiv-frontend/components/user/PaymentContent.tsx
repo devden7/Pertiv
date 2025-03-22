@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -13,6 +15,8 @@ import { formatDateTime } from '@/utils/formatDateTime';
 import { formatNumberToRupiah } from '@/utils/formatRupiah';
 import { Badge } from '../ui/badge';
 import { HandCoins, ScrollText } from 'lucide-react';
+import { purchaseBook } from '@/lib/actions/user.action';
+import { useToast } from '@/hooks/use-toast';
 
 interface Props {
   data: {
@@ -31,9 +35,27 @@ interface Props {
       }
     ];
   };
+  token?: string;
 }
 
-const PaymentContent = ({ data }: Props) => {
+const PaymentContent = ({ data, token }: Props) => {
+  const { toast } = useToast();
+
+  const purchaseHandler = async () => {
+    const splitOrderId = data.id.split('#');
+    const response = await purchaseBook(splitOrderId[1], token);
+
+    if (!response || !response.success) {
+      toast({
+        variant: 'destructive',
+        title: 'Oh! Something went wrong!',
+        description: 'Internal server error',
+        duration: 2000,
+      });
+
+      return;
+    }
+  };
   return (
     <section>
       <div className="container">
@@ -55,6 +77,11 @@ const PaymentContent = ({ data }: Props) => {
               )}
               {data.status === 'canceled' && (
                 <Badge className="capitalize bg-red-100 hover:bg-red-100 text-red-800">
+                  {data.status}
+                </Badge>
+              )}
+              {data.status === 'paid' && (
+                <Badge className="capitalize bg-blue-100 hover:bg-blue-100 text-blue-8000">
                   {data.status}
                 </Badge>
               )}
@@ -104,16 +131,19 @@ const PaymentContent = ({ data }: Props) => {
                       Rp {formatNumberToRupiah(data.total_price)}
                     </div>
                   </div>
-                  <div className="flex items-center justify-between font-medium mt-3 text-red-500">
-                    <div>Payment due by</div>
-                    <div>{formatDateTime(data.ended_at)}</div>
-                  </div>
+                  {data.status !== 'paid' && (
+                    <div className="flex items-center justify-between font-medium mt-3 text-red-500">
+                      <div>Payment due by</div>
+                      <div>{formatDateTime(data.ended_at)}</div>
+                    </div>
+                  )}
                 </CardContent>
                 <CardFooter className="flex items-center gap-2">
                   {data.status === 'pending' && (
                     <Button
                       size="sm"
                       className="bg-primary-500 hover:bg-primary-600"
+                      onClick={purchaseHandler}
                     >
                       Pay now
                     </Button>
