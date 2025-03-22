@@ -224,8 +224,80 @@ const purchaseBook = async (req, res, next) => {
   }
 };
 
+const cancelPurchaseBook = async (req, res, next) => {
+  try {
+    const paramsId = req.params.id;
+    const { id } = req.user;
+    logger.info(
+      `ERROR USER Controller purchaseBook -  Order ID : ${paramsId}  User ID : ${id}`
+    );
+    const findOrderQuery = await prisma.order.findUnique({
+      where: {
+        id: `#${paramsId}`,
+        userId: id,
+      },
+    });
+
+    if (!findOrderQuery) {
+      const error = new Error('Order not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const dateNow = formatISO(new Date());
+    const dueDate = formatISO(findOrderQuery.ended_at);
+
+    if (dateNow >= dueDate) {
+      await prisma.order.update({
+        where: {
+          id: `#${paramsId}`,
+          userId: id,
+        },
+        data: {
+          status: 'canceled',
+          canceled_at: dueDate,
+        },
+      });
+    }
+
+    if (
+      findOrderQuery.status === 'canceled' ||
+      findOrderQuery.status === 'paid'
+    ) {
+      const error = new Error('Order is not valid');
+      error.success = false;
+      error.statusCode = 400;
+      throw error;
+    }
+
+    await prisma.order.update({
+      where: {
+        id: `#${paramsId}`,
+        userId: id,
+      },
+      data: {
+        status: 'canceled',
+        canceled_at: formatISO(new Date()),
+      },
+    });
+    res.json({
+      success: true,
+      statusCode: 201,
+      message: 'Your payment is cancelled',
+    });
+  } catch (error) {
+    logger.error(`ERROR USER Controller cancelPurchaseBook - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
 module.exports = {
   createOrderBook,
   paymentBookDetail,
   purchaseBook,
+  cancelPurchaseBook,
 };

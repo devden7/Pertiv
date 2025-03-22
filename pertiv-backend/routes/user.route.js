@@ -17,6 +17,7 @@ const {
   createOrderBook,
   paymentBookDetail,
   purchaseBook,
+  cancelPurchaseBook,
 } = require('../controllers/user/order.controller');
 
 const router = express.Router();
@@ -73,4 +74,6 @@ router.post('/decrease-item-cart', userMiddleware, decreaseItemFromCart);
 router.post('/order-book', userMiddleware, createOrderBook);
 router.get('/payment-detail/:id', userMiddleware, paymentBookDetail);
 router.post('/purchase/:id', userMiddleware, purchaseBook);
+router.post('/purchase/:id', userMiddleware, purchaseBook);
+router.post('/cancel-purchase/:id', userMiddleware, cancelPurchaseBook);
 module.exports = router;
