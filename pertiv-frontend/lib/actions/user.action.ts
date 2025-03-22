@@ -156,3 +156,25 @@ export const purchaseBook = async (bookId: string, token?: string) => {
     console.log('Error from purchaseBook action ', error);
   }
 };
+
+export const cancelPurchaseBook = async (bookId: string, token?: string) => {
+  try {
+    console.log(bookId);
+    const response = await fetch(
+      `${ENV.API_URL}/user/cancel-purchase/${bookId}`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const data = await response.json();
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from purchaseBook action ', error);
+  }
+};

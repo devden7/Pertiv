@@ -15,7 +15,7 @@ import { formatDateTime } from '@/utils/formatDateTime';
 import { formatNumberToRupiah } from '@/utils/formatRupiah';
 import { Badge } from '../ui/badge';
 import { HandCoins, ScrollText } from 'lucide-react';
-import { purchaseBook } from '@/lib/actions/user.action';
+import { cancelPurchaseBook, purchaseBook } from '@/lib/actions/user.action';
 import { useToast } from '@/hooks/use-toast';
 
 interface Props {
@@ -44,6 +44,22 @@ const PaymentContent = ({ data, token }: Props) => {
   const purchaseHandler = async () => {
     const splitOrderId = data.id.split('#');
     const response = await purchaseBook(splitOrderId[1], token);
+
+    if (!response || !response.success) {
+      toast({
+        variant: 'destructive',
+        title: 'Oh! Something went wrong!',
+        description: 'Internal server error',
+        duration: 2000,
+      });
+
+      return;
+    }
+  };
+
+  const cancelPurchaseHandler = async () => {
+    const splitOrderId = data.id.split('#');
+    const response = await cancelPurchaseBook(splitOrderId[1], token);
 
     if (!response || !response.success) {
       toast({
@@ -131,7 +147,7 @@ const PaymentContent = ({ data, token }: Props) => {
                       Rp {formatNumberToRupiah(data.total_price)}
                     </div>
                   </div>
-                  {data.status !== 'paid' && (
+                  {data.status === 'pending' && (
                     <div className="flex items-center justify-between font-medium mt-3 text-red-500">
                       <div>Payment due by</div>
                       <div>{formatDateTime(data.ended_at)}</div>
@@ -149,7 +165,11 @@ const PaymentContent = ({ data, token }: Props) => {
                     </Button>
                   )}
                   {data.status === 'pending' && (
-                    <Button variant="outline" size="sm">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={cancelPurchaseHandler}
+                    >
                       Cancel
                     </Button>
                   )}
