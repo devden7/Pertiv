@@ -93,3 +93,18 @@ export const deleteBookSelling = async (id: string, token?: string) => {
     console.log('Error from deleteStaff action', error);
   }
 };
+
+export const getTransactions = async (token?: string) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/staff/transactions`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      cache: 'no-store',
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Error from getBookCart action ', error);
+  }
+};
