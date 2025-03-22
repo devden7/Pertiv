@@ -4,7 +4,7 @@ const { JWT_SECRET } = require('../config/env');
 
 const staffMiddleware = (req, res, next) => {
   try {
-    logger.info('Accesing staff middleware');
+    logger.info('Accesing STAFF middleware');
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {

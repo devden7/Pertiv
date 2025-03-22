@@ -1,11 +1,10 @@
 const jwt = require('jsonwebtoken');
 const logger = require('../../lib/winston/winstonLogger');
 const bcrypt = require('bcryptjs');
-const { PrismaClient } = require('@prisma/client');
 const { JWT_SECRET } = require('../../config/env');
 const { validationResult } = require('express-validator');
+const prisma = require('../../utils/prismaConnection');
 
-const prisma = new PrismaClient();
 const loginAuth = async (req, res, next) => {
   try {
     const { email, password } = req.body;

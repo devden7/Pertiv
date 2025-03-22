@@ -1,7 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
 const logger = require('../../lib/winston/winstonLogger');
-
-const prisma = new PrismaClient();
+const prisma = require('../../utils/prismaConnection');
 
 const AddToCart = async (req, res, next) => {
   try {

@@ -1,7 +1,7 @@
-const { PrismaClient } = require('@prisma/client');
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const logger = require('../../lib/winston/winstonLogger');
+const prisma = require('../../utils/prismaConnection');
 
 const createStaffAccount = async (req, res, next) => {
   try {
@@ -20,7 +20,6 @@ const createStaffAccount = async (req, res, next) => {
       throw error;
     }
 
-    const prisma = new PrismaClient();
     await prisma.user.create({
       data: {
         name,
@@ -53,7 +52,6 @@ const getStaffAccounts = async (req, res, next) => {
   try {
     logger.info('Controller getStaffAccounts - Get all staff accounts');
 
-    const prisma = new PrismaClient();
     const findDataQuery = await prisma.user.findMany({
       where: { role: 'staff' },
       select: {
@@ -89,8 +87,6 @@ const getStaffAccountDetail = async (req, res, next) => {
     logger.info(
       `Controller getStaffAccountDetail - Get staff account detail ID : ${paramsId}`
     );
-
-    const prisma = new PrismaClient();
 
     const staffDetailQuery = await prisma.user.findUnique({
       where: { id: paramsId },
@@ -143,8 +139,6 @@ const updateStaffAccount = async (req, res, next) => {
       error.message = errors.array();
       throw error;
     }
-
-    const prisma = new PrismaClient();
 
     const findStaffQuery = await prisma.user.findUnique({
       where: { id: paramsId },
@@ -200,7 +194,7 @@ const deleteStaffAccount = async (req, res, next) => {
     logger.info(
       `Controller deleteStaffAccount - Deleting staff account with ID : ${paramsId}`
     );
-    const prisma = new PrismaClient();
+
     const findStaffQuery = await prisma.user.findUnique({
       where: { id: paramsId },
     });

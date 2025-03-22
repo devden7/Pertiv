@@ -4,7 +4,7 @@ const { JWT_SECRET } = require('../config/env');
 
 const adminMiddleware = (req, res, next) => {
   try {
-    logger.info('Accesing admin middleware');
+    logger.info('Accesing ADMIN middleware');
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {

@@ -1,7 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
 const logger = require('../../lib/winston/winstonLogger');
+const prisma = require('../../utils/prismaConnection');
 
-const prisma = new PrismaClient();
 const getBookListSelling = async (req, res, next) => {
   try {
     logger.info(

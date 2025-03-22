@@ -1,9 +1,7 @@
-const { PrismaClient } = require('@prisma/client');
 const { validationResult } = require('express-validator');
 const logger = require('../../lib/winston/winstonLogger');
 const { saveImgToFileSystem } = require('../../lib/multer/multer');
-
-const prisma = new PrismaClient();
+const prisma = require('../../utils/prismaConnection');
 
 const addBookSelling = async (req, res, next) => {
   try {

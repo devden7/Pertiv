@@ -1,11 +1,9 @@
-const { PrismaClient } = require('@prisma/client');
 const logger = require('../../lib/winston/winstonLogger');
 const generateOrderId = require('../../utils/randomOrderId');
 const endDate24Hours = require('../../utils/createEndDateTime');
 const { formatISO } = require('date-fns');
 const generateOrderKey = require('../../utils/randomOrderKey');
-
-const prisma = new PrismaClient();
+const prisma = require('../../utils/prismaConnection');
 
 const createOrderBook = async (req, res, next) => {
   try {

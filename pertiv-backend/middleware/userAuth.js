@@ -4,7 +4,7 @@ const { JWT_SECRET } = require('../config/env');
 
 const userMiddleware = (req, res, next) => {
   try {
-    logger.info('Accesing staff middleware');
+    logger.info('Accesing USER middleware');
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
       const error = new Error('Bad request!');
