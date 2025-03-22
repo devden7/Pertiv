@@ -1906,6 +1906,109 @@
           }
         }
       }
+    },
+    "/staff/transactions": {
+      "get": {
+        "tags": ["Staff"],
+        "summary": "Get transaction history",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": { "type": "string" },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "status": { "type": "string" },
+                      "buy_key": { "type": "string" },
+                      "buy_handled_by": { "type": "string" },
+                      "buy_date": { "type": "string" },
+                      "total_price": { "type": "number" },
+                      "created_at": { "type": "string" },
+                      "ended_at": { "type": "string" },
+                      "canceled_at": { "type": "string" },
+                      "paid_at": { "type": "string" },
+                      "userId": { "type": "string" },
+                      "user": {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" },
+                          "email": { "type": "string" }
+                        }
+                      },
+                      "item_order": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": { "type": "string" },
+                            "book_title": { "type": "string" },
+                            "book_imageUrl": { "type": "string" },
+                            "book_price": { "type": "number" },
+                            "quantity": { "type": "number" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error: Orders History Not Found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
