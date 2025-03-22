@@ -1,12 +1,13 @@
+import React from 'react';
 import { TableBody } from '@/components/ui/table';
-import PaymentBookItem from './PaymentBookItem';
 import { IItemOrder } from '@/model/user.model';
+import PaymentBookItem from '../PaymentBookItem';
 
 interface Props {
   item_order: IItemOrder[];
 }
 
-const PaymentBookList = ({ item_order }: Props) => {
+const TransactionBookList = ({ item_order }: Props) => {
   return (
     <TableBody>
       {item_order.map((item) => (
@@ -22,4 +23,4 @@ const PaymentBookList = ({ item_order }: Props) => {
   );
 };
 
-export default PaymentBookList;
+export default TransactionBookList;

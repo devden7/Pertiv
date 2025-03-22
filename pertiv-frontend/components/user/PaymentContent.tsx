@@ -8,15 +8,14 @@ import {
   CardContent,
   CardFooter,
 } from '@/components/ui/card';
-import { Table, TableHeader, TableRow, TableHead } from '@/components/ui/table';
 import { Separator } from '@/components/ui/separator';
-import PaymentBookList from './PaymentBookList';
 import { formatDateTime } from '@/utils/formatDateTime';
 import { formatNumberToRupiah } from '@/utils/formatRupiah';
 import { Badge } from '../ui/badge';
-import { HandCoins, ScrollText } from 'lucide-react';
+import { HandCoins } from 'lucide-react';
 import { cancelPurchaseBook, purchaseBook } from '@/lib/actions/user.action';
 import { useToast } from '@/hooks/use-toast';
+import TransactionBookItem from './transactionContent/TransactionBookItem';
 
 interface Props {
   data: {
@@ -87,49 +86,19 @@ const PaymentContent = ({ data, token }: Props) => {
             </div>
             <div>
               {data.status === 'pending' && (
-                <Badge className="capitalize bg-yellow-100 hover:bg-yellow-100 text-yellow-800">
-                  {data.status}
-                </Badge>
+                <Badge className="badge_pending">{data.status}</Badge>
               )}
               {data.status === 'canceled' && (
-                <Badge className="capitalize bg-red-100 hover:bg-red-100 text-red-800">
-                  {data.status}
-                </Badge>
+                <Badge className="badge_canceled">{data.status}</Badge>
               )}
               {data.status === 'paid' && (
-                <Badge className="capitalize bg-blue-100 hover:bg-blue-100 text-blue-8000">
-                  {data.status}
-                </Badge>
+                <Badge className="badge_paid">{data.status}</Badge>
               )}
             </div>
           </div>
           <div className="flex flex-col md:grid md:grid-cols-6 gap-6">
             <div className="md:col-span-4 lg:col-span-3 xl:col-span-4 flex flex-col gap-6">
-              <Card>
-                <CardHeader>
-                  <div className="flex gap-2 items-center">
-                    <ScrollText />
-                    <CardTitle>Book Items</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[80px] hidden md:table-cell">
-                          Image
-                        </TableHead>
-                        <TableHead className="max-w-[150px]">
-                          Item Name
-                        </TableHead>
-                        <TableHead>Quantity</TableHead>
-                        <TableHead>Price</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <PaymentBookList item_order={data.item_Order} />
-                  </Table>
-                </CardContent>
-              </Card>
+              <TransactionBookItem item_Order={data.item_Order} />
             </div>
             <div className="md:col-span-2 lg:col-span-3 xl:col-span-2 flex flex-col gap-6">
               <Card>
