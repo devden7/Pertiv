@@ -3,6 +3,7 @@ const logger = require('../../lib/winston/winstonLogger');
 const generateOrderId = require('../../utils/randomOrderId');
 const endDate24Hours = require('../../utils/createEndDateTime');
 const { formatISO } = require('date-fns');
+const generateOrderKey = require('../../utils/randomOrderKey');
 
 const prisma = new PrismaClient();
 
@@ -147,7 +148,83 @@ const paymentBookDetail = async (req, res, next) => {
   }
 };
 
+const purchaseBook = async (req, res, next) => {
+  try {
+    const paramsId = req.params.id;
+    const id = '39ec9e8a-76ef-4d4b-a686-896765a87427';
+    logger.info(
+      `ERROR USER Controller purchaseBook -  Order ID : ${paramsId}  User ID : ${id}`
+    );
+    const findOrderQuery = await prisma.order.findUnique({
+      where: {
+        id: `#${paramsId}`,
+        userId: id,
+      },
+    });
+
+    if (!findOrderQuery) {
+      const error = new Error('Order not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+    const dateNow = formatISO(new Date());
+    const dueDate = formatISO(findOrderQuery.ended_at);
+
+    if (dateNow >= dueDate) {
+      await prisma.order.update({
+        where: {
+          id: `#${paramsId}`,
+          userId: id,
+        },
+        data: {
+          status: 'canceled',
+          canceled_at: dueDate,
+        },
+      });
+
+      const error = new Error('Order is not valid');
+      error.success = false;
+      error.statusCode = 400;
+      throw error;
+    }
+
+    if (
+      findOrderQuery.status === 'canceled' ||
+      findOrderQuery.status === 'paid'
+    ) {
+      const error = new Error('Order is not valid');
+      error.success = false;
+      error.statusCode = 400;
+      throw error;
+    }
+    await prisma.order.update({
+      where: {
+        id: `#${paramsId}`,
+        userId: id,
+      },
+      data: {
+        status: 'paid',
+        buy_key: generateOrderKey(),
+      },
+    });
+    res.json({
+      success: true,
+      statusCode: 201,
+      message: 'Your payment is successfully',
+    });
+  } catch (error) {
+    logger.error(`ERROR USER Controller purchaseBook - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   createOrderBook,
   paymentBookDetail,
+  purchaseBook,
 };

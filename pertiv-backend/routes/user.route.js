@@ -16,6 +16,7 @@ const userMiddleware = require('../middleware/userAuth');
 const {
   createOrderBook,
   paymentBookDetail,
+  purchaseBook,
 } = require('../controllers/user/order.controller');
 
 const router = express.Router();
@@ -71,4 +72,5 @@ router.post('/decrease-item-cart', userMiddleware, decreaseItemFromCart);
 
 router.post('/order-book', userMiddleware, createOrderBook);
 router.get('/payment-detail/:id', userMiddleware, paymentBookDetail);
+router.post('/purchase/:id', purchaseBook);
 module.exports = router;
