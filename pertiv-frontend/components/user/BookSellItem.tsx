@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { ImageHandler } from '@/utils/imageHandler';
 import { Badge } from '../ui/badge';
 import Link from 'next/link';
+import { formatNumberToRupiah } from '@/utils/formatRupiah';
 
 interface Props {
   id: string;
@@ -28,7 +29,7 @@ const BookSellItem = ({ id, title, imageUrl, price, category }: Props) => {
             {title}
           </p>
           <h6 className="font-semibold text-xl leading-8 text-primary-600">
-            {price}
+            {formatNumberToRupiah(price)}
           </h6>
         </div>
         <div className="mt-2 flex gap-2">

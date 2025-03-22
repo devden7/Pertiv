@@ -1611,7 +1611,6 @@
                         "properties": {
                           "id": { "type": "string" },
                           "book_title": { "type": "string" },
-                          "book_description": { "type": "string" },
                           "book_imageUrl": { "type": "string" },
                           "book_price": { "type": "number" },
                           "quantity": { "type": "number" }

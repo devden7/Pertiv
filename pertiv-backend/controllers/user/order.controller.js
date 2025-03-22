@@ -2,6 +2,7 @@ const { PrismaClient } = require('@prisma/client');
 const logger = require('../../lib/winston/winstonLogger');
 const generateOrderId = require('../../utils/randomOrderId');
 const endDate24Hours = require('../../utils/createEndDateTime');
+const { formatISO } = require('date-fns');
 
 const prisma = new PrismaClient();
 
@@ -85,7 +86,7 @@ const paymentBookDetail = async (req, res, next) => {
 
     const findOrderQuery = await prisma.order.findUnique({
       where: {
-        id: paramsId,
+        id: `#${paramsId}`,
         userId: id,
       },
       include: {
@@ -100,6 +101,21 @@ const paymentBookDetail = async (req, res, next) => {
       throw error;
     }
 
+    const dateNow = formatISO(new Date());
+    const dueDate = formatISO(findOrderQuery.ended_at);
+
+    if (dateNow >= dueDate) {
+      await prisma.order.update({
+        where: {
+          id: `#${paramsId}`,
+        },
+        data: {
+          status: 'canceled',
+          canceled_at: dueDate,
+        },
+      });
+    }
+
     const data = {
       id: findOrderQuery.id,
       status: findOrderQuery.status,
@@ -109,7 +125,6 @@ const paymentBookDetail = async (req, res, next) => {
       item_Order: findOrderQuery.item_orders.map((item) => ({
         id: item.id,
         book_title: item.book_title,
-        book_description: item.book_description,
         book_imageUrl: item.book_imageUrl,
         book_price: item.book_price,
         quantity: item.quantity,

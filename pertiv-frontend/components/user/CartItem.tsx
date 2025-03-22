@@ -9,6 +9,7 @@ import {
 } from '@/lib/actions/user.action';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { formatNumberToRupiah } from '@/utils/formatRupiah';
 
 interface Props {
   id: string;
@@ -100,7 +101,7 @@ const CartItem = ({
         <p className="text-xs text-gray-500">{description}</p>
         <p className="text-xs text-gray-800 mt-5">
           <span className="text-primary-500 font-medium">Qty {quantity}</span> X{' '}
-          {price}
+          {formatNumberToRupiah(price)}
         </p>
       </div>
       <div>

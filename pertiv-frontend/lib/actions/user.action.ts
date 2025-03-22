@@ -122,3 +122,18 @@ export const createOrder = async (
     console.log('Error from decreaseBookFromCart action ', error);
   }
 };
+
+export const paymentOrderDetail = async (id: string, token?: string) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/user/payment-detail/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      cache: 'no-store',
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Error from getBooksSelling action ', error);
+  }
+};

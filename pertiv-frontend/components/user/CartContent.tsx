@@ -8,6 +8,7 @@ import { Button } from '../ui/button';
 import { createOrder } from '@/lib/actions/user.action';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { formatNumberToRupiah } from '@/utils/formatRupiah';
 
 interface Props {
   data: {
@@ -82,7 +83,7 @@ const CartContent = ({ data, token }: Props) => {
             <div className="flex justify-between">
               <div className="font-medium">Total</div>
               <div className="font-medium">
-                {calcTotalPrice(data.cart_items)}
+                {formatNumberToRupiah(calcTotalPrice(data.cart_items))}
               </div>
             </div>
             <div className="mt-3 flex justify-center">
