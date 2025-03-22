@@ -153,7 +153,7 @@ const purchaseBook = async (req, res, next) => {
     const paramsId = req.params.id;
     const { id } = req.user;
     logger.info(
-      `ERROR USER Controller purchaseBook -  Order ID : ${paramsId}  User ID : ${id}`
+      `Controller USER purchaseBook -  Order ID : ${paramsId}  User ID : ${id}`
     );
     const findOrderQuery = await prisma.order.findUnique({
       where: {
@@ -229,7 +229,7 @@ const cancelPurchaseBook = async (req, res, next) => {
     const paramsId = req.params.id;
     const { id } = req.user;
     logger.info(
-      `ERROR USER Controller purchaseBook -  Order ID : ${paramsId}  User ID : ${id}`
+      `Controller USER cancelPurchaseBook -  Order ID : ${paramsId}  User ID : ${id}`
     );
     const findOrderQuery = await prisma.order.findUnique({
       where: {
@@ -295,9 +295,65 @@ const cancelPurchaseBook = async (req, res, next) => {
     next(error);
   }
 };
+
+const transactions = async (req, res, next) => {
+  try {
+    const { id } = req.user;
+    logger.info(`Controller USER transactions -  User ID : ${id}`);
+    const findOrderQuery = await prisma.order.findMany({
+      where: {
+        userId: id,
+      },
+      include: {
+        item_orders: true,
+      },
+    });
+
+    if (!findOrderQuery) {
+      const error = new Error('Orders History not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+    const data = findOrderQuery.map((item) => ({
+      id: item.id,
+      status: item.status,
+      buy_key: item.buy_key,
+      buy_handled_by: item.buy_handled_by,
+      buy_date: item.buy_date,
+      total_price: item.total_price,
+      created_at: item.created_at,
+      ended_at: item.ended_at,
+      canceled_at: item.canceled_at,
+      paid_at: item.paid_at,
+      item_Order: item.item_orders.map((order) => ({
+        id: order.id,
+        book_title: order.book_title,
+        book_imageUrl: order.book_imageUrl,
+        book_price: order.book_price,
+        quantity: order.quantity,
+      })),
+    }));
+
+    res.json({
+      success: true,
+      statusCode: 200,
+      message: 'Access transaction history',
+      data,
+    });
+  } catch (error) {
+    logger.error(`ERROR USER Controller transactions - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
 module.exports = {
   createOrderBook,
   paymentBookDetail,
   purchaseBook,
   cancelPurchaseBook,
+  transactions,
 };

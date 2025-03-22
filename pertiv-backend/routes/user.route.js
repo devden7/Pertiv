@@ -18,6 +18,7 @@ const {
   paymentBookDetail,
   purchaseBook,
   cancelPurchaseBook,
+  transactions,
 } = require('../controllers/user/order.controller');
 
 const router = express.Router();
@@ -76,4 +77,5 @@ router.get('/payment-detail/:id', userMiddleware, paymentBookDetail);
 router.post('/purchase/:id', userMiddleware, purchaseBook);
 router.post('/purchase/:id', userMiddleware, purchaseBook);
 router.post('/cancel-purchase/:id', userMiddleware, cancelPurchaseBook);
+router.get('/transactions', userMiddleware, transactions);
 module.exports = router;
