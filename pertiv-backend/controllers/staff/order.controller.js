@@ -1,3 +1,4 @@
+const { formatISO } = require('date-fns/formatISO');
 const logger = require('../../lib/winston/winstonLogger');
 const prisma = require('../../utils/prismaConnection');
 
@@ -61,4 +62,64 @@ const transactions = async (req, res, next) => {
   }
 };
 
-module.exports = { transactions };
+const confirmOrder = async (req, res, next) => {
+  try {
+    const paramsId = req.params.id;
+    const { id } = req.user;
+    logger.info(`Controller STAFF confirmOrder -  Order ID : ${paramsId}`);
+
+    const findStaffQuery = await prisma.user.findUnique({
+      where: {
+        id,
+        role: 'staff',
+      },
+    });
+
+    if (!findStaffQuery) {
+      const error = new Error('Staff not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const findOrderQuery = await prisma.order.findUnique({
+      where: {
+        id: `#${paramsId}`,
+        status: 'paid',
+      },
+    });
+
+    if (!findOrderQuery) {
+      const error = new Error('invalid Order');
+      error.success = false;
+      error.statusCode = 400;
+      throw error;
+    }
+
+    await prisma.order.update({
+      where: {
+        id: findOrderQuery.id,
+        status: findOrderQuery.status,
+      },
+      data: {
+        status: 'success',
+        buy_handled_by: findStaffQuery.name,
+        buy_date: formatISO(new Date()),
+      },
+    });
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'Successfully confirm order',
+    });
+  } catch (error) {
+    logger.error(`ERROR STAFF Controller confirmOrder - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
+module.exports = { transactions, confirmOrder };

@@ -9,7 +9,10 @@ const {
 } = require('../controllers/staff/books.controller');
 const { PrismaClient } = require('@prisma/client');
 const staffMiddleware = require('../middleware/staffAuth');
-const { transactions } = require('../controllers/staff/order.controller');
+const {
+  transactions,
+  confirmOrder,
+} = require('../controllers/staff/order.controller');
 
 const router = express.Router();
 
@@ -143,5 +146,6 @@ router.put(
 
 router.delete('/delete-book-selling/:id', staffMiddleware, deleteBookSelling);
 router.get('/transactions', staffMiddleware, transactions);
+router.post('/confirm-order/:id', staffMiddleware, confirmOrder);
 
 module.exports = router;
