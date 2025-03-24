@@ -16,7 +16,6 @@ const getBookListSelling = async (req, res, next) => {
       include: {
         user: {
           select: {
-            id: true,
             email: true,
             name: true,
           },
@@ -41,13 +40,47 @@ const getBookListSelling = async (req, res, next) => {
             },
           },
         },
+        item_orders: {
+          include: {
+            order: {
+              select: {
+                status: true,
+              },
+            },
+          },
+        },
       },
     });
+
+    const finalResults = booksSellingQuery.map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      language: item.language,
+      stock: item.stock,
+      imageUrl: item.imageUrl,
+      price: item.price,
+      created_at: item.created_at,
+      user_id: item.user_id,
+      publisher_id: item.publisher_id,
+      writer_id: item.writer_id,
+      user: item.user,
+      publisher: item.publisher,
+      writer: item.writer,
+      category: item.category,
+      totalItemSold: item.item_orders
+        .map((list) => ({
+          quantity: list.quantity,
+          order: list.order,
+        }))
+        .filter((value) => value.order.status === 'success')
+        .reduce((acc, item) => acc + item.quantity, 0),
+    }));
 
     res.status(200).json({
       success: true,
       statusCode: 200,
-      data: booksSellingQuery,
+      data: finalResults,
     });
   } catch (error) {
     logger.error(`ERROR Controller getBookListSelling for user  -  ${error}`);
