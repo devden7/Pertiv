@@ -64,9 +64,9 @@ const transactions = async (req, res, next) => {
 
 const confirmOrder = async (req, res, next) => {
   try {
-    const paramsId = req.params.id;
     const { id } = req.user;
-    logger.info(`Controller STAFF confirmOrder -  Order ID : ${paramsId}`);
+    const { orderKey } = req.body;
+    logger.info(`Controller STAFF confirmOrder -  Staff ID : ${id}`);
 
     const findStaffQuery = await prisma.user.findUnique({
       where: {
@@ -84,7 +84,7 @@ const confirmOrder = async (req, res, next) => {
 
     const findOrderQuery = await prisma.order.findUnique({
       where: {
-        id: `#${paramsId}`,
+        buy_key: orderKey,
         status: 'paid',
       },
     });

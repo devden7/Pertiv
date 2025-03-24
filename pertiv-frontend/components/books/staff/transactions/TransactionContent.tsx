@@ -2,17 +2,22 @@ import React from 'react';
 import { Table, TableHeader, TableRow, TableHead } from '@/components/ui/table';
 import { ISTransaction } from '@/model/staff.model';
 import TransactionList from './TransactionList';
+import FormConfirmBook from './FormConfirmBook';
 
 interface Props {
   data: ISTransaction[];
+  token?: string;
 }
 
-const TransactionContent = ({ data }: Props) => {
+const TransactionContent = ({ data, token }: Props) => {
   return (
     <section>
       <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl my-2">
         Manage Transactions
       </h2>
+      <p className=" text-slate-500 mb-3">Manage all transaction books</p>
+      <FormConfirmBook token={token} />
+
       <Table>
         <TableHeader>
           <TableRow>

@@ -11,7 +11,7 @@ const Transaction = async () => {
   const data = await getTransactions(user.token);
   return (
     <>
-      <TransactionContent data={data.data} />
+      <TransactionContent data={data.data} token={user.token} />
     </>
   );
 };

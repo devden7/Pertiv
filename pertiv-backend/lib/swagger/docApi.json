@@ -2010,7 +2010,7 @@
         }
       }
     },
-    "/staff/confirm-order/{id}": {
+    "/staff/confirm-order/": {
       "post": {
         "tags": ["Staff"],
         "summary": "Confirm order a book",
@@ -2021,12 +2021,15 @@
         ],
         "parameters": [
           {
-            "in": "path",
-            "name": "id",
+            "in": "body",
+            "name": "body",
+            "description": "order KEY",
             "required": true,
-            "description": "ID of the payment order detail",
             "schema": {
-              "type": "string"
+              "type": "object",
+              "properties": {
+                "orderKey": { "type": "string" }
+              }
             }
           }
         ],

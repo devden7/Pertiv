@@ -108,3 +108,26 @@ export const getTransactions = async (token?: string) => {
     console.log('Error from getBookCart action ', error);
   }
 };
+
+export const confirmOrderTransaction = async (
+  orderKey: string,
+  token?: string
+) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/staff/confirm-order`, {
+      method: 'POST',
+      body: JSON.stringify({ orderKey }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from confirmOrderTransaction action ', error);
+  }
+};

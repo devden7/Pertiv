@@ -34,6 +34,8 @@ const TransactionItem = ({
       ? 'badge_pending'
       : status === 'canceled'
       ? 'badge_canceled'
+      : status === 'success'
+      ? 'badge_success'
       : 'badge_paid';
   return (
     <TableRow className="font-medium text-zinc-800">
@@ -62,6 +64,7 @@ const TransactionItem = ({
               created_at={created_at}
               paid_at={paid_at}
               canceled_at={canceled_at}
+              buy_date={buy_date}
             />
           </DialogContent>
         </Dialog>

@@ -9,12 +9,14 @@ interface Props {
   created_at: string;
   canceled_at: string;
   paid_at: string;
+  buy_date: string;
 }
 const DateInformation = ({
   status,
   created_at,
   canceled_at,
   paid_at,
+  buy_date,
 }: Props) => {
   return (
     <Card>
@@ -31,16 +33,22 @@ const DateInformation = ({
           <div className="text-zinc-600">{formatDateTime(created_at)}</div>
         </div>
 
-        {status === 'paid' && (
+        {(status === 'paid' || status === 'success') && (
           <div className="flex items-center justify-between font-medium mt-3">
-            <div>Paid Date</div>
+            <div>Paid date</div>
             <div className="text-zinc-600">{formatDateTime(paid_at)}</div>
           </div>
         )}
         {status === 'canceled' && (
           <div className="flex items-center justify-between font-medium mt-3">
-            <div>Canceled Date</div>
+            <div>Canceled date</div>
             <div className="text-zinc-600">{formatDateTime(canceled_at)}</div>
+          </div>
+        )}
+        {status === 'success' && (
+          <div className="flex items-center justify-between font-medium mt-3">
+            <div>Success date</div>
+            <div className="text-zinc-600">{formatDateTime(buy_date)}</div>
           </div>
         )}
       </CardContent>

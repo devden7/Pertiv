@@ -14,6 +14,10 @@
   .badge_paid {
     @apply capitalize bg-blue-100 hover:bg-blue-100 text-blue-800 !important;
   }
+
+  .badge_success {
+    @apply capitalize bg-green-100 hover:bg-green-100 text-green-800 !important;
+  }
 }
 @layer base {
   :root {
