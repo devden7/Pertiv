@@ -5,9 +5,10 @@ import React, { useState } from 'react';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { ImageHandler } from '@/utils/imageHandler';
-import { addBookToCart, createOrder } from '@/lib/actions/user.action';
+import { createOrder } from '@/lib/actions/user.action';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import CartBtn from './CartBtn';
 
 interface Props {
   id: string;
@@ -37,27 +38,6 @@ const BookSellingDetailInformation = ({
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
-  const addToCartHandler = async (bookId: string) => {
-    setIsLoading(true);
-    const response = await addBookToCart(bookId, token);
-
-    if (!response || !response.success) {
-      toast({
-        variant: 'destructive',
-        title: 'Oh! Something went wrong!',
-        description: 'Internal server error',
-        duration: 2000,
-      });
-      setIsLoading(false);
-      return;
-    }
-
-    toast({
-      description: response.message,
-      duration: 2000,
-    });
-    setIsLoading(false);
-  };
 
   const orderHandler = async () => {
     setIsLoading(true);
@@ -137,14 +117,13 @@ const BookSellingDetailInformation = ({
                   >
                     Order
                   </Button>
-                  <Button
-                    variant="outline"
-                    className="text-primary-500"
-                    onClick={() => addToCartHandler(id)}
-                    disabled={isLoading}
-                  >
-                    Add to Cart
-                  </Button>
+                  <CartBtn
+                    id={id}
+                    token={token}
+                    isLoading={isLoading}
+                    setIsLoading={setIsLoading}
+                    type="text"
+                  />
                 </div>
               </div>
             </div>

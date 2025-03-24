@@ -3,8 +3,9 @@ import BookSellItem from './BookSellItem';
 
 interface Props {
   data: IBookForSelling[];
+  token?: string;
 }
-const BooksForSelling = ({ data }: Props) => {
+const BooksForSelling = ({ data, token }: Props) => {
   return (
     <section className="mt-5">
       <div className="container">
@@ -18,10 +19,12 @@ const BooksForSelling = ({ data }: Props) => {
             <BookSellItem
               key={book.id}
               id={book.id}
+              token={token}
               title={book.title}
               imageUrl={book.imageUrl}
               price={book.price}
               category={book.category}
+              totalItemSold={book.totalItemSold}
             />
           ))}
         </div>

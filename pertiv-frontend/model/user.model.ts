@@ -27,6 +27,7 @@ export interface IBookForSelling {
       name: string;
     };
   }[];
+  totalItemSold: number;
 }
 
 export interface ITransaction {
