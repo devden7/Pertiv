@@ -103,7 +103,7 @@ const confirmOrder = async (req, res, next) => {
       },
       data: {
         status: 'success',
-        buy_handled_by: findStaffQuery.name,
+        buy_handled_by: findStaffQuery.email,
         buy_date: formatISO(new Date()),
       },
     });

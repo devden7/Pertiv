@@ -31,8 +31,8 @@ model User {
 model Membership {
   id       String @id @default(uuid())
   type     String
-  start_date DateTime
-  end_date   DateTime
+  start_date DateTime @db.Timestamptz()
+  end_date   DateTime @db.Timestamptz()
 
   user_id   String @unique
   user     User @relation(fields: [user_id], references: [id])
@@ -101,7 +101,7 @@ model BookSelling {
   stock       Int
   imageUrl String?
   price Int
-  created_at   DateTime @default(now())
+  created_at   DateTime @default(now()) @db.Timestamptz()
 
   user_id      String
   publisher_id String
@@ -141,12 +141,12 @@ model Order {
   status         String
   buy_key         String? @db.VarChar(50) @unique
   buy_handled_by String?
-  buy_date   DateTime?
+  buy_date   DateTime? @db.Timestamptz()
   total_price     Int
-  created_at      DateTime @default(now())
-  ended_at        DateTime?
-  canceled_at     DateTime?
-  paid_at         DateTime?
+  created_at      DateTime @default(now()) @db.Timestamptz()
+  ended_at        DateTime? @db.Timestamptz()
+  canceled_at     DateTime? @db.Timestamptz()
+  paid_at         DateTime? @db.Timestamptz()
 
   userId         String
   item_orders     ItemOrder[]
@@ -189,7 +189,7 @@ model BookBorrowing {
   stock       Int
   imageUrl String?
   is_member    Boolean @default(false)
-  created_at   DateTime @default(now())
+  created_at   DateTime @default(now()) @db.Timestamptz()
 
   user_id      String
   publisher_id String
@@ -207,10 +207,10 @@ model BookBorrowed {
   status         String
   loan_key        String @db.VarChar(50)
   loan_handled_by  String
-  loan_date       DateTime
+  loan_date       DateTime @db.Timestamptz()
   returned_key    String? @db.VarChar(50)
   return_handled_by String?
-  date_returned   DateTime?
+  date_returned   DateTime? @db.Timestamptz()
 
   userId         String
   items          ItemBorrowed[]

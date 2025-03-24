@@ -13,6 +13,7 @@ const {
   transactions,
   confirmOrder,
 } = require('../controllers/staff/order.controller');
+const { dashboard } = require('../controllers/staff/dashboard.controller');
 
 const router = express.Router();
 
@@ -147,5 +148,6 @@ router.put(
 router.delete('/delete-book-selling/:id', staffMiddleware, deleteBookSelling);
 router.get('/transactions', staffMiddleware, transactions);
 router.post('/confirm-order/', staffMiddleware, confirmOrder);
+router.get('/dashboard', staffMiddleware, dashboard);
 
 module.exports = router;
