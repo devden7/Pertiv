@@ -131,3 +131,28 @@ export const confirmOrderTransaction = async (
     console.log('Error from confirmOrderTransaction action ', error);
   }
 };
+
+export const dashboard = async (
+  startDate: string,
+  endDate: string,
+  filter: string,
+  token?: string
+) => {
+  try {
+    const response = await fetch(
+      `${ENV.API_URL}/staff/dashboard?start=${encodeURIComponent(
+        startDate
+      )}&end=${encodeURIComponent(endDate)}&filter=${filter}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        cache: 'no-store',
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Error from getBookCart action ', error);
+  }
+};

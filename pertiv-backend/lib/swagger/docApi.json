@@ -2143,7 +2143,55 @@
               "properties": {
                 "success": { "type": "boolean" },
                 "statusCode": { "type": "number" },
-                "message": { "type": "string" }
+                "message": { "type": "string" },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "pieChart": {
+                      "type": "object",
+                      "properties": {
+                        "bookSellingSuccess": { "type": "number" }
+                      }
+                    },
+                    "areaChart": {
+                      "type": "object",
+                      "properties": {
+                        "transactionsBookSelling": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "time": { "type": "string" },
+                              "book_selling": { "type": "number" }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "bookSellingSales": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "quantity": { "type": "number" },
+                          "book_price": { "type": "number" },
+                          "book_title": { "type": "string" },
+                          "calc": { "type": "number" }
+                        }
+                      }
+                    },
+                    "staffBookSellingHandle": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "staffName": { "type": "string" },
+                          "totalHandledSuccess": { "type": "number" }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           },

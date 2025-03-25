@@ -45,3 +45,35 @@ export interface ISItemUser {
   email: string;
   name: string;
 }
+
+export interface IDashboard {
+  pieChart: IPieChart;
+  areaChart: IAreaChart;
+  bookSellingSales: BookSellingSale[];
+  staffBookSellingHandle: StaffBookSellingHandle[];
+}
+
+export interface IPieChart {
+  bookSellingSuccess: number;
+}
+
+export interface IAreaChart {
+  transactionsBookSelling: TransactionsBookSelling[];
+}
+
+export interface TransactionsBookSelling {
+  time: string;
+  book_selling: number;
+}
+
+export interface BookSellingSale {
+  quantity: number;
+  book_price: number;
+  book_title: string;
+  calc: number;
+}
+
+export interface StaffBookSellingHandle {
+  staffName: string;
+  totalHandledSuccess: number;
+}

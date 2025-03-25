@@ -119,10 +119,10 @@ const dashboard = async (req, res, next) => {
       statusCode: 200,
       message: 'Dashboard Overview',
       data: {
-        pieChart: findOrderSuccessQuery,
-        areaChart: data,
+        pieChart: { bookSellingSuccess: findOrderSuccessQuery },
+        areaChart: { transactionsBookSelling: data },
         bookSellingSales: dataBookSellingSales,
-        staffBokkSellingHandle: dataStaffBookSelling,
+        staffBookSellingHandle: dataStaffBookSelling,
       },
     });
   } catch (error) {

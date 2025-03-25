@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { Book, ScrollText } from 'lucide-react';
+import { Book, LayoutDashboard, ScrollText } from 'lucide-react';
 import Link from 'next/link';
 import LogoutButton from './staff/LogoutButton';
 
@@ -21,6 +21,14 @@ const AppSidebar = () => {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/staff" className="flex gap-2 items-center">
+                    <LayoutDashboard />
+                    <span>Dashboard overview</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link href="/staff/books" className="flex gap-2 items-center">
