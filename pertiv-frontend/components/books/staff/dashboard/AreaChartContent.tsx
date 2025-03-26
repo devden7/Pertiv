@@ -33,15 +33,17 @@ const AreaChartContent = ({ data, timePeriod }: Props) => {
         <CardDescription>Showing all transaction history</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
-          <AreaChart data={data.transactionsBookSelling}>
+        <ChartContainer
+          config={chartConfig}
+          className="w-full aspect-square max-h-[203px]"
+        >
+          <AreaChart data={data.transactionsBookSelling} accessibilityLayer>
             <CartesianGrid vertical={false} />
             <XAxis
               dataKey="time"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              minTickGap={32}
               tickFormatter={(value) => {
                 if (timePeriod === 'yesterday') return value.slice(0, 7);
                 return value;

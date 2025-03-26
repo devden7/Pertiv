@@ -78,7 +78,7 @@ const PieCharts = ({ books }: Props) => {
                           y={(viewBox.cy || 0) + 24}
                           className="fill-muted-foreground"
                         >
-                          Book Sold
+                          Transaction
                         </tspan>
                       </text>
                     );

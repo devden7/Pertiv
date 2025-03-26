@@ -42,6 +42,8 @@ const DashboardContent = ({ filterPeriod, data, timePeriod }: Props) => {
           pieChart={data.pieChart}
           areaChart={data.areaChart}
           timePeriod={timePeriod}
+          booksSelling={data.bookSellingSales}
+          staffHandling={data.staffBookSellingHandle}
         />
       </TabsContent>
     </Tabs>
