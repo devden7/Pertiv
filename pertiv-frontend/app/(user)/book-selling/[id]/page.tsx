@@ -1,4 +1,4 @@
-import BookSellingDetailInformation from '@/components/user/BookSellingDetailInformation';
+import BookDetail from '@/components/shared/BookDetail';
 import { getUserToken } from '@/lib/actions/auth.action';
 import { getBookSellingDetail } from '@/lib/actions/user.action';
 
@@ -16,7 +16,8 @@ const BookSellingDetail = async ({ params }: Params) => {
   }
   return (
     <>
-      <BookSellingDetailInformation
+      <BookDetail
+        type="Selling"
         id={data.data.id}
         title={data.data.title}
         description={data.data.description}

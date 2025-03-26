@@ -1,5 +1,5 @@
-import BooksForSelling from '@/components/user/BooksForSelling';
-import Hero from '@/components/user/Hero';
+import BooksHomePage from '@/components/shared/BooksHomePage';
+import Hero from '@/components/user/home/Hero';
 import { getUserToken } from '@/lib/actions/auth.action';
 import { getBooksSellingUser } from '@/lib/actions/user.action';
 
@@ -10,7 +10,12 @@ const UserHomePage = async () => {
   return (
     <>
       <Hero />
-      <BooksForSelling data={data.data} token={user ? user.token : undefined} />
+      <BooksHomePage
+        books={data.data}
+        title="Buying a book"
+        url="/books-selling"
+        token={user ? user.token : undefined}
+      />
     </>
   );
 };

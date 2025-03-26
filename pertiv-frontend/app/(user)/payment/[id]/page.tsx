@@ -1,4 +1,4 @@
-import PaymentContent from '@/components/user/PaymentContent';
+import PaymentContent from '@/components/user/payment/PaymentContent';
 import { getUserToken } from '@/lib/actions/auth.action';
 import { paymentOrderDetail } from '@/lib/actions/user.action';
 

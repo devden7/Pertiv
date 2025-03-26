@@ -1,6 +1,5 @@
-import { ITransaction } from '@/model/user.model';
-import { formatNumberToRupiah } from '@/utils/formatRupiah';
 import React from 'react';
+import { ISTransaction } from '@/model/staff.model';
 import {
   Dialog,
   DialogContent,
@@ -11,10 +10,10 @@ import {
 } from '@/components/ui/dialog';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { formatDateTime } from '@/utils/formatDateTime';
+import { formatNumberToRupiah } from '@/utils/formatRupiah';
 import DateInformation from './DateInformation';
-import TransactionKey from './transactionKey';
-import Link from 'next/link';
 import TableOrderBook from '@/components/shared/TableOrderBook';
+
 const TransactionItem = ({
   id,
   status,
@@ -26,8 +25,10 @@ const TransactionItem = ({
   ended_at,
   canceled_at,
   paid_at,
-  item_Order,
-}: ITransaction) => {
+  userId,
+  user,
+  item_order,
+}: ISTransaction) => {
   const backgroundBadge =
     status === 'pending'
       ? 'badge_pending'
@@ -39,8 +40,11 @@ const TransactionItem = ({
   return (
     <TableRow className="font-medium text-zinc-800">
       <TableCell className="p-3 font-semibold text-lg">{id}</TableCell>
+      <TableCell>{user.name}</TableCell>
+      <TableCell>{user.email}</TableCell>
       <TableCell>{formatDateTime(created_at)}</TableCell>
       <TableCell>Rp {formatNumberToRupiah(total_price)}</TableCell>
+      <TableCell>{buy_handled_by}</TableCell>
       <TableCell>
         <div className={`${backgroundBadge} max-w-20 rounded-md`}>
           <p className="text-center">{status}</p>
@@ -54,8 +58,7 @@ const TransactionItem = ({
               <DialogTitle>Details Transaction</DialogTitle>
               <DialogDescription>Order ID : {id}</DialogDescription>
             </DialogHeader>
-            <TableOrderBook item_order={item_Order} />
-            <TransactionKey status={status} buy_key={buy_key} />
+            <TableOrderBook item_order={item_order} />
             <DateInformation
               status={status}
               created_at={created_at}
@@ -63,17 +66,6 @@ const TransactionItem = ({
               canceled_at={canceled_at}
               buy_date={buy_date}
             />
-            {status === 'pending' && (
-              <p className="text-center text-zinc-700">
-                For payment please visit this{' '}
-                <Link
-                  href={`/payment/${id.split('#')[1]}`}
-                  className="text-primary-500 font-medium"
-                >
-                  Link
-                </Link>
-              </p>
-            )}
           </DialogContent>
         </Dialog>
       </TableCell>

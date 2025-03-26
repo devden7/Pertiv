@@ -51,3 +51,33 @@ export interface IItemOrder {
   book_price: number;
   quantity: number;
 }
+
+export interface ICartList {
+  cart_items: ICartDetail[];
+}
+
+export interface ICartDetail {
+  id: string;
+  quantity: number;
+  title: string;
+  description: string;
+  imageUrl: string | null;
+  price: number;
+}
+
+export interface IPaymentUser {
+  id: string;
+  status: string;
+  total_price: number;
+  created_at: string;
+  ended_at: string;
+  item_Order: [
+    {
+      id: string;
+      book_title: string;
+      book_imageUrl: string;
+      book_price: 0;
+      quantity: 0;
+    }
+  ];
+}

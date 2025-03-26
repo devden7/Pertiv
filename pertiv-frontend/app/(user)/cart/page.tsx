@@ -1,4 +1,4 @@
-import CartContent from '@/components/user/CartContent';
+import CartContent from '@/components/user/cart/CartContent';
 import { getUserToken } from '@/lib/actions/auth.action';
 import { getBookCart } from '@/lib/actions/user.action';
 import React from 'react';

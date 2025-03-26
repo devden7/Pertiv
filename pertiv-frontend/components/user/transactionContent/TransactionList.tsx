@@ -8,7 +8,6 @@ interface Props {
 }
 
 const TransactionList = ({ data }: Props) => {
-  console.log(data);
   return (
     <TableBody>
       {data.map((item) => (
