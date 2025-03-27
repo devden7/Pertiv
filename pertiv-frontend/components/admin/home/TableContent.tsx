@@ -31,7 +31,7 @@ const TableContent = ({ data, token, page, pageSize, totalCount }: Props) => {
             <TableCaption>A list of your staffs.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px]">No</TableHead>
+                <TableHead>No</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Role</TableHead>

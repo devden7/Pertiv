@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { ENV } from '@/utils/config';
 import { jwtVerify } from 'jose';
+import { AuthUser } from '@/model/auth.model';
 
 export const loginAuth = async (email: string, password: string) => {
   try {
@@ -39,13 +40,13 @@ export const getUserToken = async () => {
     }
     const secret = new TextEncoder().encode(ENV.JWT_SECRET);
     const user = await jwtVerify(getToken.value, secret);
-    const userInfo = {
-      id: user.payload.id,
-      email: user.payload.email,
-      name: user.payload.name,
-      role: user.payload.role,
-      image: user.payload.image,
-      is_penalty: user.payload.is_penalty,
+    const userInfo: AuthUser = {
+      id: user.payload.id as string,
+      email: user.payload.email as string,
+      name: user.payload.name as string,
+      role: user.payload.role as string,
+      image: user.payload.image as string,
+      is_penalty: user.payload.is_penalty as boolean,
     };
     return { token: getToken.value, ...userInfo };
   } catch (error) {

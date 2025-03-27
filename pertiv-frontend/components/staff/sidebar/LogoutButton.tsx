@@ -17,20 +17,11 @@ import {
 import { useEffect, useState } from 'react';
 import { deleteCookie, getUserToken } from '@/lib/actions/auth.action';
 import { useRouter } from 'next/navigation';
-
-type AuthUser = {
-  id: unknown;
-  email: unknown;
-  name: unknown;
-  role: unknown;
-  image: unknown;
-  is_penalty: unknown;
-  token: string;
-};
+import { AuthUser } from '@/model/auth.model';
 
 const LogoutButton = () => {
   const { isMobile } = useSidebar();
-  const [auth, setAuth] = useState<AuthUser | null>(null);
+  const [auth, setAuth] = useState<AuthUser | null | undefined>(null);
 
   const router = useRouter();
 
@@ -46,7 +37,9 @@ const LogoutButton = () => {
   const logoutBtnHandler = async () => {
     await deleteCookie();
     router.push('/login');
-    setAuth(null);
+    setTimeout(() => {
+      setAuth(null);
+    }, 3000);
   };
 
   return (
@@ -60,12 +53,8 @@ const LogoutButton = () => {
             >
               <div className="h-8 w-8 bg-red-500 rounded-full"></div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  {(auth?.name as string) || ''}
-                </span>
-                <span className="truncate text-xs">
-                  {(auth?.email as string) || ''}
-                </span>
+                <span className="truncate font-semibold">{auth?.name}</span>
+                <span className="truncate text-xs">{auth?.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
