@@ -61,6 +61,7 @@ const loginAuth = async (req, res, next) => {
       statusCode: 201,
       message: 'Login success',
       token,
+      role: findUserQuery.role,
     });
   } catch (error) {
     logger.error(`ERROR Controller loginAuth - ${error}`);

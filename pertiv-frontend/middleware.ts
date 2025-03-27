@@ -10,36 +10,51 @@ export async function middleware(request: NextRequest) {
 
   const token = request.cookies.get('token');
 
-  if (
-    !token &&
-    pathname !== '/login' &&
-    pathname !== '/register' &&
-    pathname !== '/'
-  ) {
-    return NextResponse.redirect(new URL('/login', request.url));
+  if (!token && publicRoutes.some((item) => item === pathname)) {
+    return NextResponse.next();
+  }
+
+  for (let i = 0; i < protectedUserRoutes.length; i++) {
+    if (!token && pathname.startsWith(protectedUserRoutes[i])) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
   }
 
   if (token) {
     const secret = new TextEncoder().encode(ENV.JWT_SECRET);
     const user = await jwtVerify(token.value, secret);
-
     const role = user.payload.role as Role;
 
-    if (role === 'admin' && pathname.startsWith(ROLE_PATHS.admin)) {
-      return NextResponse.next();
+    const routePath =
+      role === 'admin'
+        ? ROLE_PATHS.admin
+        : role === 'staff'
+        ? ROLE_PATHS.staff
+        : ROLE_PATHS.user;
+
+    if (authRoutes.some((item) => item === pathname)) {
+      return NextResponse.redirect(new URL(routePath, request.url));
     }
 
-    if (role === 'staff' && pathname.startsWith(ROLE_PATHS.staff)) {
-      return NextResponse.next();
+    if ((role === 'admin') !== pathname.startsWith(ROLE_PATHS.admin)) {
+      return NextResponse.redirect(new URL(routePath, request.url));
     }
 
-    if (role === 'user' && pathname.startsWith(ROLE_PATHS.user)) {
-      return NextResponse.next();
+    if ((role === 'staff') !== pathname.startsWith(ROLE_PATHS.staff)) {
+      return NextResponse.redirect(new URL(routePath, request.url));
     }
 
-    return NextResponse.redirect(new URL(ROLE_PATHS[role], request.url));
+    if (
+      role === 'user' &&
+      protectedUserRoutes.some((item) => item === pathname)
+    ) {
+      return NextResponse.next();
+    }
   }
 }
+const authRoutes = ['/login', '/register'];
+const publicRoutes = ['/', '/book-selling', '/login', '/register'];
+const protectedUserRoutes = ['/cart', '/transactions', '/payment'];
 
 export const config = {
   matcher: [

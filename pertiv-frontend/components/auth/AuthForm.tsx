@@ -63,8 +63,9 @@ const AuthForm = () => {
 
       return;
     }
-
-    router.push('/admin/');
+    if (response.role === 'admin') return router.push('/admin');
+    if (response.role === 'staff') return router.push('/staff');
+    if (response.role === 'user') return router.push('/');
   };
 
   return (

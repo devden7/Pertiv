@@ -1,6 +1,7 @@
 import TableContent from '@/components/admin/home/TableContent';
 import { getStaffs } from '@/lib/actions/admin/admin.action';
 import { getUserToken } from '@/lib/actions/auth.action';
+import { notFound } from 'next/navigation';
 
 interface ParamsProps {
   searchParams: { [key: string]: string };
@@ -9,7 +10,7 @@ interface ParamsProps {
 const AdminHomePage = async ({ searchParams }: ParamsProps) => {
   const user = await getUserToken();
   if (!user) {
-    return;
+    return notFound();
   }
   const page = parseInt(searchParams.page) || 1;
   const SIZE = 10;

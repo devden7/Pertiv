@@ -31,22 +31,26 @@ export const loginAuth = async (email: string, password: string) => {
 };
 
 export const getUserToken = async () => {
-  const cookieStore = cookies();
-  const getToken = cookieStore.get('token');
-  if (!getToken) {
-    return null;
+  try {
+    const cookieStore = cookies();
+    const getToken = cookieStore.get('token');
+    if (!getToken?.value) {
+      return null;
+    }
+    const secret = new TextEncoder().encode(ENV.JWT_SECRET);
+    const user = await jwtVerify(getToken.value, secret);
+    const userInfo = {
+      id: user.payload.id,
+      email: user.payload.email,
+      name: user.payload.name,
+      role: user.payload.role,
+      image: user.payload.image,
+      is_penalty: user.payload.is_penalty,
+    };
+    return { token: getToken.value, ...userInfo };
+  } catch (error) {
+    console.log('Error from action getUserToken ', error);
   }
-  const secret = new TextEncoder().encode(ENV.JWT_SECRET);
-  const user = await jwtVerify(getToken.value, secret);
-  const userInfo = {
-    id: user.payload.id,
-    email: user.payload.email,
-    name: user.payload.name,
-    role: user.payload.role,
-    image: user.payload.image,
-    is_penalty: user.payload.is_penalty,
-  };
-  return { token: getToken.value, ...userInfo };
 };
 
 export const deleteCookie = () => {

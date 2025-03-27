@@ -7,9 +7,7 @@ interface Params {
 }
 const BookSellingDetail = async ({ params }: Params) => {
   const user = await getUserToken();
-  if (!user) {
-    return;
-  }
+
   const data = await getBookSellingDetail(params.id);
   if (!data.success && data.statusCode === 404) {
     return <h1 className="text-center">{data.message}</h1>;
@@ -27,7 +25,7 @@ const BookSellingDetail = async ({ params }: Params) => {
         publisherName={data.data.publisher.name}
         writerName={data.data.writer.name}
         category={data.data.category}
-        token={user.token}
+        token={user ? user.token : undefined}
       />
     </>
   );

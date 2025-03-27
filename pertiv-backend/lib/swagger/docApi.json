@@ -54,7 +54,8 @@
                 "success": { "type": "boolean" },
                 "statusCode": { "type": "number" },
                 "message": { "type": "string" },
-                "token": { "type": "string" }
+                "token": { "type": "string" },
+                "role": { "type": "string" }
               }
             }
           },

@@ -2,6 +2,7 @@ import DashboardContent from '@/components/staff/dashboard/DashboardContent';
 import { getUserToken } from '@/lib/actions/auth.action';
 import { dashboard } from '@/lib/actions/staff.action';
 import { getTimeFilter } from '@/utils/getTimeFilter';
+import { notFound } from 'next/navigation';
 interface ParamsProps {
   searchParams: { [key: string]: string };
 }
@@ -11,7 +12,7 @@ const StaffHomePage = async ({ searchParams }: ParamsProps) => {
 
   const user = await getUserToken();
   if (!user) {
-    return;
+    return notFound();
   }
 
   const { start, end } = getTimeFilter(filterPeriod);
