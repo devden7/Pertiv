@@ -190,6 +190,19 @@
       "get": {
         "tags": ["Admin"],
         "summary": "Get list staff accounts",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Input page number",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page": { "type": "number" }
+              }
+            }
+          }
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -216,7 +229,8 @@
                       "is_penalty": { "type": "boolean" }
                     }
                   }
-                }
+                },
+                "totalCount": { "type": "number" }
               }
             }
           },
@@ -582,6 +596,19 @@
       "get": {
         "tags": ["Staff"],
         "summary": "Get list books selling",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Input page number",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page": { "type": "number" }
+              }
+            }
+          }
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -612,7 +639,8 @@
                       "writer_id": { "type": "boolean" }
                     }
                   }
-                }
+                },
+                "totalCount": { "type": "number" }
               }
             }
           },
@@ -1816,6 +1844,19 @@
       "get": {
         "tags": ["User"],
         "summary": "Get transaction history",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Input page number",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page": { "type": "number" }
+              }
+            }
+          }
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1861,7 +1902,8 @@
                       }
                     }
                   }
-                }
+                },
+                "totalCount": { "type": "number" }
               }
             }
           },

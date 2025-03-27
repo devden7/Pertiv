@@ -3,15 +3,26 @@ import { getUserToken } from '@/lib/actions/auth.action';
 import { getTransactions } from '@/lib/actions/staff.action';
 import React from 'react';
 
-const Transaction = async () => {
+interface ParamsProps {
+  searchParams: { [key: string]: string };
+}
+const Transaction = async ({ searchParams }: ParamsProps) => {
   const user = await getUserToken();
   if (!user) {
     return;
   }
-  const data = await getTransactions(user.token);
+  const page = parseInt(searchParams.page) || 1;
+  const SIZE = 10;
+  const data = await getTransactions(page, user.token);
   return (
     <>
-      <TransactionContent data={data.data} token={user.token} />
+      <TransactionContent
+        data={data.data}
+        token={user.token}
+        page={page}
+        pageSize={SIZE}
+        totalCount={data.totalCount}
+      />
     </>
   );
 };

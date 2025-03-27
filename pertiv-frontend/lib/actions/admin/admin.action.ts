@@ -3,9 +3,9 @@
 import { ENV } from '@/utils/config';
 import { revalidatePath } from 'next/cache';
 
-export const getStaffs = async (token?: string) => {
+export const getStaffs = async (page: number, token?: string) => {
   try {
-    const response = await fetch(`${ENV.API_URL}/admin/staffs`, {
+    const response = await fetch(`${ENV.API_URL}/admin/staffs?page=${page}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

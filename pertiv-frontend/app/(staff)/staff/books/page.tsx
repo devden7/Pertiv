@@ -3,12 +3,18 @@ import BooksContent from '@/components/staff/books/BooksContent';
 import { getUserToken } from '@/lib/actions/auth.action';
 import { getBooksSelling } from '@/lib/actions/staff.action';
 
-const StaffBooks = async () => {
+interface ParamsProps {
+  searchParams: { [key: string]: string };
+}
+
+const StaffBooks = async ({ searchParams }: ParamsProps) => {
   const user = await getUserToken();
   if (!user) {
     return;
   }
-  const data = await getBooksSelling(user.token);
+  const page = parseInt(searchParams.page) || 1;
+  const SIZE = 10;
+  const data = await getBooksSelling(page, user.token);
   return (
     <section>
       <h2 className="text-xl font-medium">Books</h2>
@@ -16,7 +22,13 @@ const StaffBooks = async () => {
         As a Staff, you can manage this book collection.
       </p>
       <AddBook token={user.token} />
-      <BooksContent data={data.data} token={user.token} />
+      <BooksContent
+        data={data.data}
+        token={user.token}
+        page={page}
+        pageSize={SIZE}
+        totalCount={data.totalCount}
+      />
     </section>
   );
 };

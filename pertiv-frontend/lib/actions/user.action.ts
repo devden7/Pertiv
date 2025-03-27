@@ -179,14 +179,17 @@ export const cancelPurchaseBook = async (bookId: string, token?: string) => {
   }
 };
 
-export const getTransactions = async (token?: string) => {
+export const getTransactions = async (page: number, token?: string) => {
   try {
-    const response = await fetch(`${ENV.API_URL}/user/transactions`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      cache: 'no-store',
-    });
+    const response = await fetch(
+      `${ENV.API_URL}/user/transactions?page=${page}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        cache: 'no-store',
+      }
+    );
     const data = await response.json();
     return data;
   } catch (error) {

@@ -5,8 +5,17 @@ const prisma = require('../../utils/prismaConnection');
 const transactions = async (req, res, next) => {
   try {
     const { id } = req.user;
+    const page = parseInt(req.query.page) || 1;
+    const LIMIT = 10;
+    const skip = (page - 1) * LIMIT;
+
     logger.info(`Controller STAFF transactions -  User ID : ${id}`);
     const findOrderQuery = await prisma.order.findMany({
+      skip,
+      take: LIMIT,
+      orderBy: {
+        created_at: 'desc',
+      },
       include: {
         user: {
           select: {
@@ -46,11 +55,13 @@ const transactions = async (req, res, next) => {
       })),
     }));
 
+    const countOrder = await prisma.order.count();
     res.status(200).json({
       success: true,
       statusCode: 200,
       message: 'Access transaction history',
       data,
+      totalCount: countOrder,
     });
   } catch (error) {
     logger.error(`ERROR STAFF Controller transactions - ${error}`);

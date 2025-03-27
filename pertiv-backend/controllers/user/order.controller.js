@@ -297,11 +297,17 @@ const cancelPurchaseBook = async (req, res, next) => {
 const transactions = async (req, res, next) => {
   try {
     const { id } = req.user;
+    const page = parseInt(req.query.page) || 1;
+    const LIMIT = 10;
+    const skip = (page - 1) * LIMIT;
     logger.info(`Controller USER transactions -  User ID : ${id}`);
     const findOrderQuery = await prisma.order.findMany({
       where: {
         userId: id,
       },
+      skip,
+      take: LIMIT,
+      orderBy: { created_at: 'desc' },
       include: {
         item_orders: true,
       },
@@ -333,11 +339,18 @@ const transactions = async (req, res, next) => {
       })),
     }));
 
-    res.json({
+    const countOrder = await prisma.order.count({
+      where: {
+        userId: id,
+      },
+    });
+
+    res.status(200).json({
       success: true,
       statusCode: 200,
       message: 'Access transaction history',
       data,
+      totalCount: countOrder,
     });
   } catch (error) {
     logger.error(`ERROR USER Controller transactions - ${error}`);

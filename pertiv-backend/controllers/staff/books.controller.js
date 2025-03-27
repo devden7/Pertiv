@@ -103,9 +103,17 @@ const addBookSelling = async (req, res, next) => {
 
 const getBooksSelling = async (req, res, next) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const LIMIT = 10;
+    const skip = (page - 1) * LIMIT;
     logger.info('Controller getBooksSelling - Get all book selling');
 
     const findDataQuery = await prisma.bookSelling.findMany({
+      skip,
+      take: LIMIT,
+      orderBy: {
+        created_at: 'desc',
+      },
       select: {
         id: true,
         title: true,
@@ -143,10 +151,12 @@ const getBooksSelling = async (req, res, next) => {
       category: book.category.map((c) => c.categories.name),
     }));
 
+    const countOrder = await prisma.bookSelling.count();
     res.status(200).json({
       success: true,
       statusCode: 200,
       data: formatQuery,
+      totalCount: countOrder,
     });
   } catch (error) {
     logger.error(`ERROR Controller getBooksSelling  -  ${error}`);
@@ -210,9 +220,17 @@ const updateBookSelling = async (req, res, next) => {
     const listCategories = JSON.parse(categories);
 
     const fileNameImage =
-      !res.file && image ? image : Date.now() + '-' + req.file.originalname;
+      !req.file && !image
+        ? null
+        : !req.file && image
+        ? image
+        : Date.now() + '-' + req.file.originalname;
 
-    const imageUrl = !req.file && image ? image : `/uploads/${fileNameImage}`;
+    const imageUrl = !fileNameImage
+      ? null
+      : !req.file && image
+      ? image
+      : `/uploads/${fileNameImage}`;
 
     logger.info(
       `Controller updateBookSelling - Updating Book Selling with ID : ${paramsId} - Title : ${title}`

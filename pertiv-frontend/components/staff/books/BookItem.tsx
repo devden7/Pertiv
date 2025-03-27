@@ -9,12 +9,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { TableRow, TableCell } from '@/components/ui/table';
 import { Ellipsis } from 'lucide-react';
-import DialogComponent from '@/components/DialogComponent';
 import BookForm from './BookForm';
 import { deleteBookSelling } from '@/lib/actions/staff.action';
 import { useToast } from '@/hooks/use-toast';
 import { ImageHandler } from '@/utils/imageHandler';
+import { formatNumberToRupiah } from '@/utils/formatRupiah';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 interface Props extends IBooksSelling {
   token: string;
@@ -56,68 +65,68 @@ const BookItem = ({
   };
   return (
     <>
-      <DialogComponent
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        title="Update book"
-        description="Update a new book"
-      >
-        <BookForm
-          id={id}
-          title={title}
-          description={description}
-          language={language}
-          stock={stock}
-          imageUrl={imageUrl}
-          price={price}
-          user_id={user_id}
-          publisher={publisher.name}
-          writer={writer.name}
-          token={token}
-          setIsOpen={setIsOpen}
-          category={category}
-          type="Edit"
-        />
-      </DialogComponent>
-      <div className="relative flex w-full gap-3 border-b-2 border-slate-100 p-3 last:border-b-0 md:w-2/5 md:rounded-2xl md:border-2 md:border-slate-100 md:last:border-b-2 lg:h-[395px] lg:w-[22%] lg:flex-col lg:items-center lg:rounded-2xl lg:border-2 lg:p-2">
-        <div className="relative h-40 w-48 overflow-hidden rounded-xl md:w-56 lg:h-[600px] lg:w-full">
-          <Image
-            src={ImageHandler(imageUrl)}
-            alt={title}
-            width={500}
-            height={500}
-          />
-        </div>
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
-            <div className="absolute left-[12%] top-[8%] z-50 flex -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center gap-1 rounded-lg bg-white p-1 text-sm font-medium text-black">
-              <Ellipsis size={15} />
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="absolute -top-7 left-5  lg:left-4 xl:left-5">
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={() => setIsOpen(true)}
-            >
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={() => deleteBookHandler(id)}
-            >
-              Delete
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <div className="size-full">
-          <h3 className="mb-3 line-clamp-2 font-semibold">{title}</h3>
-          <div className="mb-3 flex max-h-96 flex-wrap gap-2">
-            <p className="line-clamp-2 text-xs text-black/70 lg:line-clamp-1 lg:text-sm">
-              {description}
-            </p>
+      <TableRow className="font-medium text-zinc-800">
+        <TableCell className="hidden md:table-cell">
+          <div className="relative aspect-square rounded-md object-cover size-16">
+            <Image src={ImageHandler(imageUrl)} alt={title} fill />
           </div>
-        </div>
-      </div>
+        </TableCell>
+        <TableCell>{title}</TableCell>
+        <TableCell className="text-center">{language}</TableCell>
+        <TableCell className="text-center">{stock}</TableCell>
+        <TableCell className="text-center">
+          Rp {formatNumberToRupiah(price)}
+        </TableCell>
+        <TableCell className="text-center">{publisher.name}</TableCell>
+        <TableCell className="text-center">{writer.name}</TableCell>
+        <TableCell className="text-center">{category}</TableCell>
+        <TableCell>
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div className="cursor-pointer">
+                  <Ellipsis size={15} />
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="left">
+                <DropdownMenuItem className="cursor-pointer">
+                  <DialogTrigger className="w-full text-left">
+                    Edit
+                  </DialogTrigger>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => deleteBookHandler(id)}
+                >
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DialogContent className="overflow-auto max-h-[500px]">
+              <DialogHeader>
+                <DialogTitle>Update book</DialogTitle>
+                <DialogDescription>Update a new book</DialogDescription>
+              </DialogHeader>
+              <BookForm
+                id={id}
+                title={title}
+                description={description}
+                language={language}
+                stock={stock}
+                imageUrl={imageUrl}
+                price={price}
+                user_id={user_id}
+                publisher={publisher.name}
+                writer={writer.name}
+                token={token}
+                category={category}
+                setIsOpen={setIsOpen}
+                type="Edit"
+              />
+            </DialogContent>
+          </Dialog>
+        </TableCell>
+      </TableRow>
     </>
   );
 };

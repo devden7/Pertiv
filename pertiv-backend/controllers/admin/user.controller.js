@@ -51,9 +51,13 @@ const createStaffAccount = async (req, res, next) => {
 const getStaffAccounts = async (req, res, next) => {
   try {
     logger.info('Controller getStaffAccounts - Get all staff accounts');
-
+    const page = parseInt(req.query.page) || 1;
+    const LIMIT = 10;
+    const skip = (page - 1) * LIMIT;
     const findDataQuery = await prisma.user.findMany({
       where: { role: 'staff' },
+      skip,
+      take: LIMIT,
       select: {
         id: true,
         name: true,
@@ -64,10 +68,17 @@ const getStaffAccounts = async (req, res, next) => {
       },
     });
 
+    const countOrder = await prisma.user.count({
+      where: {
+        role: 'staff',
+      },
+    });
+
     res.status(200).json({
       success: true,
       statusCode: 200,
       data: findDataQuery,
+      totalCount: countOrder,
     });
   } catch (error) {
     logger.error(`ERROR Controller getStaffAccounts  -  ${error}`);

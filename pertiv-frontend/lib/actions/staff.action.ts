@@ -3,14 +3,17 @@
 import { ENV } from '@/utils/config';
 import { revalidatePath } from 'next/cache';
 
-export const getBooksSelling = async (token?: string) => {
+export const getBooksSelling = async (page: number, token?: string) => {
   try {
-    const response = await fetch(`${ENV.API_URL}/staff/books-selling`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      cache: 'no-store',
-    });
+    const response = await fetch(
+      `${ENV.API_URL}/staff/books-selling?page=${page}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        cache: 'no-store',
+      }
+    );
     const data = await response.json();
     return data;
   } catch (error) {
@@ -46,7 +49,6 @@ export const updateBookSelling = async (
   values: FormData,
   token?: string
 ) => {
-  console.log(values);
   try {
     const response = await fetch(
       `${ENV.API_URL}/staff/update-book-selling/${id}`,
@@ -94,14 +96,17 @@ export const deleteBookSelling = async (id: string, token?: string) => {
   }
 };
 
-export const getTransactions = async (token?: string) => {
+export const getTransactions = async (page: number, token?: string) => {
   try {
-    const response = await fetch(`${ENV.API_URL}/staff/transactions`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      cache: 'no-store',
-    });
+    const response = await fetch(
+      `${ENV.API_URL}/staff/transactions?page=${page}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        cache: 'no-store',
+      }
+    );
     const data = await response.json();
     return data;
   } catch (error) {
