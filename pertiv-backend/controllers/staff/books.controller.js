@@ -103,9 +103,19 @@ const addBookSelling = async (req, res, next) => {
 
 const getBooksSelling = async (req, res, next) => {
   try {
+    const { search } = req.query;
     const page = parseInt(req.query.page) || 1;
     const LIMIT = 10;
     const skip = (page - 1) * LIMIT;
+    const keyword = search
+      ? {
+          title: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        }
+      : {};
+
     logger.info('Controller getBooksSelling - Get all book selling');
 
     const findDataQuery = await prisma.bookSelling.findMany({
@@ -114,6 +124,7 @@ const getBooksSelling = async (req, res, next) => {
       orderBy: {
         created_at: 'desc',
       },
+      where: keyword,
       select: {
         id: true,
         title: true,
@@ -151,7 +162,9 @@ const getBooksSelling = async (req, res, next) => {
       category: book.category.map((c) => c.categories.name),
     }));
 
-    const countOrder = await prisma.bookSelling.count();
+    const countOrder = await prisma.bookSelling.count({
+      where: keyword,
+    });
     res.status(200).json({
       success: true,
       statusCode: 200,

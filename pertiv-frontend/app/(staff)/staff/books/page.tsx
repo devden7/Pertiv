@@ -1,4 +1,3 @@
-import AddBook from '@/components/staff/books/AddBook';
 import BooksContent from '@/components/staff/books/BooksContent';
 import { getUserToken } from '@/lib/actions/auth.action';
 import { getBooksSelling } from '@/lib/actions/staff.action';
@@ -13,15 +12,11 @@ const StaffBooks = async ({ searchParams }: ParamsProps) => {
     return;
   }
   const page = parseInt(searchParams.page) || 1;
+  const search = searchParams.search || '';
   const SIZE = 10;
-  const data = await getBooksSelling(page, user.token);
+  const data = await getBooksSelling(page, search, user.token);
   return (
-    <section>
-      <h2 className="text-xl font-medium">Books</h2>
-      <p className=" text-slate-500 mb-3">
-        As a Staff, you can manage this book collection.
-      </p>
-      <AddBook token={user.token} />
+    <>
       <BooksContent
         data={data.data}
         token={user.token}
@@ -29,7 +24,7 @@ const StaffBooks = async ({ searchParams }: ParamsProps) => {
         pageSize={SIZE}
         totalCount={data.totalCount}
       />
-    </section>
+    </>
   );
 };
 

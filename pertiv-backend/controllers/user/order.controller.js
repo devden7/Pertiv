@@ -297,14 +297,30 @@ const cancelPurchaseBook = async (req, res, next) => {
 const transactions = async (req, res, next) => {
   try {
     const { id } = req.user;
+    const { search } = req.query;
     const page = parseInt(req.query.page) || 1;
     const LIMIT = 10;
     const skip = (page - 1) * LIMIT;
+
+    const keyword = search
+      ? {
+          AND: [
+            {
+              userId: id,
+            },
+            {
+              id: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        }
+      : { userId: id };
+
     logger.info(`Controller USER transactions -  User ID : ${id}`);
     const findOrderQuery = await prisma.order.findMany({
-      where: {
-        userId: id,
-      },
+      where: keyword,
       skip,
       take: LIMIT,
       orderBy: { created_at: 'desc' },
@@ -340,9 +356,7 @@ const transactions = async (req, res, next) => {
     }));
 
     const countOrder = await prisma.order.count({
-      where: {
-        userId: id,
-      },
+      where: keyword,
     });
 
     res.status(200).json({

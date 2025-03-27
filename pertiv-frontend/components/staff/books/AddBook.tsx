@@ -12,7 +12,7 @@ const AddBook = ({ token }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <>
-      <Button className="mb-2" onClick={() => setIsOpen(true)}>
+      <Button className="mb-2 btn_primary" onClick={() => setIsOpen(true)}>
         Add Books
       </Button>
       <DialogComponent

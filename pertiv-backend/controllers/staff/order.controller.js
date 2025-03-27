@@ -5,9 +5,30 @@ const prisma = require('../../utils/prismaConnection');
 const transactions = async (req, res, next) => {
   try {
     const { id } = req.user;
+    const { search } = req.query;
     const page = parseInt(req.query.page) || 1;
     const LIMIT = 10;
     const skip = (page - 1) * LIMIT;
+    const keyword = search
+      ? {
+          OR: [
+            {
+              user: {
+                name: {
+                  contains: search,
+                  mode: 'insensitive',
+                },
+              },
+            },
+            {
+              id: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        }
+      : {};
 
     logger.info(`Controller STAFF transactions -  User ID : ${id}`);
     const findOrderQuery = await prisma.order.findMany({
@@ -16,6 +37,7 @@ const transactions = async (req, res, next) => {
       orderBy: {
         created_at: 'desc',
       },
+      where: keyword,
       include: {
         user: {
           select: {
@@ -55,7 +77,9 @@ const transactions = async (req, res, next) => {
       })),
     }));
 
-    const countOrder = await prisma.order.count();
+    const countOrder = await prisma.order.count({
+      where: keyword,
+    });
     res.status(200).json({
       success: true,
       statusCode: 200,

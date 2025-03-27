@@ -75,9 +75,7 @@ const FormConfirmBook = ({ token }: Props) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="mb-3">
-          Confirm transaction
-        </Button>
+        <Button className="mb-3 btn_primary">Confirm transaction</Button>
       </DialogTrigger>
       <DialogContent className="overflow-auto max-h-[500px]">
         <DialogHeader>

@@ -179,10 +179,14 @@ export const cancelPurchaseBook = async (bookId: string, token?: string) => {
   }
 };
 
-export const getTransactions = async (page: number, token?: string) => {
+export const getTransactions = async (
+  page: number,
+  search: string,
+  token?: string
+) => {
   try {
     const response = await fetch(
-      `${ENV.API_URL}/user/transactions?page=${page}`,
+      `${ENV.API_URL}/user/transactions?page=${page}&search=${search}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

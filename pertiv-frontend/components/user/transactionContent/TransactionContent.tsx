@@ -4,6 +4,7 @@ import { Table, TableHeader, TableRow, TableHead } from '@/components/ui/table';
 import { ITransaction } from '@/model/user.model';
 import TransactionList from './TransactionList';
 import { PaginationWithLinks } from '@/components/ui/pagination-with-links';
+import SearchInput from '@/components/shared/SearchInput';
 
 interface Props {
   data: ITransaction[];
@@ -19,7 +20,7 @@ const TransactionContent = ({ data, page, pageSize, totalCount }: Props) => {
           <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl my-2">
             My Transactions
           </h2>
-
+          <SearchInput placeholder="Search by ORDER ID" path="/transactions" />
           <Table>
             <TableHeader>
               <TableRow>

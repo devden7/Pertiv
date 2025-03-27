@@ -607,6 +607,17 @@
                 "page": { "type": "number" }
               }
             }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "description": "search keyword",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "search": { "type": "string" }
+              }
+            }
           }
         ],
         "security": [
@@ -1855,6 +1866,17 @@
                 "page": { "type": "number" }
               }
             }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "description": "search keyword",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "search": { "type": "string" }
+              }
+            }
           }
         ],
         "security": [
@@ -1953,6 +1975,30 @@
       "get": {
         "tags": ["Staff"],
         "summary": "Get transaction history",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Input page number",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page": { "type": "number" }
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "description": "search keyword",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "search": { "type": "string" }
+              }
+            }
+          }
+        ],
         "security": [
           {
             "bearerAuth": []

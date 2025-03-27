@@ -18,6 +18,10 @@
   .badge_success {
     @apply capitalize bg-green-100 hover:bg-green-100 text-green-800 !important;
   }
+
+  .btn_primary {
+    @apply bg-primary-500 hover:bg-primary-600 duration-300 !important;
+  }
 }
 @layer base {
   :root {

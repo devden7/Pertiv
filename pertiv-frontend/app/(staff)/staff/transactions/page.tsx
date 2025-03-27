@@ -12,8 +12,9 @@ const Transaction = async ({ searchParams }: ParamsProps) => {
     return;
   }
   const page = parseInt(searchParams.page) || 1;
+  const search = searchParams.search || '';
   const SIZE = 10;
-  const data = await getTransactions(page, user.token);
+  const data = await getTransactions(page, search, user.token);
   return (
     <>
       <TransactionContent

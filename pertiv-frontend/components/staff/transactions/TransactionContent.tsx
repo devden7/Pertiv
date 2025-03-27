@@ -4,6 +4,7 @@ import { ISTransaction } from '@/model/staff.model';
 import TransactionList from './TransactionList';
 import FormConfirmBook from './FormConfirmBook';
 import { PaginationWithLinks } from '@/components/ui/pagination-with-links';
+import SearchInput from '@/components/shared/SearchInput';
 
 interface Props {
   data: ISTransaction[];
@@ -23,12 +24,19 @@ const TransactionContent = ({
   return (
     <>
       <section>
-        <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl my-2">
-          Manage Transactions
-        </h2>
-        <p className=" text-slate-500 mb-3">Manage all transaction books</p>
-        <FormConfirmBook token={token} />
-
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl my-2">
+              Manage Transactions
+            </h2>
+            <p className=" text-slate-500 mb-3">Manage all transaction books</p>
+          </div>
+          <FormConfirmBook token={token} />
+        </div>
+        <SearchInput
+          placeholder="Search by Order ID or Name"
+          path="/staff/transactions"
+        />
         <Table>
           <TableHeader>
             <TableRow>
