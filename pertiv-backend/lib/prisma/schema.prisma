@@ -20,8 +20,8 @@ model User {
 
   membership Membership?
   cart     Cart[]
+  collection Collection[]
   orders   Order[]
-  book_collections BookCollection[]
   books_borrowed BookBorrowed[]
   Book_selling BookSelling[]
   Book_borrowing BookBorrowing[]
@@ -158,15 +158,23 @@ model ItemOrder {
   book_selling   BookSelling? @relation(fields: [book_selling_id], references: [id], onDelete: SetNull)
 }
 
+model Collection {
+  id          String @id @default(uuid())
 
-model BookCollection {
-  user_id  String
+  user_id        String @unique
+
+  user          User   @relation(fields: [user_id], references: [id])
+  collection_item CollectionItem[]
+}
+model CollectionItem {
+  collection_id String
   book_id  String
+ 
 
-  book    BookBorrowing @relation(fields: [book_id], references: [id])
-  user    User @relation(fields: [user_id], references: [id])
+  collection Collection @relation(fields: [collection_id], references: [id])
+  book_borrowing    BookBorrowing @relation(fields: [book_id], references: [id], onDelete: Cascade)
 
-  @@id([user_id, book_id])
+  @@id([collection_id, book_id])
 }
 
 model BookBorrowing {
@@ -183,7 +191,7 @@ model BookBorrowing {
   user_id      String
   publisher_id String
   writer_id    String
-  collections BookCollection[]
+  collection_item CollectionItem[]
   category BookCategoryBorrow[]
 
   user        User @relation(fields: [user_id], references: [id])
