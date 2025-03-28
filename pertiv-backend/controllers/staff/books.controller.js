@@ -51,7 +51,7 @@ const addBookSelling = async (req, res, next) => {
 
     const categoriesQuery = await Promise.all(
       listCategories.map(async (name) =>
-        prisma.categorySell.upsert({
+        prisma.category.upsert({
           where: { name },
           update: {},
           create: { name },
@@ -285,7 +285,7 @@ const updateBookSelling = async (req, res, next) => {
 
     const categoriesQuery = await Promise.all(
       listCategories.map(async (name) =>
-        prisma.categorySell.upsert({
+        prisma.category.upsert({
           where: { name },
           update: {},
           create: { name },

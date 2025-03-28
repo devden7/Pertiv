@@ -27,7 +27,6 @@ model User {
   Book_borrowing BookBorrowing[]
 }
 
-
 model Membership {
   id       String @id @default(uuid())
   type     String
@@ -54,11 +53,12 @@ model Writer {
   books_borrowing BookBorrowing[]
 }
 
-model CategorySell {
+model Category {
   id  String @id @default(uuid())
   name String @db.VarChar(50) @unique
 
-  books BookCategorySell[]
+  booksSell BookCategorySell[]
+  booksBorrow BookCategoryBorrow[]
 
 }
 
@@ -67,17 +67,9 @@ model BookCategorySell {
   category_id String
 
   books_selling BookSelling @relation(fields: [book_id], references: [id])
-  categories CategorySell @relation(fields: [category_id], references: [id])
+  categories Category @relation(fields: [category_id], references: [id])
   
   @@id([book_id, category_id])
-}
-
-model CategoryBorrow {
-  id  String @id @default(uuid())
-  name String @db.VarChar(50)
-
-  books BookCategoryBorrow[]
-
 }
 
 model BookCategoryBorrow {
@@ -85,13 +77,10 @@ model BookCategoryBorrow {
   category_id String
 
   books_borrow BookBorrowing @relation(fields: [book_id], references: [id])
-  categories CategoryBorrow @relation(fields: [category_id], references: [id])
+  categories Category @relation(fields: [category_id], references: [id])
   
   @@id([book_id, category_id])
 }
-
-
-
 
 model BookSelling {
   id          String @id @default(uuid())
@@ -131,7 +120,7 @@ model CartItem {
   book_selling_id   String
 
   cart Cart      @relation(fields: [cart_id], references: [id])
-  book_selling BookSelling @relation(fields: [book_selling_id], references: [id])
+  book_selling BookSelling @relation(fields: [book_selling_id], references: [id], onDelete: Cascade)
    @@id([cart_id, book_selling_id])
 }
 
@@ -221,8 +210,9 @@ model BookBorrowed {
 model ItemBorrowed {
   id                String @id @default(uuid())
 
-  bookBorrowedItemId String
-  bookBorrowed      BookBorrowed @relation(fields: [bookBorrowedItemId], references: [id])
+  borrowed_id String
+  book_borrowing_id String
+  bookBorrowed      BookBorrowed @relation(fields: [borrowed_id], references: [id])
 }
 
 model Log {
