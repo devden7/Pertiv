@@ -16,7 +16,6 @@ const addBookSelling = async (req, res, next) => {
       categories,
     } = req.body;
     const { id } = req.user;
-    const listCategories = JSON.parse(categories);
     const fileNameImage = req.file
       ? Date.now() + '-' + req.file.originalname
       : null;
@@ -38,23 +37,23 @@ const addBookSelling = async (req, res, next) => {
 
     const [publisher, writer] = await Promise.all([
       prisma.publisher.upsert({
-        where: { name: publisherName },
+        where: { name: publisherName.toLowerCase() },
         update: {},
-        create: { name: publisherName },
+        create: { name: publisherName.toLowerCase() },
       }),
       prisma.writer.upsert({
-        where: { name: writerName },
+        where: { name: writerName.toLowerCase() },
         update: {},
-        create: { name: writerName },
+        create: { name: writerName.toLowerCase() },
       }),
     ]);
 
     const categoriesQuery = await Promise.all(
-      listCategories.map(async (name) =>
+      categories.map(async (name) =>
         prisma.category.upsert({
-          where: { name },
+          where: { name: name.toLowerCase() },
           update: {},
-          create: { name },
+          create: { name: name.toLowerCase() },
         })
       )
     );
@@ -230,7 +229,6 @@ const updateBookSelling = async (req, res, next) => {
       writerName,
       categories,
     } = req.body;
-    const listCategories = JSON.parse(categories);
 
     const fileNameImage =
       !req.file && !image
@@ -272,9 +270,9 @@ const updateBookSelling = async (req, res, next) => {
 
     const [publisher, writer] = await Promise.all([
       prisma.publisher.upsert({
-        where: { name: publisherName },
+        where: { name: publisherName.toLowerCase() },
         update: {},
-        create: { name: publisherName },
+        create: { name: publisherName.toLowerCase() },
       }),
       prisma.writer.upsert({
         where: { name: writerName },
@@ -284,11 +282,11 @@ const updateBookSelling = async (req, res, next) => {
     ]);
 
     const categoriesQuery = await Promise.all(
-      listCategories.map(async (name) =>
+      categories.map(async (name) =>
         prisma.category.upsert({
-          where: { name },
+          where: { name: name.toLowerCase() },
           update: {},
-          create: { name },
+          create: { name: name.toLowerCase() },
         })
       )
     );
@@ -323,7 +321,7 @@ const updateBookSelling = async (req, res, next) => {
     res.status(201).json({
       success: true,
       statusCode: 201,
-      message: 'Staff account updated successfully',
+      message: 'Book updated successfully',
     });
   } catch (error) {
     logger.error(
@@ -381,10 +379,112 @@ const deleteBookSelling = async (req, res, next) => {
   }
 };
 
+const addBookBorrowing = async (req, res, next) => {
+  try {
+    const {
+      title,
+      description,
+      bookPosition,
+      language,
+      stock,
+      isMember,
+      publisherName,
+      writerName,
+      categories,
+    } = req.body;
+
+    const { id } = req.user;
+    const fileNameImage = req.file
+      ? Date.now() + '-' + req.file.originalname
+      : null;
+    const imageUrl = req.file ? `/uploads/${fileNameImage}` : null;
+
+    logger.info(
+      `Controller STAFF addBookBorrowing - Create book selling title : ${title}`
+    );
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const error = new Error();
+      error.success = false;
+      error.statusCode = 400;
+      error.message = errors.array();
+      throw error;
+    }
+
+    const [publisher, writer] = await Promise.all([
+      prisma.publisher.upsert({
+        where: { name: publisherName.toLowerCase() },
+        update: {},
+        create: { name: publisherName.toLowerCase() },
+      }),
+      prisma.writer.upsert({
+        where: { name: writerName },
+        update: {},
+        create: { name: writerName },
+      }),
+    ]);
+
+    const categoriesQuery = await Promise.all(
+      categories.map(async (name) =>
+        prisma.category.upsert({
+          where: { name: name.toLowerCase() },
+          update: {},
+          create: { name: name.toLowerCase() },
+        })
+      )
+    );
+    console.log(isMember);
+    await prisma.bookBorrowing.create({
+      data: {
+        title: title.toLowerCase(),
+        description,
+        book_position: bookPosition.toLowerCase(),
+        language: language.toLowerCase(),
+        stock: parseInt(stock),
+        is_member: isMember === 'true' ? true : false,
+        imageUrl,
+        user_id: id,
+        publisher_id: publisher.id,
+        writer_id: writer.id,
+        category: {
+          create: categoriesQuery.map((name) => ({
+            categories: { connect: { name: name.name } },
+          })),
+        },
+      },
+      include: {
+        category: true,
+      },
+    });
+
+    if (req.file) {
+      saveImgToFileSystem(fileNameImage, req.file.buffer);
+    }
+
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'The book has been added successfully.',
+    });
+  } catch (error) {
+    console.log(error);
+    logger.error(`ERROR Controller STAFF addBookBorrowing - ${error}`);
+
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   addBookSelling,
   getBooksSelling,
   getDetailBookSelling,
   updateBookSelling,
   deleteBookSelling,
+  addBookBorrowing,
 };

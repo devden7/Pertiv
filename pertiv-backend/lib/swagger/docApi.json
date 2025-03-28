@@ -517,6 +517,12 @@
           },
           {
             "in": "formData",
+            "name": "price",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "in": "formData",
             "name": "publisherName",
             "type": "string",
             "required": true
@@ -787,6 +793,12 @@
           {
             "in": "formData",
             "name": "stock",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "price",
             "type": "integer",
             "required": true
           },
@@ -2293,6 +2305,130 @@
                 "statusCode": { "type": "number" },
                 "message": {
                   "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/staff/add-book-borrowing": {
+      "post": {
+        "tags": ["Staff"],
+        "summary": "Add a book for borrowing",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "title",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "description",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "bookPosition",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "language",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "stock",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "isMember",
+            "type": "boolean",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "publisherName",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "writerName",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "categories",
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi",
+            "example": ["Fiction", "Drama", "Science"]
+          },
+          {
+            "in": "formData",
+            "name": "image",
+            "type": "file",
+            "description": "Image of the book (PNG/JPG)"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": { "type": "string" }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": { "type": "string" },
+                      "value": { "type": "string" },
+                      "msg": { "type": "string" },
+                      "path": { "type": "string" },
+                      "location": { "type": "string" }
+                    }
+                  }
                 }
               }
             }
