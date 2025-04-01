@@ -169,3 +169,26 @@ export const dashboard = async (
     console.log('Error from getBookCart action ', error);
   }
 };
+
+export const addBookBorrowing = async (values: FormData, token?: string) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/staff/add-book-borrowing`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: values,
+    });
+    const data = await response.json();
+    console.log(data);
+    if (data.statusCode === 500) {
+      throw response;
+    }
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from addBookBorrowing action ', error);
+  }
+};

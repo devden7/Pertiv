@@ -12,9 +12,17 @@ import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { addBookSelling, updateBookSelling } from '@/lib/actions/staff.action';
+import {
+  addBookBorrowing,
+  addBookSelling,
+  updateBookSelling,
+} from '@/lib/actions/staff.action';
 import { useToast } from '@/hooks/use-toast';
-import { booksSellingSchema } from '@/model/staff.model';
+import {
+  booksBorrowingFormSchema,
+  booksSellingFormSchema,
+} from '@/model/staff.model';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface Props {
   type: string;
@@ -26,10 +34,13 @@ interface Props {
   stock?: number;
   imageUrl: string | null;
   price?: number;
+  bookPosition?: string;
   user_id?: string;
   publisher?: string;
   writer?: string;
   category?: string[];
+  isMember?: boolean;
+  mode: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const BookForm = ({
@@ -42,26 +53,46 @@ const BookForm = ({
   stock,
   imageUrl,
   price,
+  bookPosition,
   publisher,
   writer,
+  isMember,
   category,
+  mode,
   setIsOpen,
 }: Props) => {
   const { toast } = useToast();
-
-  const form = useForm<z.infer<typeof booksSellingSchema>>({
-    resolver: zodResolver(booksSellingSchema),
-    defaultValues: {
-      title: title ?? '',
-      description: description ?? '',
-      price: price || 0,
-      language: language ?? '',
-      stock: stock ?? 0,
-      publisherName: publisher ?? '',
-      writerName: writer ?? '',
-      categories: category ?? [],
-      image: imageUrl ?? null,
-    },
+  const schema =
+    mode === 'bookSelling' ? booksSellingFormSchema : booksBorrowingFormSchema;
+  const defaultFormValue =
+    mode === 'bookSelling'
+      ? {
+          title: title ?? '',
+          description: description ?? '',
+          price: price ?? 0,
+          language: language ?? '',
+          stock: stock ?? 0,
+          publisherName: publisher ?? '',
+          writerName: writer ?? '',
+          categories: category ?? [],
+          image: imageUrl ?? null,
+        }
+      : {
+          title: title ?? '',
+          description: description ?? '',
+          bookPosition: bookPosition ?? '',
+          language: language ?? '',
+          stock: stock ?? 0,
+          publisherName: publisher ?? '',
+          writerName: writer ?? '',
+          categories: category ?? [],
+          image: imageUrl ?? null,
+          isMember: isMember ?? false,
+        };
+  const form = useForm<z.infer<typeof schema>>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(schema as z.ZodType<any>),
+    defaultValues: defaultFormValue,
   });
 
   const { isSubmitting } = form.formState;
@@ -107,24 +138,43 @@ const BookForm = ({
     form.clearErrors('categories');
   };
 
-  const onSubmit = async (values: z.infer<typeof booksSellingSchema>) => {
+  const onSubmit = async (values: z.infer<typeof schema>) => {
     const formData = new FormData();
+
     formData.append('title', values.title);
     formData.append('description', values.description);
-    formData.append('price', values.price.toString());
+    if (mode === 'bookSelling' && 'price' in values) {
+      formData.append('price', values.price.toString());
+    }
+    if (
+      mode === 'bookBorrowing' &&
+      'isMember' in values &&
+      'bookPosition' in values
+    ) {
+      formData.append('bookPosition', values.bookPosition);
+      formData.append('isMember', values.isMember.toString());
+    }
     formData.append('language', values.language);
     formData.append('stock', values.stock.toLocaleString());
     formData.append('publisherName', values.publisherName);
     formData.append('writerName', values.writerName);
-    formData.append('categories', JSON.stringify(values.categories));
+    values.categories.forEach((category) => {
+      formData.append('categories', category);
+    });
     if (values.image) {
       formData.append('image', values.image);
     }
 
-    const response =
-      type === 'Add'
-        ? await addBookSelling(formData, token)
-        : await updateBookSelling(id!, formData, token);
+    let response;
+    if (mode === 'bookSelling') {
+      if (type === 'Add') {
+        response = await addBookSelling(formData, token);
+      } else {
+        response = await updateBookSelling(id!, formData, token);
+      }
+    } else {
+      response = await addBookBorrowing(formData, token);
+    }
 
     if (!response) {
       return toast({
@@ -134,6 +184,15 @@ const BookForm = ({
         duration: 2000,
       });
     }
+
+    if (!response.success) {
+      return toast({
+        variant: 'destructive',
+        title: response.message[0].msg,
+        duration: 2000,
+      });
+    }
+
     setIsOpen(false);
     toast({
       description: response.message,
@@ -170,19 +229,36 @@ const BookForm = ({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="price"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Price</FormLabel>
-              <FormControl>
-                <Input placeholder="Price of the book" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {mode === 'bookBorrowing' && (
+          <FormField
+            control={form.control}
+            name="bookPosition"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Book Position</FormLabel>
+                <FormControl>
+                  <Input placeholder="Book position" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+        {mode === 'bookSelling' && (
+          <FormField
+            control={form.control}
+            name="price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Price</FormLabel>
+                <FormControl>
+                  <Input placeholder="Price of the book" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           control={form.control}
           name="language"
@@ -209,6 +285,7 @@ const BookForm = ({
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="publisherName"
@@ -282,7 +359,28 @@ const BookForm = ({
             </FormItem>
           )}
         />
-
+        {mode === 'bookBorrowing' && (
+          <FormField
+            control={form.control}
+            name="isMember"
+            render={({ field }) => {
+              console.log(field.value === undefined ? false : true);
+              return (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Membership only</FormLabel>
+                  </div>
+                </FormItem>
+              );
+            }}
+          />
+        )}
         <Button type="submit" variant="outline" disabled={isSubmitting}>
           Add Book
         </Button>

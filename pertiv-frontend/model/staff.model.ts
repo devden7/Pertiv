@@ -80,7 +80,7 @@ export interface StaffBookSellingHandle {
   totalHandledSuccess: number;
 }
 
-export const booksSellingSchema = z.object({
+export const booksSellingFormSchema = z.object({
   title: z
     .string()
     .min(3, { message: 'title must be at least 3 characters' })
@@ -132,4 +132,58 @@ export const booksSellingSchema = z.object({
     z.null(),
     z.string(),
   ]),
+});
+
+export const booksBorrowingFormSchema = z.object({
+  title: z
+    .string()
+    .min(3, { message: 'title must be at least 3 characters' })
+    .max(255, { message: 'title must be max 255 characters' }),
+  description: z
+    .string()
+    .min(3, { message: 'description must be at least 3 characters' })
+    .max(255, { message: 'description must be max 255 characters' }),
+  bookPosition: z
+    .string()
+    .min(1, { message: 'description must be at least 1 characters' })
+    .max(10, { message: 'description must be max 10 characters' }),
+  language: z
+    .string()
+    .min(3, { message: 'language must be at least 3 characters' })
+    .max(255, { message: 'language must be max 255 characters' }),
+  stock: z.coerce
+    .number()
+    .min(0, { message: 'stock at least 0 item' })
+    .max(1000, { message: 'stock must be max 1000' }),
+  publisherName: z
+    .string()
+    .min(3, { message: 'publisher name must be at least 3 characters' })
+    .max(255, { message: 'publisher name must be max 255 characters' }),
+  writerName: z
+    .string()
+    .min(3, { message: 'writer name must be at least 3 characters' })
+    .max(255, { message: 'writer name must be max 255 characters' }),
+  categories: z
+    .array(
+      z
+        .string()
+        .min(1, { message: 'category is required.' })
+        .max(50, { message: 'category cannot exceed 50 characters.' })
+    )
+    .min(1, { message: 'At least one categories is required.' }),
+  image: z.union([
+    z.instanceof(File).refine(
+      (file) => {
+        const validExtensions = ['jpg', 'jpeg', 'png'];
+        const extension = file.name.split('.').pop()?.toLowerCase();
+        return extension && validExtensions.includes(extension);
+      },
+      {
+        message: 'File harus berupa JPG atau PNG',
+      }
+    ),
+    z.null(),
+    z.string(),
+  ]),
+  isMember: z.boolean().default(false),
 });
