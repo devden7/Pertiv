@@ -7,6 +7,7 @@ const {
   updateBookSelling,
   deleteBookSelling,
   addBookBorrowing,
+  getBooksBorrowing,
 } = require('../controllers/staff/books.controller');
 const { PrismaClient } = require('@prisma/client');
 const staffMiddleware = require('../middleware/staffAuth');
@@ -214,5 +215,7 @@ router.post(
   ],
   addBookBorrowing
 );
+
+router.get('/books-borrowing', staffMiddleware, getBooksBorrowing);
 
 module.exports = router;

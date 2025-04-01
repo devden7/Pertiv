@@ -480,6 +480,88 @@ const addBookBorrowing = async (req, res, next) => {
   }
 };
 
+const getBooksBorrowing = async (req, res, next) => {
+  try {
+    const { search } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const LIMIT = 10;
+    const skip = (page - 1) * LIMIT;
+    const keyword = search
+      ? {
+          title: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        }
+      : {};
+
+    logger.info('Controller getBooksBorrowing - Get all book selling');
+
+    const findDataQuery = await prisma.bookBorrowing.findMany({
+      skip,
+      take: LIMIT,
+      orderBy: {
+        created_at: 'desc',
+      },
+      where: keyword,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        book_position: true,
+        language: true,
+        stock: true,
+        imageUrl: true,
+        is_member: true,
+        created_at: true,
+        user_id: true,
+        publisher: {
+          select: {
+            name: true,
+          },
+        },
+        writer: {
+          select: {
+            name: true,
+          },
+        },
+        category: {
+          select: {
+            categories: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const formatQuery = findDataQuery.map((book) => ({
+      ...book,
+      category: book.category.map((c) => c.categories.name),
+    }));
+
+    const countOrder = await prisma.bookBorrowing.count({
+      where: keyword,
+    });
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      data: formatQuery,
+      totalCount: countOrder,
+    });
+  } catch (error) {
+    logger.error(`ERROR Controller getBooksBorrowing  -  ${error}`);
+
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   addBookSelling,
   getBooksSelling,
@@ -487,4 +569,5 @@ module.exports = {
   updateBookSelling,
   deleteBookSelling,
   addBookBorrowing,
+  getBooksBorrowing,
 };
