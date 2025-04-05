@@ -5,6 +5,7 @@ const { PrismaClient } = require('@prisma/client');
 const {
   getBookListSelling,
   getBookSellingDetail,
+  getBookListBorrowing,
 } = require('../controllers/user/books.controller');
 const {
   AddToCart,
@@ -78,4 +79,6 @@ router.post('/purchase/:id', userMiddleware, purchaseBook);
 router.post('/purchase/:id', userMiddleware, purchaseBook);
 router.post('/cancel-purchase/:id', userMiddleware, cancelPurchaseBook);
 router.get('/transactions', userMiddleware, transactions);
+
+router.get('/books-borrowing', getBookListBorrowing);
 module.exports = router;

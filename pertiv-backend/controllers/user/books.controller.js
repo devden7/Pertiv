@@ -154,7 +154,65 @@ const getBookSellingDetail = async (req, res, next) => {
     next(error);
   }
 };
+
+const getBookListBorrowing = async (req, res, next) => {
+  try {
+    logger.info(
+      'Controller getBookListBorrowing - Get all book selling for user'
+    );
+    const take = req.query.limit ? parseInt(req.query.limit, 10) : undefined;
+
+    const data = await prisma.bookBorrowing.findMany({
+      take: take,
+      orderBy: {
+        created_at: 'desc',
+      },
+      include: {
+        user: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
+        publisher: {
+          select: {
+            name: true,
+          },
+        },
+        writer: {
+          select: {
+            name: true,
+          },
+        },
+        category: {
+          select: {
+            categories: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      data,
+    });
+  } catch (error) {
+    logger.error(`ERROR Controller getBookListBorrowing for user  -  ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
 module.exports = {
   getBookListSelling,
   getBookSellingDetail,
+  getBookListBorrowing,
 };

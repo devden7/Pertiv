@@ -181,7 +181,7 @@ model BookBorrowing {
   id          String @id @default(uuid())
   title       String @db.VarChar(255) @unique
   description String
-  book_position String @db.Char(10)
+  book_position String @db.VarChar(10)
   language    String
   stock       Int
   imageUrl String?
