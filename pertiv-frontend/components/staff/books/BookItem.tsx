@@ -112,6 +112,7 @@ const BookItem = ({ item, token, mode }: Props) => {
                 setIsOpen={setIsOpen}
                 type="Edit"
                 mode={mode}
+                token={token}
               />
             </DialogContent>
           </Dialog>

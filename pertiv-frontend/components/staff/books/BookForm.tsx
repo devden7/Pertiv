@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import {
   addBookBorrowing,
   addBookSelling,
+  updateBookBorrowing,
   updateBookSelling,
 } from '@/lib/actions/staff.action';
 import { useToast } from '@/hooks/use-toast';
@@ -165,14 +166,18 @@ const BookForm = ({ type, token, book, mode, setIsOpen }: Props) => {
     }
 
     let response;
-    if (mode === 'bookSelling') {
+    if (mode === 'bookBorrowing') {
+      if (type === 'Add') {
+        response = await addBookBorrowing(formData, token);
+      } else {
+        response = await updateBookBorrowing(book.id!, formData, token);
+      }
+    } else {
       if (type === 'Add') {
         response = await addBookSelling(formData, token);
       } else {
         response = await updateBookSelling(book.id!, formData, token);
       }
-    } else {
-      response = await addBookBorrowing(formData, token);
     }
 
     if (!response) {

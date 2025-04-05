@@ -642,15 +642,17 @@ const updateBookBorrowing = async (req, res, next) => {
     await prisma.bookBorrowing.update({
       where: { id: paramsId },
       data: {
-        title: title?.toLowerCase() || findBookSellingQuery.title,
-        description: description || findBookSellingQuery.description,
-        language: language || findBookSellingQuery.language,
-        stock: parseInt(stock) || findBookSellingQuery.stock,
+        title: title?.toLowerCase() || findBookBorrowingQuery.title,
+        description: description || findBookBorrowingQuery.description,
+        language: language || findBookBorrowingQuery.language,
+        stock: parseInt(stock) || findBookBorrowingQuery.stock,
         imageUrl,
         book_position:
-          bookPosition.toLowerCase() || findBookSellingQuery.book_position,
+          bookPosition.toLowerCase() || findBookBorrowingQuery.book_position,
         is_member:
-          isMember === 'true' ? true : false || findBookSellingQuery.is_member,
+          isMember === 'true'
+            ? true
+            : false || findBookBorrowingQuery.is_member,
         publisher_id: publisher.id,
         writer_id: writer.id,
         category: {

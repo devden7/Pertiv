@@ -208,11 +208,42 @@ export const getBooksBorrowing = async (
       }
     );
     const data = await response.json();
-    if (!response.ok) {
+    if (data.statusCode === 500) {
       throw response;
     }
     return data;
   } catch (error) {
     console.log('Error from getBooksSelling action ', error);
+  }
+};
+
+export const updateBookBorrowing = async (
+  id: string,
+  values: FormData,
+  token?: string
+) => {
+  try {
+    const response = await fetch(
+      `${ENV.API_URL}/staff/update-book-borrowing/${id}`,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: values,
+      }
+    );
+    const data = await response.json();
+
+    if (data.statusCode === 500) {
+      throw response;
+    }
+
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from updateBookBorrowing action ', error);
   }
 };
