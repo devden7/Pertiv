@@ -247,3 +247,27 @@ export const updateBookBorrowing = async (
     console.log('Error from updateBookBorrowing action ', error);
   }
 };
+
+export const deleteBookBorrowing = async (id: string, token?: string) => {
+  try {
+    const response = await fetch(
+      `${ENV.API_URL}/staff/delete-book-borrowing/${id}`,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const data = await response.json();
+    if (data.statusCode === 500) {
+      throw response;
+    }
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from deleteStaff action', error);
+  }
+};

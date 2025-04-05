@@ -12,7 +12,10 @@ import {
 import { TableRow, TableCell } from '@/components/ui/table';
 import { Ellipsis } from 'lucide-react';
 import BookForm from './BookForm';
-import { deleteBookSelling } from '@/lib/actions/staff.action';
+import {
+  deleteBookBorrowing,
+  deleteBookSelling,
+} from '@/lib/actions/staff.action';
 import { useToast } from '@/hooks/use-toast';
 import { ImageHandler } from '@/utils/imageHandler';
 import { formatNumberToRupiah } from '@/utils/formatRupiah';
@@ -35,7 +38,10 @@ const BookItem = ({ item, token, mode }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   const deleteBookHandler = async (id: string) => {
-    const response = await deleteBookSelling(id, token);
+    const response =
+      mode === 'bookBorrowing'
+        ? await deleteBookBorrowing(id, token)
+        : await deleteBookSelling(id, token);
     if (!response) {
       return toast({
         variant: 'destructive',
