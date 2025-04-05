@@ -211,8 +211,72 @@ const getBookListBorrowing = async (req, res, next) => {
     next(error);
   }
 };
+
+const getBookBorrowingDetail = async (req, res, next) => {
+  try {
+    const paramsId = req.params.id;
+
+    logger.info(
+      `Controller USER getBookBorrowingDetail - Get detail books selling ID : ${paramsId}`
+    );
+
+    const bookBorrowingQuery = await prisma.bookBorrowing.findUnique({
+      where: { id: paramsId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+          },
+        },
+        publisher: {
+          select: {
+            name: true,
+          },
+        },
+        writer: {
+          select: {
+            name: true,
+          },
+        },
+        category: {
+          select: {
+            categories: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!bookBorrowingQuery) {
+      const error = new Error('Book borrowing not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      data: bookBorrowingQuery,
+    });
+  } catch (error) {
+    logger.error(`ERROR Controller USER getBookBorrowingDetail - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
 module.exports = {
   getBookListSelling,
   getBookSellingDetail,
   getBookListBorrowing,
+  getBookBorrowingDetail,
 };

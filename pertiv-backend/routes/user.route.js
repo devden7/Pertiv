@@ -6,6 +6,7 @@ const {
   getBookListSelling,
   getBookSellingDetail,
   getBookListBorrowing,
+  getBookBorrowingDetail,
 } = require('../controllers/user/books.controller');
 const {
   AddToCart,
@@ -81,4 +82,6 @@ router.post('/cancel-purchase/:id', userMiddleware, cancelPurchaseBook);
 router.get('/transactions', userMiddleware, transactions);
 
 router.get('/books-borrowing', getBookListBorrowing);
+router.get('/book-borrowing/:id', getBookBorrowingDetail);
+
 module.exports = router;
