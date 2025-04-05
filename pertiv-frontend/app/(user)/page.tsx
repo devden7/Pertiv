@@ -18,12 +18,14 @@ const UserHomePage = async () => {
         books={data.data}
         title="Buy a book"
         url="/books-selling"
+        detailUrl={'/book-selling'}
         token={user ? user.token : undefined}
       />
       <BooksHomePage
         books={dataBookBorrowing.data}
         title="Borrow a book"
         url="/books-borrowing"
+        detailUrl={'/book-borrowing'}
         token={user ? user.token : undefined}
       />
     </>

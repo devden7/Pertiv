@@ -212,3 +212,13 @@ export const getBooksBorrowingUser = async (limit: number) => {
     console.log('Error from getBooksSellingUser action ', error);
   }
 };
+
+export const getBookBorrowingDetail = async (id: string) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/user/book-borrowing/${id}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Error from getBookBorrowingDetail action ', error);
+  }
+};

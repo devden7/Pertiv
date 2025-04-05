@@ -6,10 +6,11 @@ import Link from 'next/link';
 interface Props {
   title: string;
   url: string;
+  detailUrl: string;
   token?: string;
   books: IBookForSelling[] | IBookForBorrowing[];
 }
-const BooksHomePage = ({ title, url, token, books }: Props) => {
+const BooksHomePage = ({ title, url, detailUrl, token, books }: Props) => {
   return (
     <section className="mt-5">
       <div className="container">
@@ -25,7 +26,7 @@ const BooksHomePage = ({ title, url, token, books }: Props) => {
             <BooksItem
               key={book.id}
               book={{ ...book }}
-              url={url}
+              detailUrl={detailUrl}
               token={token}
             />
           ))}

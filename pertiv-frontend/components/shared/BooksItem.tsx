@@ -11,14 +11,14 @@ import { bookItemBorrowing, bookItemSelling } from '@/model/user.model';
 
 interface Props {
   token?: string;
-  url: string;
+  detailUrl: string;
   book: bookItemSelling | bookItemBorrowing;
 }
-const BooksItem = ({ token, book, url }: Props) => {
+const BooksItem = ({ token, book, detailUrl }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   return (
     <div>
-      <Link href={`${url}/${book.id}`}>
+      <Link href={`${detailUrl}/${book.id}`}>
         <div className="relative w-full aspect-square rounded-2xl overflow-hidden">
           <Image
             src={ImageHandler(book.imageUrl)}

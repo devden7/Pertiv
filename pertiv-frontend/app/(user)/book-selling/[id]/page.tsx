@@ -9,6 +9,7 @@ const BookSellingDetail = async ({ params }: Params) => {
   const user = await getUserToken();
 
   const data = await getBookSellingDetail(params.id);
+
   if (!data.success && data.statusCode === 404) {
     return <h1 className="text-center">{data.message}</h1>;
   }
@@ -16,15 +17,11 @@ const BookSellingDetail = async ({ params }: Params) => {
     <>
       <BookDetail
         type="Selling"
-        id={data.data.id}
-        title={data.data.title}
-        description={data.data.description}
-        stock={data.data.stock}
-        language={data.data.language}
-        imageUrl={data.data.imageUrl}
-        publisherName={data.data.publisher.name}
-        writerName={data.data.writer.name}
-        category={data.data.category}
+        book={{
+          ...data.data,
+          writerName: data.data.writer.name,
+          publisherName: data.data.publisher.name,
+        }}
         token={user ? user.token : undefined}
       />
     </>
