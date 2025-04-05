@@ -7,32 +7,21 @@ import React, { useState } from 'react';
 import { Badge } from '../ui/badge';
 import { formatNumberToRupiah } from '@/utils/formatRupiah';
 import CartBtn from './CartBtn';
+import { bookItemBorrowing, bookItemSelling } from '@/model/user.model';
 
 interface Props {
-  id: string;
   token?: string;
-  title: string;
-  imageUrl: string | null;
-  price: number;
-  category: { categories: { name: string } }[];
-  totalItemSold: number;
+  url: string;
+  book: bookItemSelling | bookItemBorrowing;
 }
-const BooksItem = ({
-  id,
-  token,
-  title,
-  imageUrl,
-  price,
-  category,
-  totalItemSold,
-}: Props) => {
+const BooksItem = ({ token, book, url }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   return (
     <div>
-      <Link href={`/book-selling/${id}`}>
+      <Link href={`${url}/${book.id}`}>
         <div className="relative w-full aspect-square rounded-2xl overflow-hidden">
           <Image
-            src={ImageHandler(imageUrl)}
+            src={ImageHandler(book.imageUrl)}
             alt="face cream image"
             fill
             objectFit="cover"
@@ -40,7 +29,7 @@ const BooksItem = ({
         </div>
         <div className="mt-3">
           <div className="mt-2 flex gap-2">
-            {category.map((cat) => (
+            {book.category.map((cat) => (
               <Badge variant="outline" key={cat.categories.name}>
                 {cat.categories.name}
               </Badge>
@@ -48,23 +37,29 @@ const BooksItem = ({
           </div>
           <div className="flex items-center justify-between">
             <p className="font-semibold text-xl leading-8 text-black transition-all duration-500">
-              {title}
+              {book.title}
             </p>
-            <h6 className="font-semibold text-xl leading-8 text-primary-600">
-              {formatNumberToRupiah(price)}
-            </h6>
+            {'price' in book && (
+              <h6 className="font-semibold text-xl leading-8 text-primary-600">
+                {formatNumberToRupiah(book.price)}
+              </h6>
+            )}
           </div>
         </div>
       </Link>
       <div className="flex justify-between items-center mt-3">
         <CartBtn
-          id={id}
+          id={book.id}
           isLoading={isLoading}
           setIsLoading={setIsLoading}
           type="btn"
           token={token}
         />
-        <p className="text-xs text-gray-500">{totalItemSold} Item sold</p>
+        {'price' in book && (
+          <p className="text-xs text-gray-500">
+            {book.totalItemSold} Item sold
+          </p>
+        )}
       </div>
     </div>
   );

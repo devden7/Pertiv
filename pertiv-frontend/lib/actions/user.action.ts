@@ -200,3 +200,15 @@ export const getTransactions = async (
     console.log('Error from getBookCart action ', error);
   }
 };
+
+export const getBooksBorrowingUser = async (limit: number) => {
+  try {
+    const response = await fetch(
+      `${ENV.API_URL}/user/books-borrowing?limit=${limit}`
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Error from getBooksSellingUser action ', error);
+  }
+};

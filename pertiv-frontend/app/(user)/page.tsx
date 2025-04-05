@@ -1,19 +1,29 @@
 import BooksHomePage from '@/components/shared/BooksHomePage';
 import Hero from '@/components/user/home/Hero';
 import { getUserToken } from '@/lib/actions/auth.action';
-import { getBooksSellingUser } from '@/lib/actions/user.action';
+import {
+  getBooksBorrowingUser,
+  getBooksSellingUser,
+} from '@/lib/actions/user.action';
 
 const UserHomePage = async () => {
   const user = await getUserToken();
 
   const data = await getBooksSellingUser(5);
+  const dataBookBorrowing = await getBooksBorrowingUser(5);
   return (
     <>
       <Hero />
       <BooksHomePage
         books={data.data}
-        title="Buying a book"
+        title="Buy a book"
         url="/books-selling"
+        token={user ? user.token : undefined}
+      />
+      <BooksHomePage
+        books={dataBookBorrowing.data}
+        title="Borrow a book"
+        url="/books-borrowing"
         token={user ? user.token : undefined}
       />
     </>

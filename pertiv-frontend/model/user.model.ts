@@ -81,3 +81,51 @@ export interface IPaymentUser {
     }
   ];
 }
+
+export type bookItemSelling = {
+  id: string;
+  title: string;
+  imageUrl: string | null;
+  price: number;
+  category: { categories: { name: string } }[];
+  totalItemSold: number;
+};
+
+export type bookItemBorrowing = {
+  id: string;
+  title: string;
+  imageUrl: string | null;
+  category: { categories: { name: string } }[];
+};
+
+export interface IBookForBorrowing {
+  id: string;
+  title: string;
+  description: string;
+  book_position: string;
+  language: string;
+  stock: number;
+  imageUrl: string | null;
+  is_member: boolean;
+  created_at: string;
+  user_id: string;
+  published_id: string;
+  writer_id: string;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+  };
+  publisher: {
+    name: string;
+  };
+  writer: {
+    name: string;
+  };
+  category: {
+    categories: {
+      id: string;
+      name: string;
+    };
+  }[];
+}

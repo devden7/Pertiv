@@ -1,4 +1,4 @@
-import { IBookForSelling } from '@/model/user.model';
+import { IBookForBorrowing, IBookForSelling } from '@/model/user.model';
 import React from 'react';
 import BooksItem from './BooksItem';
 import Link from 'next/link';
@@ -7,7 +7,7 @@ interface Props {
   title: string;
   url: string;
   token?: string;
-  books: IBookForSelling[];
+  books: IBookForSelling[] | IBookForBorrowing[];
 }
 const BooksHomePage = ({ title, url, token, books }: Props) => {
   return (
@@ -24,13 +24,9 @@ const BooksHomePage = ({ title, url, token, books }: Props) => {
           {books.map((book) => (
             <BooksItem
               key={book.id}
-              id={book.id}
+              book={{ ...book }}
+              url={url}
               token={token}
-              title={book.title}
-              imageUrl={book.imageUrl}
-              price={book.price}
-              category={book.category}
-              totalItemSold={book.totalItemSold}
             />
           ))}
         </div>
