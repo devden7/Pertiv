@@ -689,6 +689,49 @@ const updateBookBorrowing = async (req, res, next) => {
   }
 };
 
+const deleteBookBorrowing = async (req, res, next) => {
+  try {
+    const paramsId = req.params.id;
+
+    logger.info(
+      `Controller STAFF deleteBookBorrowing - Delete book selling with ID: ${paramsId}`
+    );
+
+    const findBookQuery = await prisma.bookBorrowing.findUnique({
+      where: { id: paramsId },
+    });
+
+    if (!findBookQuery) {
+      const error = new Error('Book Borrowing not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    await prisma.bookCategoryBorrow.deleteMany({
+      where: { book_id: paramsId },
+    });
+
+    await prisma.bookBorrowing.delete({
+      where: { id: paramsId },
+    });
+
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'The book has been deleted successfully.',
+    });
+  } catch (error) {
+    logger.error(`ERROR STAFF Controller deleteBookBorrowing - ${error}`);
+
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   addBookSelling,
   getBooksSelling,
@@ -698,4 +741,5 @@ module.exports = {
   addBookBorrowing,
   getBooksBorrowing,
   updateBookBorrowing,
+  deleteBookBorrowing,
 };
