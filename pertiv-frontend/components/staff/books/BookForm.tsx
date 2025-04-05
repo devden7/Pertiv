@@ -56,7 +56,7 @@ type bookFormBorrowing = {
 interface Props {
   type: string;
   token?: string;
-  book: bookFormSelling | bookFormBorrowing;
+  book?: bookFormSelling | bookFormBorrowing;
   mode?: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -67,27 +67,27 @@ const BookForm = ({ type, token, book, mode, setIsOpen }: Props) => {
   const defaultFormValue =
     mode === 'bookBorrowing'
       ? {
-          title: book.title ?? '',
-          description: book.description ?? '',
-          bookPosition: (book as bookFormBorrowing).book_position ?? '',
-          language: book.language ?? '',
-          stock: book.stock ?? 0,
-          publisherName: book.publisher ?? '',
-          writerName: book.writer ?? '',
-          categories: book.category ?? [],
-          image: book.imageUrl ?? null,
-          isMember: (book as bookFormBorrowing).is_member ?? false,
+          title: book ? book.title : '',
+          description: book ? book.description : '',
+          bookPosition: book ? (book as bookFormBorrowing).book_position : '',
+          language: book ? book.language : '',
+          stock: book ? book.stock : 0,
+          publisherName: book ? book.publisher : '',
+          writerName: book ? book.writer : '',
+          categories: book ? book.category : [],
+          image: book ? book.imageUrl : null,
+          isMember: book ? (book as bookFormBorrowing).is_member : false,
         }
       : {
-          title: book.title ?? '',
-          description: book.description ?? '',
-          price: (book as bookFormSelling).price ?? 0,
-          language: book.language ?? '',
-          stock: book.stock ?? 0,
-          publisherName: book.publisher ?? '',
-          writerName: book.writer ?? '',
-          categories: book.category ?? [],
-          image: book.imageUrl ?? null,
+          title: book ? book.title : '',
+          description: book ? book.description : '',
+          price: book ? (book as bookFormSelling).price : 0,
+          language: book ? book.language : '',
+          stock: book ? book.stock : 0,
+          publisherName: book ? book.publisher : '',
+          writerName: book ? book.writer : '',
+          categories: book ? book.category : [],
+          image: book ? book.imageUrl : null,
         };
   const form = useForm<z.infer<typeof schema>>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -170,13 +170,17 @@ const BookForm = ({ type, token, book, mode, setIsOpen }: Props) => {
       if (type === 'Add') {
         response = await addBookBorrowing(formData, token);
       } else {
-        response = await updateBookBorrowing(book.id!, formData, token);
+        if (book?.id) {
+          response = await updateBookBorrowing(book.id, formData, token);
+        }
       }
     } else {
       if (type === 'Add') {
         response = await addBookSelling(formData, token);
       } else {
-        response = await updateBookSelling(book.id!, formData, token);
+        if (book?.id) {
+          response = await updateBookSelling(book.id, formData, token);
+        }
       }
     }
 
