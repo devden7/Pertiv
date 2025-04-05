@@ -13,6 +13,7 @@ const Transaction = async ({ searchParams }: ParamsProps) => {
   }
   const page = parseInt(searchParams.page) || 1;
   const search = searchParams.search || '';
+  const modeBook = searchParams.mode || '';
   const SIZE = 10;
   const data = await getTransactions(page, search, user.token);
   return (
@@ -23,6 +24,7 @@ const Transaction = async ({ searchParams }: ParamsProps) => {
         page={page}
         pageSize={SIZE}
         totalCount={data.totalCount}
+        mode={modeBook}
       />
     </>
   );

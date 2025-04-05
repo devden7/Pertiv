@@ -19,6 +19,26 @@ export interface IBooksSelling {
   category: string[];
 }
 
+export interface IBooksBorrowing {
+  id: string;
+  title: string;
+  description: string;
+  book_position: number;
+  is_member: number;
+  language: string;
+  stock: number;
+  imageUrl: string | null;
+  created_at: string;
+  user_id: string;
+  publisher: {
+    name: string;
+  };
+  writer: {
+    name: string;
+  };
+  category: string[];
+}
+
 export interface ISTransaction {
   id: string;
   status: string;

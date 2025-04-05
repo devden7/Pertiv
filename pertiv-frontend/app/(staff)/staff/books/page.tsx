@@ -1,6 +1,6 @@
 import BooksContent from '@/components/staff/books/BooksContent';
 import { getUserToken } from '@/lib/actions/auth.action';
-import { getBooksSelling } from '@/lib/actions/staff.action';
+import { getBooksBorrowing, getBooksSelling } from '@/lib/actions/staff.action';
 
 interface ParamsProps {
   searchParams: { [key: string]: string };
@@ -13,8 +13,12 @@ const StaffBooks = async ({ searchParams }: ParamsProps) => {
   }
   const page = parseInt(searchParams.page) || 1;
   const search = searchParams.search || '';
+  const modeBook = searchParams.mode || '';
   const SIZE = 10;
-  const data = await getBooksSelling(page, search, user.token);
+  const data =
+    modeBook === 'bookBorrowing'
+      ? await getBooksBorrowing(page, search, user.token)
+      : await getBooksSelling(page, search, user.token);
   return (
     <>
       <BooksContent
@@ -23,6 +27,7 @@ const StaffBooks = async ({ searchParams }: ParamsProps) => {
         page={page}
         pageSize={SIZE}
         totalCount={data.totalCount}
+        mode={modeBook}
       />
     </>
   );

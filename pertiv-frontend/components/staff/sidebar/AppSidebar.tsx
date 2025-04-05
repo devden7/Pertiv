@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Sidebar,
   SidebarContent,
@@ -12,8 +14,11 @@ import {
 import { Book, LayoutDashboard, ScrollText } from 'lucide-react';
 import Link from 'next/link';
 import LogoutButton from './LogoutButton';
+import { useSearchParams } from 'next/navigation';
 
 const AppSidebar = () => {
+  const search = useSearchParams();
+  const modeParams = search.get('mode');
   return (
     <Sidebar>
       <SidebarHeader />
@@ -31,7 +36,14 @@ const AppSidebar = () => {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href="/staff/books" className="flex gap-2 items-center">
+                  <Link
+                    href={
+                      modeParams
+                        ? `/staff/books?mode=${modeParams}`
+                        : '/staff/books'
+                    }
+                    className="flex gap-2 items-center"
+                  >
                     <Book />
                     <span>Manage Books</span>
                   </Link>
@@ -40,7 +52,11 @@ const AppSidebar = () => {
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
                   <Link
-                    href="/staff/transactions"
+                    href={
+                      modeParams
+                        ? `/staff/transactions?mode=${modeParams}`
+                        : '/staff/transactions'
+                    }
                     className="flex gap-2 items-center"
                   >
                     <ScrollText />

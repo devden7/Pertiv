@@ -1,18 +1,26 @@
 import React from 'react';
-import { IBooksSelling } from '@/model/staff.model';
+import { IBooksBorrowing, IBooksSelling } from '@/model/staff.model';
 import BooksList from './BooksList';
 import { PaginationWithLinks } from '@/components/ui/pagination-with-links';
 import AddBook from './AddBook';
 import SearchInput from '@/components/shared/SearchInput';
 
 interface Props {
-  data: IBooksSelling[];
+  data: IBooksSelling[] | IBooksBorrowing[];
   token: string;
   page: number;
   pageSize: number;
   totalCount: number;
+  mode: string;
 }
-const BooksContent = ({ data, token, page, pageSize, totalCount }: Props) => {
+const BooksContent = ({
+  data,
+  token,
+  page,
+  pageSize,
+  totalCount,
+  mode,
+}: Props) => {
   return (
     <section>
       <div className="flex justify-between items-center">
@@ -24,11 +32,20 @@ const BooksContent = ({ data, token, page, pageSize, totalCount }: Props) => {
         </div>
         <AddBook token={token} />
       </div>
-      <SearchInput placeholder="Search by Book Title" path="/staff/books" />
+      <SearchInput
+        placeholder="Search by Book Title"
+        path={
+          mode && (mode === 'bookBorrowing' || mode === 'bookSelling')
+            ? `/staff/books?mode=${mode}`
+            : '/staff/books'
+        }
+      />
       <div>
         <div>
           {data.length === 0 && <p> no books </p>}
-          {data.length > 0 && <BooksList data={data} token={token} />}
+          {data.length > 0 && (
+            <BooksList data={data} token={token} mode={mode} />
+          )}
           {totalCount > 0 && (
             <div className="my-3">
               <PaginationWithLinks

@@ -1,6 +1,6 @@
 import React from 'react';
 import BookItem from './BookItem';
-import { IBooksSelling } from '@/model/staff.model';
+import { IBooksBorrowing, IBooksSelling } from '@/model/staff.model';
 import {
   Table,
   TableHeader,
@@ -10,11 +10,12 @@ import {
 } from '@/components/ui/table';
 
 interface Props {
-  data: IBooksSelling[];
+  data: IBooksSelling[] | IBooksBorrowing[];
   token: string;
+  mode: string;
 }
 
-const BooksList = ({ data, token }: Props) => {
+const BooksList = ({ data, token, mode }: Props) => {
   return (
     <Table>
       <TableHeader>
@@ -23,7 +24,12 @@ const BooksList = ({ data, token }: Props) => {
           <TableHead>TITLE</TableHead>
           <TableHead className="text-center">LANGUAGE</TableHead>
           <TableHead className="text-center">STOCK</TableHead>
-          <TableHead className="text-center">PRICE </TableHead>
+          {mode !== 'bookBorrowing' && (
+            <TableHead className="text-center">PRICE </TableHead>
+          )}
+          {mode === 'bookBorrowing' && (
+            <TableHead className="text-center">BOOK POSITION</TableHead>
+          )}
           <TableHead className="text-center">PUBLISHER</TableHead>
           <TableHead className="text-center">WRITER</TableHead>
           <TableHead className="text-center">CATEGORY</TableHead>
@@ -34,19 +40,9 @@ const BooksList = ({ data, token }: Props) => {
         {data.map((item) => (
           <BookItem
             key={item.id}
-            id={item.id}
-            title={item.title}
-            description={item.description}
-            language={item.language}
-            stock={item.stock}
-            imageUrl={item.imageUrl}
-            price={item.price}
-            created_at={item.created_at}
-            user_id={item.user_id}
-            publisher={item.publisher}
-            writer={item.writer}
+            item={{ ...item }}
             token={token}
-            category={item.category}
+            mode={mode}
           />
         ))}
       </TableBody>

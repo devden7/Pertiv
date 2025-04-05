@@ -180,7 +180,6 @@ export const addBookBorrowing = async (values: FormData, token?: string) => {
       body: values,
     });
     const data = await response.json();
-    console.log(data);
     if (data.statusCode === 500) {
       throw response;
     }
@@ -190,5 +189,30 @@ export const addBookBorrowing = async (values: FormData, token?: string) => {
     return data;
   } catch (error) {
     console.log('Error from addBookBorrowing action ', error);
+  }
+};
+
+export const getBooksBorrowing = async (
+  page: number,
+  search: string,
+  token?: string
+) => {
+  try {
+    const response = await fetch(
+      `${ENV.API_URL}/staff/books-borrowing?page=${page}&search=${search}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        cache: 'no-store',
+      }
+    );
+    const data = await response.json();
+    if (!response.ok) {
+      throw response;
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from getBooksSelling action ', error);
   }
 };

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { Search } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface Props {
   placeholder: string;
@@ -12,6 +12,8 @@ interface Props {
 }
 const SearchInput = ({ placeholder, path }: Props) => {
   const [keyword, setKeyword] = useState('');
+  const search = useSearchParams();
+  const modeParams = search.get('mode');
   const { replace } = useRouter();
 
   useEffect(() => {
@@ -19,9 +21,12 @@ const SearchInput = ({ placeholder, path }: Props) => {
       if (!keyword) {
         replace(path);
       } else {
-        replace(`?search=${keyword}`);
+        replace(
+          !modeParams
+            ? `?search=${keyword}`
+            : `?mode=${modeParams}&search=${keyword}`
+        );
       }
-      console.log('USE EFFECT');
     }, 300);
     return () => clearTimeout(debounceTyping);
   }, [keyword]);

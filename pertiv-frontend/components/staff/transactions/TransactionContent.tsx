@@ -12,6 +12,7 @@ interface Props {
   pageSize: number;
   totalCount: number;
   token?: string;
+  mode: string;
 }
 
 const TransactionContent = ({
@@ -20,6 +21,7 @@ const TransactionContent = ({
   page,
   pageSize,
   totalCount,
+  mode,
 }: Props) => {
   return (
     <>
@@ -35,7 +37,11 @@ const TransactionContent = ({
         </div>
         <SearchInput
           placeholder="Search by Order ID or Name"
-          path="/staff/transactions"
+          path={
+            mode && (mode === 'bookBorrowing' || mode === 'bookSelling')
+              ? `/staff/transactions?mode=${mode}`
+              : '/staff/transactions'
+          }
         />
         <Table>
           <TableHeader>

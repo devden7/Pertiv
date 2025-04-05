@@ -24,9 +24,7 @@ import {
 } from '@/model/staff.model';
 import { Checkbox } from '@/components/ui/checkbox';
 
-interface Props {
-  type: string;
-  token?: string;
+type bookFormSelling = {
   id?: string;
   title?: string;
   description?: string;
@@ -34,60 +32,61 @@ interface Props {
   stock?: number;
   imageUrl: string | null;
   price?: number;
-  bookPosition?: string;
   user_id?: string;
   publisher?: string;
   writer?: string;
   category?: string[];
-  isMember?: boolean;
-  mode: string;
+};
+
+type bookFormBorrowing = {
+  id?: string;
+  title?: string;
+  description?: string;
+  language?: string;
+  stock?: number;
+  imageUrl: string | null;
+  book_position?: string;
+  user_id?: string;
+  publisher?: string;
+  writer?: string;
+  category?: string[];
+  is_member?: boolean;
+};
+interface Props {
+  type: string;
+  token?: string;
+  book: bookFormSelling | bookFormBorrowing;
+  mode?: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
-const BookForm = ({
-  type,
-  token,
-  id,
-  title,
-  description,
-  language,
-  stock,
-  imageUrl,
-  price,
-  bookPosition,
-  publisher,
-  writer,
-  isMember,
-  category,
-  mode,
-  setIsOpen,
-}: Props) => {
+const BookForm = ({ type, token, book, mode, setIsOpen }: Props) => {
   const { toast } = useToast();
   const schema =
     mode === 'bookSelling' ? booksSellingFormSchema : booksBorrowingFormSchema;
   const defaultFormValue =
-    mode === 'bookSelling'
+    mode === 'bookBorrowing'
       ? {
-          title: title ?? '',
-          description: description ?? '',
-          price: price ?? 0,
-          language: language ?? '',
-          stock: stock ?? 0,
-          publisherName: publisher ?? '',
-          writerName: writer ?? '',
-          categories: category ?? [],
-          image: imageUrl ?? null,
+          title: book.title ?? '',
+          description: book.description ?? '',
+          bookPosition: (book as bookFormBorrowing).book_position ?? '',
+          language: book.language ?? '',
+          stock: book.stock ?? 0,
+          publisherName: book.publisher ?? '',
+          writerName: book.writer ?? '',
+          categories: book.category ?? [],
+          image: book.imageUrl ?? null,
+          isMember: (book as bookFormBorrowing).is_member ?? false,
         }
       : {
-          title: title ?? '',
-          description: description ?? '',
-          bookPosition: bookPosition ?? '',
-          language: language ?? '',
-          stock: stock ?? 0,
-          publisherName: publisher ?? '',
-          writerName: writer ?? '',
-          categories: category ?? [],
-          image: imageUrl ?? null,
-          isMember: isMember ?? false,
+          title: book.title ?? '',
+          description: book.description ?? '',
+          price: (book as bookFormSelling).price ?? 0,
+          language: book.language ?? '',
+          stock: book.stock ?? 0,
+          publisherName: book.publisher ?? '',
+          writerName: book.writer ?? '',
+          categories: book.category ?? [],
+          image: book.imageUrl ?? null,
         };
   const form = useForm<z.infer<typeof schema>>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -170,7 +169,7 @@ const BookForm = ({
       if (type === 'Add') {
         response = await addBookSelling(formData, token);
       } else {
-        response = await updateBookSelling(id!, formData, token);
+        response = await updateBookSelling(book.id!, formData, token);
       }
     } else {
       response = await addBookBorrowing(formData, token);
@@ -364,7 +363,6 @@ const BookForm = ({
             control={form.control}
             name="isMember"
             render={({ field }) => {
-              console.log(field.value === undefined ? false : true);
               return (
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                   <FormControl>

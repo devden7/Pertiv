@@ -1,6 +1,6 @@
 'use client';
 
-import { IBooksSelling } from '@/model/staff.model';
+import { IBooksBorrowing, IBooksSelling } from '@/model/staff.model';
 import Image from 'next/image';
 import React, { useState } from 'react';
 import {
@@ -25,24 +25,13 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 
-interface Props extends IBooksSelling {
+interface Props {
   token: string;
+  item: IBooksSelling | IBooksBorrowing;
+  mode: string;
 }
 
-const BookItem = ({
-  id,
-  title,
-  description,
-  language,
-  stock,
-  imageUrl,
-  price,
-  user_id,
-  publisher,
-  writer,
-  token,
-  category,
-}: Props) => {
+const BookItem = ({ item, token, mode }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   const deleteBookHandler = async (id: string) => {
@@ -68,18 +57,25 @@ const BookItem = ({
       <TableRow className="font-medium text-zinc-800">
         <TableCell className="hidden md:table-cell">
           <div className="relative aspect-square rounded-md object-cover size-16">
-            <Image src={ImageHandler(imageUrl)} alt={title} fill />
+            <Image src={ImageHandler(item.imageUrl)} alt={item.title} fill />
           </div>
         </TableCell>
-        <TableCell>{title}</TableCell>
-        <TableCell className="text-center">{language}</TableCell>
-        <TableCell className="text-center">{stock}</TableCell>
-        <TableCell className="text-center">
-          Rp {formatNumberToRupiah(price)}
-        </TableCell>
-        <TableCell className="text-center">{publisher.name}</TableCell>
-        <TableCell className="text-center">{writer.name}</TableCell>
-        <TableCell className="text-center">{category}</TableCell>
+        <TableCell>{item.title}</TableCell>
+        <TableCell className="text-center">{item.language}</TableCell>
+        <TableCell className="text-center">{item.stock}</TableCell>
+        {mode !== 'bookBorrowing' && (
+          <TableCell className="text-center">
+            Rp {formatNumberToRupiah((item as IBooksSelling).price)}
+          </TableCell>
+        )}
+        {mode === 'bookBorrowing' && (
+          <TableCell className="text-center">
+            {(item as IBooksBorrowing).book_position}
+          </TableCell>
+        )}
+        <TableCell className="text-center">{item.publisher.name}</TableCell>
+        <TableCell className="text-center">{item.writer.name}</TableCell>
+        <TableCell className="text-center">{item.category}</TableCell>
         <TableCell>
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DropdownMenu>
@@ -96,7 +92,7 @@ const BookItem = ({
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="cursor-pointer"
-                  onClick={() => deleteBookHandler(id)}
+                  onClick={() => deleteBookHandler(item.id)}
                 >
                   Delete
                 </DropdownMenuItem>
@@ -108,20 +104,14 @@ const BookItem = ({
                 <DialogDescription>Update a new book</DialogDescription>
               </DialogHeader>
               <BookForm
-                id={id}
-                title={title}
-                description={description}
-                language={language}
-                stock={stock}
-                imageUrl={imageUrl}
-                price={price}
-                user_id={user_id}
-                publisher={publisher.name}
-                writer={writer.name}
-                token={token}
-                category={category}
+                book={{
+                  ...item,
+                  publisher: item.publisher.name,
+                  writer: item.writer.name,
+                }}
                 setIsOpen={setIsOpen}
                 type="Edit"
+                mode={mode}
               />
             </DialogContent>
           </Dialog>
