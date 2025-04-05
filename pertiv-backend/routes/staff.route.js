@@ -8,6 +8,7 @@ const {
   deleteBookSelling,
   addBookBorrowing,
   getBooksBorrowing,
+  updateBookBorrowing,
 } = require('../controllers/staff/books.controller');
 const { PrismaClient } = require('@prisma/client');
 const staffMiddleware = require('../middleware/staffAuth');
@@ -187,7 +188,7 @@ router.post(
       .trim()
       .isLength({ min: 3, max: 10 })
       .withMessage(
-        'Language must be at least 3 characters & max 10 characters'
+        'Book position must be at least 3 characters & max 10 characters'
       ),
     body('language')
       .trim()
@@ -214,6 +215,70 @@ router.post(
     body('categories').trim().notEmpty().withMessage('Please input a category'),
   ],
   addBookBorrowing
+);
+router.put(
+  '/update-book-borrowing/:id',
+  staffMiddleware,
+  [
+    body('title')
+      .trim()
+      .custom(async (value, { req }) => {
+        const prisma = new PrismaClient();
+        const data = await prisma.bookBorrowing.findMany();
+
+        const findBookQuery = data.find(
+          (item) =>
+            item.title === value.toLowerCase() && item.id !== req.params.id
+        );
+
+        if (findBookQuery) {
+          const error = new Error('Book Title already exist');
+          error.success = false;
+          error.statusCode = 400;
+          throw error;
+        }
+
+        return true;
+      })
+      .isLength({ min: 3, max: 255 })
+      .withMessage('Title must be at least 3 characters & max 255 characters'),
+    body('description')
+      .trim()
+      .isLength({ min: 3, max: 255 })
+      .withMessage(
+        'Description must be at least 3 characters & max 255 characters'
+      ),
+    body('bookPosition')
+      .trim()
+      .isLength({ min: 3, max: 10 })
+      .withMessage(
+        'Book position must be at least 3 characters & max 10 characters'
+      ),
+    body('language')
+      .trim()
+      .isLength({ min: 3, max: 255 })
+      .withMessage(
+        'Language must be at least 3 characters & max 255 characters'
+      ),
+    body('stock')
+      .isInt({ min: 0 })
+      .withMessage('Stock must be a number and at least 0'),
+    body('isMember').isBoolean().withMessage('isMember must be boolean'),
+    body('publisherName')
+      .trim()
+      .isLength({ min: 3, max: 255 })
+      .withMessage(
+        'Publisher Name must be at least 3 characters & max 255 characters'
+      ),
+    body('writerName')
+      .trim()
+      .isLength({ min: 3, max: 255 })
+      .withMessage(
+        'Writer Name must be at least 3 characters & max 255 characters'
+      ),
+    body('categories').trim().notEmpty().withMessage('Please input a category'),
+  ],
+  updateBookBorrowing
 );
 
 router.get('/books-borrowing', staffMiddleware, getBooksBorrowing);

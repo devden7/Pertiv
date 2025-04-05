@@ -262,7 +262,7 @@ const updateBookSelling = async (req, res, next) => {
     });
 
     if (!findBookSellingQuery) {
-      const error = new Error('Staff account not found');
+      const error = new Error('Books selling not found');
       error.success = false;
       error.statusCode = 404;
       throw error;
@@ -562,6 +562,131 @@ const getBooksBorrowing = async (req, res, next) => {
   }
 };
 
+const updateBookBorrowing = async (req, res, next) => {
+  try {
+    const paramsId = req.params.id;
+    const {
+      title,
+      description,
+      language,
+      stock,
+      publisherName,
+      image,
+      bookPosition,
+      isMember,
+      writerName,
+      categories,
+    } = req.body;
+
+    const fileNameImage =
+      !req.file && !image
+        ? null
+        : !req.file && image
+        ? image
+        : Date.now() + '-' + req.file.originalname;
+
+    const imageUrl = !fileNameImage
+      ? null
+      : !req.file && image
+      ? image
+      : `/uploads/${fileNameImage}`;
+
+    logger.info(
+      `Controller STAFF updateBookBorrowing - Updating Book Selling with ID : ${paramsId} - Title : ${title}`
+    );
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      const error = new Error();
+      error.success = false;
+      error.statusCode = 400;
+      error.message = errors.array();
+      throw error;
+    }
+
+    const findBookBorrowingQuery = await prisma.bookBorrowing.findUnique({
+      where: { id: paramsId },
+    });
+
+    if (!findBookBorrowingQuery) {
+      const error = new Error('Books borrowing not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const [publisher, writer] = await Promise.all([
+      prisma.publisher.upsert({
+        where: { name: publisherName.toLowerCase() },
+        update: {},
+        create: { name: publisherName.toLowerCase() },
+      }),
+      prisma.writer.upsert({
+        where: { name: writerName },
+        update: {},
+        create: { name: writerName },
+      }),
+    ]);
+
+    const categoriesQuery = await Promise.all(
+      categories.map(async (name) =>
+        prisma.category.upsert({
+          where: { name: name.toLowerCase() },
+          update: {},
+          create: { name: name.toLowerCase() },
+        })
+      )
+    );
+
+    await prisma.bookBorrowing.update({
+      where: { id: paramsId },
+      data: {
+        title: title?.toLowerCase() || findBookSellingQuery.title,
+        description: description || findBookSellingQuery.description,
+        language: language || findBookSellingQuery.language,
+        stock: parseInt(stock) || findBookSellingQuery.stock,
+        imageUrl,
+        book_position:
+          bookPosition.toLowerCase() || findBookSellingQuery.book_position,
+        is_member:
+          isMember === 'true' ? true : false || findBookSellingQuery.is_member,
+        publisher_id: publisher.id,
+        writer_id: writer.id,
+        category: {
+          deleteMany: {},
+          create: categoriesQuery.map((category) => ({
+            categories: { connect: { name: category.name } },
+          })),
+        },
+      },
+      include: {
+        category: true,
+      },
+    });
+
+    if (req.file) {
+      saveImgToFileSystem(fileNameImage, req.file.buffer);
+    }
+
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'Book updated successfully',
+    });
+  } catch (error) {
+    logger.error(
+      `ERROR STAFF Controller updateBookBorrowing - ${JSON.stringify(error)}`
+    );
+
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   addBookSelling,
   getBooksSelling,
@@ -570,4 +695,5 @@ module.exports = {
   deleteBookSelling,
   addBookBorrowing,
   getBooksBorrowing,
+  updateBookBorrowing,
 };
