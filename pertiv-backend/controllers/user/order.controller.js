@@ -1,5 +1,6 @@
 const logger = require('../../lib/winston/winstonLogger');
 const generateOrderId = require('../../utils/randomOrderId');
+const generateBorrowId = require('../../utils/randomBorrowId');
 const endDate24Hours = require('../../utils/createEndDateTime');
 const { formatISO } = require('date-fns');
 const generateOrderKey = require('../../utils/randomOrderKey');
@@ -375,10 +376,124 @@ const transactions = async (req, res, next) => {
     next(error);
   }
 };
+
+const createBorrowBook = async (req, res, next) => {
+  try {
+    const { collectionItems } = req.body;
+
+    const { id } = req.user;
+
+    logger.info(
+      `Controller USER createBorrowBook -  User ID : ${id} & Collection Item : ${JSON.stringify(
+        collectionItems
+      )}`
+    );
+
+    const findBooksBorrowingQuery = await prisma.bookBorrowing.findMany({
+      where: { id: { in: collectionItems.map((item) => item.book_id) } },
+    });
+
+    if (findBooksBorrowingQuery.length === 0) {
+      const error = new Error('Book not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const calcBorrowedUser = await prisma.itemBorrowed.findMany({
+      where: {
+        bookBorrowed: {
+          userId: id,
+        },
+      },
+      include: {
+        bookBorrowed: true,
+      },
+    });
+
+    if (calcBorrowedUser.length + findBooksBorrowingQuery.length > 2) {
+      const error = new Error('A maximum of 2 books can be borrowed');
+      error.success = false;
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const duplicateBookBorrow = collectionItems.filter(
+      (book, index, self) =>
+        self.findIndex((item) => item.book_id === book.book_id) !== index
+    );
+
+    if (duplicateBookBorrow.length > 0) {
+      const error = new Error('You will not be able to borrow the same book.');
+      error.success = false;
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const existingBorrow = await prisma.itemBorrowed.findFirst({
+      where: {
+        book_borrowing_id: {
+          in: findBooksBorrowingQuery.map((item) => item.id),
+        },
+      },
+    });
+
+    if (existingBorrow) {
+      const error = new Error('You have already borrowed this book.');
+      error.success = false;
+      error.statusCode = 400;
+      throw error;
+    }
+
+    await prisma.bookBorrowed.create({
+      data: {
+        id: generateBorrowId(),
+        userId: id,
+        status: 'pending',
+        items: {
+          create: collectionItems.map((item) => {
+            const book = findBooksBorrowingQuery.find(
+              (b) => b.id === item.book_id
+            );
+            return {
+              book_title: book.title,
+              book_description: book.description,
+              book_imageUrl: book.imageUrl,
+              book_borrowing_id: book.id,
+            };
+          }),
+        },
+      },
+      include: {
+        items: true,
+      },
+    });
+
+    await prisma.collectionItem.deleteMany({
+      where: {
+        book_id: { in: findBooksBorrowingQuery.map((item) => item.id) },
+      },
+    });
+
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'Borrowed book successfully.',
+    });
+  } catch (error) {
+    logger.error(`ERROR USER Controller createBorrowBook - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   createOrderBook,
   paymentBookDetail,
   purchaseBook,
   cancelPurchaseBook,
   transactions,
+  createBorrowBook,
 };

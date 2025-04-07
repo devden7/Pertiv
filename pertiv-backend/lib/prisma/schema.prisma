@@ -202,12 +202,14 @@ model BookBorrowing {
 model BookBorrowed {
   id             String @id @default(uuid())
   status         String
-  loan_key        String @db.VarChar(50)
-  loan_handled_by  String
-  loan_date       DateTime @db.Timestamptz()
+  loan_key        String? @db.VarChar(50)
+  loan_handled_by  String?
+  loan_date       DateTime? @db.Timestamptz()
   returned_key    String? @db.VarChar(50)
   return_handled_by String?
   date_returned   DateTime? @db.Timestamptz()
+  created_at      DateTime @default(now()) @db.Timestamptz()
+  canceled_at     DateTime? @db.Timestamptz()
 
   userId         String
   items          ItemBorrowed[]
@@ -217,6 +219,9 @@ model BookBorrowed {
 
 model ItemBorrowed {
   id                String @id @default(uuid())
+  book_title     String @db.VarChar(255)
+  book_description String
+  book_imageUrl String?
 
   borrowed_id String
   book_borrowing_id String
