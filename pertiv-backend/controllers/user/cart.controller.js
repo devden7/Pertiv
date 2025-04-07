@@ -286,9 +286,76 @@ const decreaseItemFromCart = async (req, res, next) => {
     next(error);
   }
 };
+
+const AddToLoanCart = async (req, res, next) => {
+  try {
+    const { book_id } = req.body;
+    const { id } = req.user;
+
+    logger.info(`Controller USER AddToLoanCart - Add Book : ${book_id}`);
+    const findBookQuery = await prisma.bookBorrowing.findUnique({
+      where: { id: book_id },
+    });
+
+    if (!findBookQuery) {
+      const error = new Error('Book Borrowing not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const cart = await prisma.collection.upsert({
+      where: { user_id: id },
+      update: {},
+      create: { user_id: id },
+    });
+
+    const existingCartItem = await prisma.collectionItem.findUnique({
+      where: {
+        collection_id_book_id: {
+          collection_id: cart.id,
+          book_id: book_id,
+        },
+      },
+    });
+
+    if (existingCartItem) {
+      const error = new Error(
+        'You cannot borrow the same book at the same time.'
+      );
+      error.success = false;
+      error.statusCode = 400;
+      throw error;
+    } else {
+      const newCartItem = await prisma.collectionItem.create({
+        data: {
+          collection_id: cart.id,
+          book_id: book_id,
+        },
+      });
+
+      logger.info(
+        `Controller USER AddToLoanCart - LoanCart Item Added: ${newCartItem}`
+      );
+    }
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'The book has been added to LoanCart successfully.',
+    });
+  } catch (error) {
+    logger.error(`ERROR USER Controller AddToLoanCart - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
 module.exports = {
   AddToCart,
   getCartList,
   removeItemFromCart,
   decreaseItemFromCart,
+  AddToLoanCart,
 };
