@@ -28,6 +28,7 @@ const BooksHomePage = ({ title, url, detailUrl, token, books }: Props) => {
               book={{ ...book }}
               detailUrl={detailUrl}
               token={token}
+              type={url}
             />
           ))}
         </div>

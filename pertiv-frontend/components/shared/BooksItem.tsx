@@ -8,13 +8,15 @@ import { Badge } from '../ui/badge';
 import { formatNumberToRupiah } from '@/utils/formatRupiah';
 import CartBtn from './CartBtn';
 import { bookItemBorrowing, bookItemSelling } from '@/model/user.model';
+import CartLoanBtn from './CartLoanBtn';
 
 interface Props {
   token?: string;
   detailUrl: string;
   book: bookItemSelling | bookItemBorrowing;
+  type: string;
 }
-const BooksItem = ({ token, book, detailUrl }: Props) => {
+const BooksItem = ({ token, book, detailUrl, type }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   return (
     <div>
@@ -48,13 +50,25 @@ const BooksItem = ({ token, book, detailUrl }: Props) => {
         </div>
       </Link>
       <div className="flex justify-between items-center mt-3">
-        <CartBtn
-          id={book.id}
-          isLoading={isLoading}
-          setIsLoading={setIsLoading}
-          type="btn"
-          token={token}
-        />
+        {type === '/books-selling' && (
+          <CartBtn
+            id={book.id}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+            type="btn"
+            token={token}
+          />
+        )}
+
+        {type === '/books-borrowing' && (
+          <CartLoanBtn
+            id={book.id}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+            type="btn"
+            token={token}
+          />
+        )}
         {'price' in book && (
           <p className="text-xs text-gray-500">
             {book.totalItemSold} Item sold
