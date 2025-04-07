@@ -425,6 +425,68 @@ const getLoanCartList = async (req, res, next) => {
   }
 };
 
+const removeItemFromLoanCart = async (req, res, next) => {
+  try {
+    const { book_id } = req.body;
+    const { id } = req.user;
+    logger.info(
+      `Controller USER removeItemFromLoanCart - Remove Book : ${book_id}`
+    );
+    const findBookQuery = await prisma.bookBorrowing.findUnique({
+      where: { id: book_id },
+    });
+
+    if (!findBookQuery) {
+      const error = new Error('Book not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const cart = await prisma.collection.findUnique({
+      where: { user_id: id },
+    });
+
+    const existingCartItem = await prisma.collectionItem.findUnique({
+      where: {
+        collection_id_book_id: {
+          collection_id: cart.id,
+          book_id,
+        },
+      },
+    });
+
+    if (!existingCartItem) {
+      const error = new Error('Item not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    await prisma.collectionItem.delete({
+      where: {
+        collection_id_book_id: {
+          collection_id: cart.id,
+          book_id,
+        },
+      },
+    });
+
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'The book has been removed from cart successfully.',
+    });
+  } catch (error) {
+    logger.error(`ERROR USER Controller removeItemFromLoanCart - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   AddToCart,
   getCartList,
@@ -432,4 +494,5 @@ module.exports = {
   decreaseItemFromCart,
   AddToLoanCart,
   getLoanCartList,
+  removeItemFromLoanCart,
 };
