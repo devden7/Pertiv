@@ -2992,6 +2992,80 @@
           }
         }
       }
+    },
+    "/user/loan-cart": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get list loan cart",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": { "type": "string" },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "user_id": { "type": "string" },
+                    "collection_item": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "title": { "type": "string" },
+                          "description": { "type": "string" },
+                          "language": { "type": "string" },
+                          "stock": { "type": "number" },
+                          "imageUrl": {
+                            "type": "string",
+                            "nullable": true
+                          },
+                          "created_at": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

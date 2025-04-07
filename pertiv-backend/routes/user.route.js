@@ -14,6 +14,7 @@ const {
   removeItemFromCart,
   decreaseItemFromCart,
   AddToLoanCart,
+  getLoanCartList,
 } = require('../controllers/user/cart.controller');
 const userMiddleware = require('../middleware/userAuth');
 const {
@@ -86,5 +87,6 @@ router.get('/books-borrowing', getBookListBorrowing);
 router.get('/book-borrowing/:id', getBookBorrowingDetail);
 
 router.post('/add-to-loan-cart', userMiddleware, AddToLoanCart);
+router.get('/loan-cart', userMiddleware, getLoanCartList);
 
 module.exports = router;

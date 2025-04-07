@@ -352,10 +352,84 @@ const AddToLoanCart = async (req, res, next) => {
     next(error);
   }
 };
+
+const getLoanCartList = async (req, res, next) => {
+  try {
+    const { id } = req.user;
+    logger.info(`Controller USER getLoanCartList - Cart: `);
+
+    const findLoanCartQuery = await prisma.collection.findUnique({
+      where: { user_id: id },
+    });
+
+    if (!findLoanCartQuery) {
+      await prisma.cart.create({
+        data: {
+          user_id: id,
+        },
+      });
+    }
+
+    const loanCart = await prisma.collection.findUnique({
+      where: { user_id: id },
+
+      include: {
+        collection_item: {
+          orderBy: {
+            book_borrowing: {
+              created_at: 'desc',
+            },
+          },
+          include: {
+            book_borrowing: {
+              select: {
+                title: true,
+                description: true,
+                language: true,
+                stock: true,
+                imageUrl: true,
+                created_at: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    const finalCart = {
+      user_id: loanCart.user_id,
+      collection_item: loanCart.collection_item.map((item) => ({
+        id: item.book_id,
+        title: item.book_borrowing.title,
+        description: item.book_borrowing.description,
+        language: item.book_borrowing.language,
+        stock: item.book_borrowing.stock,
+        imageUrl: item.book_borrowing.imageUrl,
+        created_at: item.book_borrowing.created_at,
+      })),
+    };
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'Cart Items fetched successfully.',
+      data: finalCart,
+    });
+  } catch (error) {
+    logger.error(`ERROR USER Controller getLoanCartList - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   AddToCart,
   getCartList,
   removeItemFromCart,
   decreaseItemFromCart,
   AddToLoanCart,
+  getLoanCartList,
 };
