@@ -1,5 +1,3 @@
-'use client';
-
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { removeBookFromLoanCart } from '@/lib/actions/user.action';
