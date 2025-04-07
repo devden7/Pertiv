@@ -257,3 +257,26 @@ export const getBookLoanCart = async (token?: string) => {
     console.log('Error from getBookCart action ', error);
   }
 };
+
+export const removeBookFromLoanCart = async (
+  bookId: string,
+  token?: string
+) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/user/remove-item-loan-cart`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ book_id: bookId }),
+    });
+    const data = await response.json();
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from removeBookFromCart action ', error);
+  }
+};
