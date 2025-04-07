@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { deleteCookie, getUserToken } from '@/lib/actions/auth.action';
-import { ShoppingCart } from 'lucide-react';
+import { BookMarked, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { AuthUser } from '@/model/auth.model';
@@ -61,6 +61,16 @@ const UserNavbar = () => {
                       >
                         <ShoppingCart color="black" size={15} />
                         <span>Cart</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer">
+                      <Link
+                        href="/loan-cart"
+                        className="flex gap-2 items-center"
+                        onClick={() => setIsOpenNavbar(false)}
+                      >
+                        <BookMarked color="black" size={15} />
+                        <span>Loan cart</span>
                       </Link>
                     </DropdownMenuItem>
                   </DropdownMenuContent>

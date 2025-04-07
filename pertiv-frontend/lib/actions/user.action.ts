@@ -242,3 +242,18 @@ export const addBookToLoanCart = async (bookId: string, token?: string) => {
     console.log('Error from addBookToLoanCart action ', error);
   }
 };
+
+export const getBookLoanCart = async (token?: string) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/user/loan-cart`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      cache: 'no-store',
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Error from getBookCart action ', error);
+  }
+};

@@ -65,6 +65,17 @@ export interface ICartDetail {
   price: number;
 }
 
+export interface ILoanCartList {
+  collection_item: ILoanCartDetail[];
+}
+
+export interface ILoanCartDetail {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string | null;
+}
+
 export interface IPaymentUser {
   id: string;
   status: string;

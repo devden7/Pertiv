@@ -54,7 +54,12 @@ export async function middleware(request: NextRequest) {
 }
 const authRoutes = ['/login', '/register'];
 const publicRoutes = ['/', '/book-selling', '/login', '/register'];
-const protectedUserRoutes = ['/cart', '/transactions', '/payment'];
+const protectedUserRoutes = [
+  '/cart',
+  '/loan-cart',
+  '/transactions',
+  '/payment',
+];
 
 export const config = {
   matcher: [
