@@ -21,13 +21,17 @@ const BooksItem = ({ token, book, detailUrl, type }: Props) => {
   return (
     <div>
       <Link href={`${detailUrl}/${book.id}`}>
-        <div className="relative w-full aspect-square rounded-2xl overflow-hidden">
-          <Image
-            src={ImageHandler(book.imageUrl)}
-            alt="face cream image"
-            fill
-            objectFit="cover"
-          />
+        <div className="w-full aspect-square rounded-2xl p-3">
+          <div className="relative h-full w-9/12 object-contain mx-auto overflow-hidden p-5">
+            <Image
+              src={ImageHandler(book.imageUrl)}
+              alt={book.title}
+              fill
+              sizes="50vw"
+              quality={100}
+              priority
+            />
+          </div>
         </div>
         <div className="mt-3">
           <div className="mt-2 flex gap-2">
@@ -37,7 +41,7 @@ const BooksItem = ({ token, book, detailUrl, type }: Props) => {
               </Badge>
             ))}
           </div>
-          <div className="flex items-center justify-between">
+          <div className="flex justify-between">
             <p className="font-semibold text-xl leading-8 text-black transition-all duration-500">
               {book.title}
             </p>

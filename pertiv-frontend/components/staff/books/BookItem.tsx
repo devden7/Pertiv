@@ -27,6 +27,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
 
 interface Props {
   token: string;
@@ -61,9 +62,18 @@ const BookItem = ({ item, token, mode }: Props) => {
   return (
     <>
       <TableRow className="font-medium text-zinc-800">
-        <TableCell className="hidden md:table-cell">
-          <div className="relative aspect-square rounded-md object-cover size-16">
-            <Image src={ImageHandler(item.imageUrl)} alt={item.title} fill />
+        <TableCell className="table-cell">
+          <div className="max-sm:w-20 w-24 mx-auto aspect-square rounded-md p-1">
+            <div className="relative w-full h-28 object-contain">
+              <Image
+                src={ImageHandler(item.imageUrl)}
+                alt={item.title}
+                fill
+                sizes="50vw"
+                quality={100}
+                priority
+              />
+            </div>
           </div>
         </TableCell>
         <TableCell>{item.title}</TableCell>
@@ -81,7 +91,13 @@ const BookItem = ({ item, token, mode }: Props) => {
         )}
         <TableCell className="text-center">{item.publisher.name}</TableCell>
         <TableCell className="text-center">{item.writer.name}</TableCell>
-        <TableCell className="text-center">{item.category}</TableCell>
+        <TableCell className="text-center">
+          {item.category.map((category) => (
+            <Badge key={category} variant="outline" className="mr-2">
+              {category}
+            </Badge>
+          ))}
+        </TableCell>
         <TableCell>
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DropdownMenu>

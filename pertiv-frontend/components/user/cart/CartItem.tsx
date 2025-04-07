@@ -15,15 +15,7 @@ import { ICartDetail } from '@/model/user.model';
 interface Props extends ICartDetail {
   token?: string;
 }
-const CartItem = ({
-  id,
-  quantity,
-  title,
-  description,
-  imageUrl,
-  price,
-  token,
-}: Props) => {
+const CartItem = ({ id, quantity, title, imageUrl, price, token }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -80,26 +72,30 @@ const CartItem = ({
   };
 
   return (
-    <div className="mb-4 flex justify-between items-center border-b-[1.5px] border-gray-200">
-      <div className="relative mb-4 size-24 overflow-hidden rounded-xl">
-        <Image
-          className="object-cover"
-          src={ImageHandler(imageUrl)}
-          alt="book"
-          fill
-          sizes="50vw"
-          quality={90}
-        />
+    <div className="mb-4 flex  max-sm:flex-col justify-between items-center border-b-[1.5px] border-gray-200">
+      <div className="flex gap-2 items-center max-sm:flex-col max-sm:gap-4">
+        <div className="max-sm:w-32  w-24 mx-auto aspect-square rounded-md p-1">
+          <div className="relative w-full max-sm:h-52 h-28 overflow-hidden object-contain">
+            <Image
+              className="object-cover"
+              src={ImageHandler(imageUrl)}
+              alt="book"
+              fill
+              sizes="50vw"
+              quality={100}
+              priority
+            />
+          </div>
+        </div>
+        <div className="max-sm:flex max-sm:items-center max max-sm:flex-col">
+          <h1 className="font-semibold">{title}</h1>
+          <p className="text-xs text-gray-800 mt-5">
+            <span className="text-primary-500 font-medium">Qty {quantity}</span>{' '}
+            X {formatNumberToRupiah(price)}
+          </p>
+        </div>
       </div>
-      <div>
-        <h1 className="font-semibold">{title}</h1>
-        <p className="text-xs text-gray-500">{description}</p>
-        <p className="text-xs text-gray-800 mt-5">
-          <span className="text-primary-500 font-medium">Qty {quantity}</span> X{' '}
-          {formatNumberToRupiah(price)}
-        </p>
-      </div>
-      <div>
+      <div className="mt-3">
         <div className="mb-3 flex justify-between gap-2">
           <Button
             variant="outline"
@@ -123,7 +119,7 @@ const CartItem = ({
         </div>
         <Button
           variant="outline"
-          className="text-primary-500 hover:text-primary-600"
+          className="text-primary-500 hover:text-primary-600 mb-3"
           onClick={() => removeItemCartHandler(id, 'remove')}
           disabled={isLoading}
         >

@@ -11,7 +11,7 @@ interface Props extends ILoanCartDetail {
   token?: string;
 }
 
-const LoanCartItem = ({ id, title, description, imageUrl, token }: Props) => {
+const LoanCartItem = ({ id, title, imageUrl, token }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -50,27 +50,28 @@ const LoanCartItem = ({ id, title, description, imageUrl, token }: Props) => {
     setIsLoading(false);
   };
   return (
-    <div className="mb-4 flex justify-between items-center border-b-[1.5px] border-gray-200">
-      <div className="flex gap-2 items-center">
-        <div className="relative mb-4 size-24 overflow-hidden rounded-xl">
-          <Image
-            className="object-cover"
-            src={ImageHandler(imageUrl)}
-            alt="book"
-            fill
-            sizes="50vw"
-            quality={90}
-          />
+    <div className="mb-4 flex max-sm:flex-col justify-between items-center border-b-[1.5px] border-gray-200">
+      <div className="flex gap-2 items-center max-sm:flex-col max-sm:gap-4">
+        <div className="max-sm:w-20 w-24 mx-auto aspect-square rounded-md p-1">
+          <div className="relative w-full h-28 overflow-hidden object-contain">
+            <Image
+              src={ImageHandler(imageUrl)}
+              alt={title}
+              fill
+              sizes="50vw"
+              quality={100}
+              priority
+            />
+          </div>
         </div>
         <div>
           <h1 className="font-semibold">{title}</h1>
-          <p className="text-xs text-gray-500">{description}</p>
         </div>
       </div>
       <div>
         <Button
           variant="outline"
-          className="text-primary-500 hover:text-primary-600"
+          className="text-primary-500 hover:text-primary-600 mb-2"
           onClick={() => removeItemLoanCartHandler(id)}
           disabled={isLoading}
         >

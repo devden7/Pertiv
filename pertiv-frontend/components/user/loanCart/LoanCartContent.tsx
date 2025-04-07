@@ -63,7 +63,7 @@ const LoanCartContent = ({ data, token }: Props) => {
     <section>
       <div className="container">
         <div className="flex justify-center items-center my-2">
-          <Card className="w-1/2 p-2">
+          <Card className="w-1/2 p-2 max-sm:w-full">
             <h1 className="text-xl font-medium text-center">Books Loan Cart</h1>
             <LoanCartList data={data} token={token} />
             <div className="mt-3 flex justify-center">

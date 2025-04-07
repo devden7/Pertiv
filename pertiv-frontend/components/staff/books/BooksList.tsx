@@ -16,11 +16,12 @@ interface Props {
 }
 
 const BooksList = ({ data, token, mode }: Props) => {
+  console.log(data);
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>IMAGE</TableHead>
+          <TableHead className="text-center">IMAGE</TableHead>
           <TableHead>TITLE</TableHead>
           <TableHead className="text-center">LANGUAGE</TableHead>
           <TableHead className="text-center">STOCK</TableHead>
