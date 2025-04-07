@@ -16,7 +16,6 @@ interface Props {
 }
 
 const BooksList = ({ data, token, mode }: Props) => {
-  console.log(data);
   return (
     <Table>
       <TableHeader>

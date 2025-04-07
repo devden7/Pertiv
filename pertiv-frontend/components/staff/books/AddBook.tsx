@@ -54,7 +54,6 @@ const AddBook = ({ token }: Props) => {
           </DialogHeader>
           <BookForm
             token={token}
-            imageUrl={null}
             setIsOpen={setIsOpen}
             type="Add"
             mode={mode}

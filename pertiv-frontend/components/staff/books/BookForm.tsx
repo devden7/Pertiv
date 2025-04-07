@@ -63,7 +63,10 @@ interface Props {
 const BookForm = ({ type, token, book, mode, setIsOpen }: Props) => {
   const { toast } = useToast();
   const schema =
-    mode === 'bookSelling' ? booksSellingFormSchema : booksBorrowingFormSchema;
+    mode === 'bookBorrowing'
+      ? booksBorrowingFormSchema
+      : booksSellingFormSchema;
+
   const defaultFormValue =
     mode === 'bookBorrowing'
       ? {
@@ -94,7 +97,7 @@ const BookForm = ({ type, token, book, mode, setIsOpen }: Props) => {
     resolver: zodResolver(schema as z.ZodType<any>),
     defaultValues: defaultFormValue,
   });
-
+  console.log(mode);
   const { isSubmitting } = form.formState;
 
   const handleKeyCategory = (
@@ -143,7 +146,7 @@ const BookForm = ({ type, token, book, mode, setIsOpen }: Props) => {
 
     formData.append('title', values.title);
     formData.append('description', values.description);
-    if (mode === 'bookSelling' && 'price' in values) {
+    if (mode !== 'bookBorrowing' && 'price' in values) {
       formData.append('price', values.price.toString());
     }
     if (
@@ -389,7 +392,7 @@ const BookForm = ({ type, token, book, mode, setIsOpen }: Props) => {
           />
         )}
         <Button type="submit" variant="outline" disabled={isSubmitting}>
-          Add Book
+          {type === 'Add' ? 'Add' : 'Update'} Book
         </Button>
       </form>
     </Form>
