@@ -330,12 +330,6 @@ const transactions = async (req, res, next) => {
       },
     });
 
-    if (!findOrderQuery) {
-      const error = new Error('Orders History not found');
-      error.success = false;
-      error.statusCode = 404;
-      throw error;
-    }
     const data = findOrderQuery.map((item) => ({
       id: item.id,
       status: item.status,
@@ -489,6 +483,81 @@ const createBorrowBook = async (req, res, next) => {
   }
 };
 
+const borrowTransactions = async (req, res, next) => {
+  try {
+    const { id } = req.user;
+    const { search } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const LIMIT = 10;
+    const skip = (page - 1) * LIMIT;
+
+    const keyword = search
+      ? {
+          AND: [
+            {
+              userId: id,
+            },
+            {
+              id: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        }
+      : { userId: id };
+
+    logger.info(`Controller USER borrowTransactions -  User ID : ${id}`);
+
+    const findBorrowQuery = await prisma.bookBorrowed.findMany({
+      where: keyword,
+      skip,
+      take: LIMIT,
+      orderBy: { created_at: 'desc' },
+      include: {
+        items: true,
+      },
+    });
+
+    const data = findBorrowQuery.map((item) => ({
+      id: item.id,
+      status: item.status,
+      loan_key: item.loan_key,
+      loan_handled_by: item.loan_handled_by,
+      loan_date: item.loan_date,
+      created_at: item.created_at,
+      canceled_at: item.canceled_at,
+      return_handled_by: item.return_handled_by,
+      date_returned: item.date_returned,
+      returned_key: item.returned_key,
+      items: item.items.map((order) => ({
+        id: order.id,
+        book_title: order.book_title,
+        book_imageUrl: order.book_imageUrl,
+      })),
+    }));
+
+    const countBorrowed = await prisma.bookBorrowed.count({
+      where: keyword,
+    });
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'Access transaction history',
+      data,
+      totalCount: countBorrowed,
+    });
+  } catch (error) {
+    logger.error(`ERROR USER Controller borrowTransactions - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   createOrderBook,
   paymentBookDetail,
@@ -496,4 +565,5 @@ module.exports = {
   cancelPurchaseBook,
   transactions,
   createBorrowBook,
+  borrowTransactions,
 };
