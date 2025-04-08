@@ -311,6 +311,27 @@ export const acceptLoanBook = async (bookId: string, token?: string) => {
     }
     return data;
   } catch (error) {
-    console.log('Error from purchaseBook action ', error);
+    console.log('Error from acceptLoanBook action ', error);
+  }
+};
+
+export const rejectLoanBook = async (bookId: string, token?: string) => {
+  try {
+    const response = await fetch(
+      `${ENV.API_URL}/staff/reject-loan-book/${bookId}`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const data = await response.json();
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from rejectLoanBook action ', error);
   }
 };

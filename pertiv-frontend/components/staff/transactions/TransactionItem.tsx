@@ -16,7 +16,7 @@ import { formatNumberToRupiah } from '@/utils/formatRupiah';
 import DateInformation from './DateInformation';
 import TableOrderBook from '@/components/shared/TableOrderBook';
 import { Button } from '@/components/ui/button';
-import { acceptLoanBook } from '@/lib/actions/staff.action';
+import { acceptLoanBook, rejectLoanBook } from '@/lib/actions/staff.action';
 import { toast } from '@/hooks/use-toast';
 
 interface Props {
@@ -39,6 +39,39 @@ const TransactionItem = ({ item, mode, token }: Props) => {
     setIsLoading(true);
     const splitOrderId = item.id.split('#');
     const response = await acceptLoanBook(splitOrderId[1], token);
+
+    if (!response) {
+      toast({
+        variant: 'destructive',
+        title: 'Oh! Something went wrong!',
+        description: 'Internal server error',
+        duration: 2000,
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    if (!response.success && response.statusCode !== 201) {
+      toast({
+        variant: 'destructive',
+        title: response.message,
+        duration: 2000,
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    toast({
+      title: response.message,
+      duration: 2000,
+    });
+    setIsLoading(false);
+  };
+
+  const rejectLoanHandler = async () => {
+    setIsLoading(true);
+    const splitOrderId = item.id.split('#');
+    const response = await rejectLoanBook(splitOrderId[1], token);
 
     if (!response) {
       toast({
@@ -118,7 +151,14 @@ const TransactionItem = ({ item, mode, token }: Props) => {
                 >
                   Accept
                 </Button>
-                <Button variant="outline">Reject</Button>
+                <Button
+                  type="submit"
+                  variant="outline"
+                  disabled={isLoading}
+                  onClick={rejectLoanHandler}
+                >
+                  Reject
+                </Button>
               </div>
             )}
           </DialogContent>
