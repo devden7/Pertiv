@@ -54,7 +54,9 @@ const TransactionContent = ({
                 {mode !== 'bookBorrowing' ? 'BUYING DATE' : 'LOAN DATE'}
               </TableHead>
               {mode !== 'bookBorrowing' && <TableHead>TOTAL PRICE</TableHead>}
-              <TableHead>HANDLE BY</TableHead>
+              <TableHead>
+                {mode !== 'bookBorrowing' ? 'HANDLE BY' : 'LOAN HANDLE BY'}
+              </TableHead>
               <TableHead>STATUS</TableHead>
               <TableHead></TableHead>
             </TableRow>

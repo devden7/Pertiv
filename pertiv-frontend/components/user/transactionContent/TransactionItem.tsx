@@ -60,14 +60,20 @@ const TransactionItem = ({ item, mode }: Props) => {
             />
             <TransactionKey
               status={item.status}
-              buy_key={(item as ITransaction).buy_key}
+              keyValue={
+                (item as ITransaction).buy_key ||
+                (item as IBorrowTransaction).loan_key
+              }
             />
             <DateInformation
               status={item.status}
               created_at={item.created_at}
-              paid_at={(item as ITransaction).paid_at}
+              date={{
+                paid_at: (item as ITransaction).paid_at,
+                buy_date: (item as ITransaction).buy_date,
+                loan_date: (item as IBorrowTransaction).loan_date,
+              }}
               canceled_at={item.canceled_at}
-              buy_date={(item as ITransaction).buy_date}
               mode={mode}
             />
             {item.status === 'pending' && mode !== 'bookBorrowing' && (

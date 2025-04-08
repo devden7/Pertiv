@@ -19,6 +19,7 @@ const {
   borrowtransactions,
   acceptLoanBook,
   rejectLoanBook,
+  confirmLoan,
 } = require('../controllers/staff/order.controller');
 const { dashboard } = require('../controllers/staff/dashboard.controller');
 
@@ -295,5 +296,6 @@ router.delete(
 router.get('/borrow-transactions', staffMiddleware, borrowtransactions);
 router.post('/accept-loan-book/:id', staffMiddleware, acceptLoanBook);
 router.post('/reject-loan-book/:id', staffMiddleware, rejectLoanBook);
+router.post('/confirm-loan/', staffMiddleware, confirmLoan);
 
 module.exports = router;

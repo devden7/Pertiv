@@ -4,20 +4,27 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { formatDateTime } from '@/utils/formatDateTime';
 
+interface dateBookSelling {
+  paid_at: string;
+  buy_date: string;
+}
+
+interface dateBookBorrowing {
+  loan_date: string;
+}
+
 interface Props {
   status: string;
   created_at: string;
   canceled_at: string;
-  paid_at: string;
-  buy_date: string;
+  date: dateBookSelling | dateBookBorrowing;
   mode: string;
 }
 const DateInformation = ({
   status,
   created_at,
   canceled_at,
-  paid_at,
-  buy_date,
+  date,
   mode,
 }: Props) => {
   return (
@@ -35,10 +42,19 @@ const DateInformation = ({
           <div className="text-zinc-600">{formatDateTime(created_at)}</div>
         </div>
 
-        {(status === 'paid' || status === 'success') && (
+        {(status === 'paid' ||
+          status === 'success' ||
+          status === 'on loan') && (
           <div className="flex items-center justify-between font-medium mt-3">
-            <div>Paid Date</div>
-            <div className="text-zinc-600">{formatDateTime(paid_at)}</div>
+            <div>
+              {mode !== 'bookBorrowing' ? 'Paid date' : 'Loan accept date'}
+            </div>
+            <div className="text-zinc-600">
+              {formatDateTime(
+                (date as dateBookSelling).paid_at ||
+                  (date as dateBookBorrowing).loan_date
+              )}
+            </div>
           </div>
         )}
         {status === 'canceled' && (
@@ -50,7 +66,9 @@ const DateInformation = ({
         {status === 'success' && (
           <div className="flex items-center justify-between font-medium mt-3">
             <div>Success date</div>
-            <div className="text-zinc-600">{formatDateTime(buy_date)}</div>
+            <div className="text-zinc-600">
+              {formatDateTime((date as dateBookSelling).buy_date)}
+            </div>
           </div>
         )}
       </CardContent>

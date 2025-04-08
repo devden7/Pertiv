@@ -1,7 +1,7 @@
 const logger = require('../../lib/winston/winstonLogger');
 const generateOrderId = require('../../utils/randomOrderId');
 const generateBorrowId = require('../../utils/randomBorrowId');
-const endDate24Hours = require('../../utils/createEndDateTime');
+const { endDate24Hours } = require('../../utils/createEndDateTime');
 const { formatISO } = require('date-fns');
 const generateOrderKey = require('../../utils/randomOrderKey');
 const prisma = require('../../utils/prismaConnection');

@@ -112,7 +112,10 @@ const TransactionItem = ({ item, mode, token }: Props) => {
           Rp {formatNumberToRupiah((item as ISTransaction).total_price)}
         </TableCell>
       )}
-      <TableCell>{(item as ISTransaction).buy_handled_by}</TableCell>
+      <TableCell>
+        {(item as ISTransaction).buy_handled_by ||
+          (item as ISBorrowTransaction).loan_handled_by}
+      </TableCell>
       <TableCell>
         <div className={`${backgroundBadge} max-w-20 rounded-md`}>
           <p className="text-center">{item.status}</p>
@@ -136,12 +139,15 @@ const TransactionItem = ({ item, mode, token }: Props) => {
             <DateInformation
               status={item.status}
               created_at={item.created_at}
-              paid_at={(item as ISTransaction).paid_at}
               canceled_at={item.canceled_at}
-              buy_date={(item as ISTransaction).buy_date}
+              date={{
+                paid_at: (item as ISTransaction).paid_at,
+                buy_date: (item as ISTransaction).buy_date,
+                loan_date: (item as ISBorrowTransaction).loan_date,
+              }}
               mode={mode}
             />
-            {item.status === 'pending' && (
+            {item.status === 'pending' && mode === 'bookBorrowing' && (
               <div className="flex justify-center gap-2">
                 <Button
                   type="submit"

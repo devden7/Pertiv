@@ -123,13 +123,13 @@ export const getTransactions = async (
 };
 
 export const confirmOrderTransaction = async (
-  orderKey: string,
+  keyValue: string,
   token?: string
 ) => {
   try {
     const response = await fetch(`${ENV.API_URL}/staff/confirm-order`, {
       method: 'POST',
-      body: JSON.stringify({ orderKey }),
+      body: JSON.stringify({ keyValue }),
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
@@ -333,5 +333,28 @@ export const rejectLoanBook = async (bookId: string, token?: string) => {
     return data;
   } catch (error) {
     console.log('Error from rejectLoanBook action ', error);
+  }
+};
+
+export const confirmLoanTransaction = async (
+  keyValue: string,
+  token?: string
+) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/staff/confirm-loan`, {
+      method: 'POST',
+      body: JSON.stringify({ keyValue }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from confirmLoanTransaction action ', error);
   }
 };

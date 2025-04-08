@@ -24,17 +24,27 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { confirmOrderTransaction } from '@/lib/actions/staff.action';
+import {
+  confirmLoanTransaction,
+  confirmOrderTransaction,
+} from '@/lib/actions/staff.action';
 import { useToast } from '@/hooks/use-toast';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface Props {
   token?: string;
 }
 const FormConfirmBook = ({ token }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [transactionType, setTransactionType] = useState('');
   const { toast } = useToast();
   const formSchema = z.object({
-    orderKey: z.string().min(5, {
+    keyValue: z.string().min(5, {
       message: 'Input is not valid',
     }),
   });
@@ -42,12 +52,17 @@ const FormConfirmBook = ({ token }: Props) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      orderKey: '',
+      keyValue: '',
     },
   });
   const { isSubmitting } = form.formState;
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const response = await confirmOrderTransaction(values.orderKey, token);
+    const response =
+      transactionType === 'order'
+        ? await confirmOrderTransaction(values.keyValue, token)
+        : await confirmLoanTransaction(values.keyValue, token);
+
     if (!response) {
       return toast({
         variant: 'destructive',
@@ -70,30 +85,52 @@ const FormConfirmBook = ({ token }: Props) => {
       duration: 2000,
     });
     setIsOpen(false);
+    form.reset();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button className="mb-3 btn_primary">Confirm transaction</Button>
-      </DialogTrigger>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button className="mb-3 btn_primary">Confirm transaction</Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent side="left">
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => setTransactionType('order')}
+          >
+            <DialogTrigger className="w-full text-left">
+              Order book
+            </DialogTrigger>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => setTransactionType('loan')}
+          >
+            <DialogTrigger className="w-full text-left">
+              Loan book
+            </DialogTrigger>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <DialogTrigger asChild></DialogTrigger>
       <DialogContent className="overflow-auto max-h-[500px]">
         <DialogHeader>
           <DialogTitle>Confirm book transaction</DialogTitle>
           <DialogDescription className="text-red-500 font-medium">
-            *Input the KEY order in this field
+            *Input the KEY transaction in this field
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
             <FormField
               control={form.control}
-              name="orderKey"
+              name="keyValue"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Key</FormLabel>
                   <FormControl>
-                    <Input placeholder="Key of the paid order" {...field} />
+                    <Input placeholder="Key of the transaction" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
