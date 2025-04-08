@@ -59,9 +59,9 @@ const TransactionContent = ({
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
-          {data.length === 0 && <p>List not found</p>}
-          <TransactionList data={data} mode={mode} />
+          <TransactionList data={data} mode={mode} token={token} />
         </Table>
+        {data.length === 0 && <p>List not found</p>}
       </section>
       {totalCount > 0 && (
         <div className="my-3">

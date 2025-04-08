@@ -84,7 +84,7 @@ const PaymentContent = ({ data, token }: Props) => {
           </div>
           <div className="flex flex-col md:grid md:grid-cols-6 gap-6">
             <div className="md:col-span-4 lg:col-span-3 xl:col-span-4 flex flex-col gap-6">
-              <TableOrderBook item_order={data.item_Order} />
+              <TableOrderBook item_order={data.item_Order} mode="bookSelling" />
             </div>
             <div className="md:col-span-2 lg:col-span-3 xl:col-span-2 flex flex-col gap-6">
               <Card>
