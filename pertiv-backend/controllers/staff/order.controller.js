@@ -157,4 +157,89 @@ const confirmOrder = async (req, res, next) => {
   }
 };
 
-module.exports = { transactions, confirmOrder };
+const borrowtransactions = async (req, res, next) => {
+  try {
+    const { id } = req.user;
+    const { search } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const LIMIT = 10;
+    const skip = (page - 1) * LIMIT;
+    const keyword = search
+      ? {
+          OR: [
+            {
+              user: {
+                name: {
+                  contains: search,
+                  mode: 'insensitive',
+                },
+              },
+            },
+            {
+              id: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        }
+      : {};
+
+    logger.info(`Controller STAFF borrowtransactions -  User ID : ${id}`);
+    const findBorrowQuery = await prisma.bookBorrowed.findMany({
+      skip,
+      take: LIMIT,
+      orderBy: {
+        created_at: 'desc',
+      },
+      where: keyword,
+      include: {
+        user: {
+          select: {
+            email: true,
+            name: true,
+          },
+        },
+        items: true,
+      },
+    });
+
+    const data = findBorrowQuery.map((item) => ({
+      id: item.id,
+      status: item.status,
+      loan_key: item.loan_key,
+      loan_handled_by: item.loan_handled_by,
+      loan_date: item.loan_date,
+      created_at: item.created_at,
+      canceled_at: item.canceled_at,
+      return_handled_by: item.return_handled_by,
+      date_returned: item.date_returned,
+      returned_key: item.returned_key,
+      items: item.items.map((order) => ({
+        id: order.id,
+        book_title: order.book_title,
+        book_imageUrl: order.book_imageUrl,
+      })),
+    }));
+
+    const countBorrow = await prisma.bookBorrowed.count({
+      where: keyword,
+    });
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      message: 'Access transaction history',
+      data,
+      totalCount: countBorrow,
+    });
+  } catch (error) {
+    logger.error(`ERROR STAFF Controller borrowtransactions - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
+module.exports = { transactions, confirmOrder, borrowtransactions };

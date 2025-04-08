@@ -16,6 +16,7 @@ const staffMiddleware = require('../middleware/staffAuth');
 const {
   transactions,
   confirmOrder,
+  borrowtransactions,
 } = require('../controllers/staff/order.controller');
 const { dashboard } = require('../controllers/staff/dashboard.controller');
 
@@ -288,5 +289,7 @@ router.delete(
   staffMiddleware,
   deleteBookBorrowing
 );
+
+router.get('/borrow-transactions', staffMiddleware, borrowtransactions);
 
 module.exports = router;
