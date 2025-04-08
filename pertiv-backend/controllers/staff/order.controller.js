@@ -293,9 +293,58 @@ const acceptLoanBook = async (req, res, next) => {
   }
 };
 
+const rejectLoanBook = async (req, res, next) => {
+  try {
+    const paramsId = req.params.id;
+    logger.info(`Controller USER rejectLoanBook -  Borrow ID : ${paramsId}  `);
+
+    const findOrderQuery = await prisma.bookBorrowed.findUnique({
+      where: {
+        id: `#${paramsId}`,
+      },
+    });
+
+    if (!findOrderQuery) {
+      const error = new Error('Book borrowed not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    if (findOrderQuery.status !== 'pending') {
+      const error = new Error('Book borrowed is not valid');
+      error.success = false;
+      error.statusCode = 400;
+      throw error;
+    }
+    await prisma.bookBorrowed.update({
+      where: {
+        id: `#${paramsId}`,
+      },
+      data: {
+        status: 'cancel',
+        canceled_at: formatISO(new Date()),
+      },
+    });
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'Reject book borrowed successfully',
+    });
+  } catch (error) {
+    logger.error(`ERROR USER Controller rejectLoanBook - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   transactions,
   confirmOrder,
   borrowtransactions,
   acceptLoanBook,
+  rejectLoanBook,
 };
