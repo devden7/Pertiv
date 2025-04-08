@@ -1,6 +1,9 @@
 import TransactionContent from '@/components/user/transactionContent/TransactionContent';
 import { getUserToken } from '@/lib/actions/auth.action';
-import { getTransactions } from '@/lib/actions/user.action';
+import {
+  getBorrowTransactions,
+  getTransactions,
+} from '@/lib/actions/user.action';
 import React from 'react';
 
 interface ParamsProps {
@@ -15,8 +18,13 @@ const Transaction = async ({ searchParams }: ParamsProps) => {
 
   const page = parseInt(searchParams.page) || 1;
   const search = searchParams.search || '';
+  const modeBook = searchParams.mode || '';
+
   const SIZE = 10;
-  const data = await getTransactions(page, search, user.token);
+  const data =
+    modeBook === 'bookBorrowing'
+      ? await getBorrowTransactions(page, search, user.token)
+      : await getTransactions(page, search, user.token);
   return (
     <>
       <TransactionContent
@@ -24,6 +32,7 @@ const Transaction = async ({ searchParams }: ParamsProps) => {
         page={page}
         pageSize={SIZE}
         totalCount={data.totalCount}
+        mode={modeBook}
       />
     </>
   );

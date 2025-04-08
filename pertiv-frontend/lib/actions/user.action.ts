@@ -303,3 +303,25 @@ export const borrowingBook = async (
     console.log('Error from createOrder action ', error);
   }
 };
+
+export const getBorrowTransactions = async (
+  page: number,
+  search: string,
+  token?: string
+) => {
+  try {
+    const response = await fetch(
+      `${ENV.API_URL}/user/borrow-transactions?page=${page}&search=${search}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        cache: 'no-store',
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Error from getBookCart action ', error);
+  }
+};

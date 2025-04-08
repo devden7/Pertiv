@@ -52,6 +52,26 @@ export interface IItemOrder {
   quantity: number;
 }
 
+export interface IBorrowTransaction {
+  id: string;
+  status: string;
+  loan_key: string;
+  loan_handled_by: string;
+  loan_date: string;
+  created_at: string;
+  canceled_at: string;
+  return_handled_by: string;
+  date_returned: string;
+  returned_key: string;
+  items: IItemBorrow[];
+}
+
+export interface IItemBorrow {
+  id: string;
+  book_title: string;
+  book_imageUrl: string;
+}
+
 export interface ICartList {
   cart_items: ICartDetail[];
 }

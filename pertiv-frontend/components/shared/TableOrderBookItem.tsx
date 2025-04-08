@@ -8,12 +8,14 @@ interface Props {
   book_imageUrl: string;
   book_price: number;
   quantity: number;
+  mode: string;
 }
 const TableOrderBookItem = ({
   book_title,
   book_imageUrl,
   book_price,
   quantity,
+  mode,
 }: Props) => {
   return (
     <TableRow>
@@ -23,8 +25,10 @@ const TableOrderBookItem = ({
         </div>
       </TableCell>
       <TableCell className="font-medium">{book_title}</TableCell>
-      <TableCell>{quantity}</TableCell>
-      <TableCell>Rp {formatNumberToRupiah(book_price)}</TableCell>
+      {mode !== 'bookBorrowing' && <TableCell>{quantity}</TableCell>}
+      {mode !== 'bookBorrowing' && (
+        <TableCell>Rp {formatNumberToRupiah(book_price)}</TableCell>
+      )}
     </TableRow>
   );
 };

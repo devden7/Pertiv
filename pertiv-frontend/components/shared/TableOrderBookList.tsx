@@ -6,8 +6,9 @@ import TableOrderBookItem from './TableOrderBookItem';
 
 interface Props {
   item_order: IItemOrder[] | ISItemOrder[];
+  mode: string;
 }
-const TableOrderBookList = ({ item_order }: Props) => {
+const TableOrderBookList = ({ item_order, mode }: Props) => {
   return (
     <TableBody>
       {item_order.map((item) => (
@@ -17,6 +18,7 @@ const TableOrderBookList = ({ item_order }: Props) => {
           book_imageUrl={item.book_imageUrl}
           book_price={item.book_price}
           quantity={item.quantity}
+          mode={mode}
         />
       ))}
     </TableBody>

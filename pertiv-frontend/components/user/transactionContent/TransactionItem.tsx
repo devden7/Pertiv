@@ -1,4 +1,4 @@
-import { ITransaction } from '@/model/user.model';
+import { IBorrowTransaction, ITransaction } from '@/model/user.model';
 import { formatNumberToRupiah } from '@/utils/formatRupiah';
 import React from 'react';
 import {
@@ -15,35 +15,32 @@ import DateInformation from './DateInformation';
 import TransactionKey from './transactionKey';
 import Link from 'next/link';
 import TableOrderBook from '@/components/shared/TableOrderBook';
-const TransactionItem = ({
-  id,
-  status,
-  buy_key,
-  buy_handled_by,
-  buy_date,
-  total_price,
-  created_at,
-  ended_at,
-  canceled_at,
-  paid_at,
-  item_Order,
-}: ITransaction) => {
+
+interface Props {
+  mode: string;
+  item: ITransaction | IBorrowTransaction;
+}
+const TransactionItem = ({ item, mode }: Props) => {
   const backgroundBadge =
-    status === 'pending'
+    item.status === 'pending'
       ? 'badge_pending'
-      : status === 'canceled'
+      : item.status === 'canceled'
       ? 'badge_canceled'
-      : status === 'success'
+      : item.status === 'success'
       ? 'badge_success'
       : 'badge_paid';
   return (
     <TableRow className="font-medium text-zinc-800">
-      <TableCell className="p-3 font-semibold text-lg">{id}</TableCell>
-      <TableCell>{formatDateTime(created_at)}</TableCell>
-      <TableCell>Rp {formatNumberToRupiah(total_price)}</TableCell>
+      <TableCell className="p-3 font-semibold text-lg">{item.id}</TableCell>
+      <TableCell>{formatDateTime(item.created_at)}</TableCell>
+      {mode !== 'bookBorrowing' && (
+        <TableCell>
+          Rp {formatNumberToRupiah((item as ITransaction).total_price)}
+        </TableCell>
+      )}
       <TableCell>
         <div className={`${backgroundBadge} max-w-20 rounded-md`}>
-          <p className="text-center">{status}</p>
+          <p className="text-center">{item.status}</p>
         </div>
       </TableCell>
       <TableCell>
@@ -52,22 +49,32 @@ const TransactionItem = ({
           <DialogContent className="overflow-auto max-h-[500px]">
             <DialogHeader>
               <DialogTitle>Details Transaction</DialogTitle>
-              <DialogDescription>Order ID : {id}</DialogDescription>
+              <DialogDescription>Order ID : {item.id}</DialogDescription>
             </DialogHeader>
-            <TableOrderBook item_order={item_Order} />
-            <TransactionKey status={status} buy_key={buy_key} />
-            <DateInformation
-              status={status}
-              created_at={created_at}
-              paid_at={paid_at}
-              canceled_at={canceled_at}
-              buy_date={buy_date}
+            <TableOrderBook
+              item_order={
+                (item as ITransaction).item_Order ||
+                (item as IBorrowTransaction).items
+              }
+              mode={mode}
             />
-            {status === 'pending' && (
+            <TransactionKey
+              status={item.status}
+              buy_key={(item as ITransaction).buy_key}
+            />
+            <DateInformation
+              status={item.status}
+              created_at={item.created_at}
+              paid_at={(item as ITransaction).paid_at}
+              canceled_at={item.canceled_at}
+              buy_date={(item as ITransaction).buy_date}
+              mode={mode}
+            />
+            {item.status === 'pending' && mode !== 'bookBorrowing' && (
               <p className="text-center text-zinc-700">
                 For payment please visit this{' '}
                 <Link
-                  href={`/payment/${id.split('#')[1]}`}
+                  href={`/payment/${item.id.split('#')[1]}`}
                   className="text-primary-500 font-medium"
                 >
                   Link

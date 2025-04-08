@@ -8,9 +8,10 @@ import TableOrderBookList from './TableOrderBookList';
 
 interface Props {
   item_order: IItemOrder[] | ISItemOrder[];
+  mode: string;
 }
 
-const TableOrderBook = ({ item_order }: Props) => {
+const TableOrderBook = ({ item_order, mode }: Props) => {
   return (
     <Card>
       <CardHeader>
@@ -27,11 +28,11 @@ const TableOrderBook = ({ item_order }: Props) => {
                 Image
               </TableHead>
               <TableHead className="max-w-[150px]">Item Name</TableHead>
-              <TableHead>Quantity</TableHead>
-              <TableHead>Price</TableHead>
+              {mode !== 'bookBorrowing' && <TableHead>Quantity</TableHead>}
+              {mode !== 'bookBorrowing' && <TableHead>Price</TableHead>}
             </TableRow>
           </TableHeader>
-          <TableOrderBookList item_order={item_order} />
+          <TableOrderBookList item_order={item_order} mode={mode} />
         </Table>
       </CardContent>
     </Card>
