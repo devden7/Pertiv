@@ -3366,6 +3366,14 @@
                       "return_handled_by": { "type": "string" },
                       "date_returned": { "type": "string" },
                       "returned_key": { "type": "string" },
+                      "userId": { "type": "string" },
+                      "user": {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" },
+                          "email": { "type": "string" }
+                        }
+                      },
                       "items": {
                         "type": "array",
                         "items": {
@@ -3385,6 +3393,80 @@
           },
           "400": {
             "description": "Error: Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/staff/accept-loan-book/{id}": {
+      "post": {
+        "tags": ["Staff"],
+        "summary": "Accept borrowing book",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "ID of the Borrow",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": { "type": "string" }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error: Order Not Found",
             "schema": {
               "type": "object",
               "properties": {

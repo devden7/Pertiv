@@ -13,6 +13,7 @@ import { formatDateTime } from '@/utils/formatDateTime';
 import { formatNumberToRupiah } from '@/utils/formatRupiah';
 import DateInformation from './DateInformation';
 import TableOrderBook from '@/components/shared/TableOrderBook';
+import { Button } from '@/components/ui/button';
 
 interface Props {
   item: ISTransaction | ISBorrowTransaction;
@@ -67,6 +68,12 @@ const TransactionItem = ({ item, mode }: Props) => {
               buy_date={(item as ISTransaction).buy_date}
               mode={mode}
             />
+            {item.status === 'pending' && (
+              <div className="flex justify-center gap-2">
+                <Button className="btn_primary">Accept</Button>
+                <Button variant="outline">Reject</Button>
+              </div>
+            )}
           </DialogContent>
         </Dialog>
       </TableCell>

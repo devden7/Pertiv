@@ -1,6 +1,7 @@
 const { formatISO } = require('date-fns/formatISO');
 const logger = require('../../lib/winston/winstonLogger');
 const prisma = require('../../utils/prismaConnection');
+const generateLoanKey = require('../../utils/randomLoanKey');
 
 const transactions = async (req, res, next) => {
   try {
@@ -215,6 +216,8 @@ const borrowtransactions = async (req, res, next) => {
       return_handled_by: item.return_handled_by,
       date_returned: item.date_returned,
       returned_key: item.returned_key,
+      userId: item.userId,
+      user: item.user,
       items: item.items.map((order) => ({
         id: order.id,
         book_title: order.book_title,
@@ -242,4 +245,57 @@ const borrowtransactions = async (req, res, next) => {
   }
 };
 
-module.exports = { transactions, confirmOrder, borrowtransactions };
+const acceptLoanBook = async (req, res, next) => {
+  try {
+    const paramsId = req.params.id;
+    logger.info(`Controller USER acceptLoanBook -  Borrow ID : ${paramsId}  `);
+    const findOrderQuery = await prisma.bookBorrowed.findUnique({
+      where: {
+        id: `#${paramsId}`,
+      },
+    });
+
+    if (!findOrderQuery) {
+      const error = new Error('Book borrowed not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    if (findOrderQuery.status !== 'pending') {
+      const error = new Error('Book borrowed is not valid');
+      error.success = false;
+      error.statusCode = 400;
+      throw error;
+    }
+    await prisma.bookBorrowed.update({
+      where: {
+        id: `#${paramsId}`,
+      },
+      data: {
+        status: 'Take book',
+        loan_key: generateLoanKey(),
+        loan_date: formatISO(new Date()),
+      },
+    });
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'Borrowed successfully',
+    });
+  } catch (error) {
+    logger.error(`ERROR USER Controller acceptLoanBook - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
+module.exports = {
+  transactions,
+  confirmOrder,
+  borrowtransactions,
+  acceptLoanBook,
+};
