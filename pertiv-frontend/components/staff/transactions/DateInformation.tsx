@@ -10,6 +10,7 @@ interface Props {
   canceled_at: string;
   paid_at: string;
   buy_date: string;
+  mode: string;
 }
 const DateInformation = ({
   status,
@@ -17,6 +18,7 @@ const DateInformation = ({
   canceled_at,
   paid_at,
   buy_date,
+  mode,
 }: Props) => {
   return (
     <Card>
@@ -29,7 +31,7 @@ const DateInformation = ({
       <Separator />
       <CardContent className="mt-3">
         <div className="flex items-center justify-between font-medium">
-          <div>Order date</div>
+          <div>{mode !== 'bookBorrowing' ? 'Order date' : 'Loan date'}</div>
           <div className="text-zinc-600">{formatDateTime(created_at)}</div>
         </div>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ISTransaction } from '@/model/staff.model';
+import { ISBorrowTransaction, ISTransaction } from '@/model/staff.model';
 import {
   Dialog,
   DialogContent,
@@ -14,40 +14,34 @@ import { formatNumberToRupiah } from '@/utils/formatRupiah';
 import DateInformation from './DateInformation';
 import TableOrderBook from '@/components/shared/TableOrderBook';
 
-const TransactionItem = ({
-  id,
-  status,
-  buy_key,
-  buy_handled_by,
-  buy_date,
-  total_price,
-  created_at,
-  ended_at,
-  canceled_at,
-  paid_at,
-  userId,
-  user,
-  item_order,
-}: ISTransaction) => {
+interface Props {
+  item: ISTransaction | ISBorrowTransaction;
+  mode: string;
+}
+const TransactionItem = ({ item, mode }: Props) => {
   const backgroundBadge =
-    status === 'pending'
+    item.status === 'pending'
       ? 'badge_pending'
-      : status === 'canceled'
+      : item.status === 'canceled'
       ? 'badge_canceled'
-      : status === 'success'
+      : item.status === 'success'
       ? 'badge_success'
       : 'badge_paid';
   return (
     <TableRow className="font-medium text-zinc-800">
-      <TableCell className="p-3 font-semibold text-lg">{id}</TableCell>
-      <TableCell>{user.name}</TableCell>
-      <TableCell>{user.email}</TableCell>
-      <TableCell>{formatDateTime(created_at)}</TableCell>
-      <TableCell>Rp {formatNumberToRupiah(total_price)}</TableCell>
-      <TableCell>{buy_handled_by}</TableCell>
+      <TableCell className="p-3 font-semibold text-lg">{item.id}</TableCell>
+      <TableCell>{item.user.name}</TableCell>
+      <TableCell>{item.user.email}</TableCell>
+      <TableCell>{formatDateTime(item.created_at)}</TableCell>
+      {mode !== 'bookBorrowing' && (
+        <TableCell>
+          Rp {formatNumberToRupiah((item as ISTransaction).total_price)}
+        </TableCell>
+      )}
+      <TableCell>{(item as ISTransaction).buy_handled_by}</TableCell>
       <TableCell>
         <div className={`${backgroundBadge} max-w-20 rounded-md`}>
-          <p className="text-center">{status}</p>
+          <p className="text-center">{item.status}</p>
         </div>
       </TableCell>
       <TableCell>
@@ -56,15 +50,22 @@ const TransactionItem = ({
           <DialogContent className="overflow-auto max-h-[500px]">
             <DialogHeader>
               <DialogTitle>Details Transaction</DialogTitle>
-              <DialogDescription>Order ID : {id}</DialogDescription>
+              <DialogDescription>Order ID : {item.id}</DialogDescription>
             </DialogHeader>
-            <TableOrderBook item_order={item_order} />
+            <TableOrderBook
+              item_order={
+                (item as ISTransaction).item_order ||
+                (item as ISBorrowTransaction).items
+              }
+              mode={mode}
+            />
             <DateInformation
-              status={status}
-              created_at={created_at}
-              paid_at={paid_at}
-              canceled_at={canceled_at}
-              buy_date={buy_date}
+              status={item.status}
+              created_at={item.created_at}
+              paid_at={(item as ISTransaction).paid_at}
+              canceled_at={item.canceled_at}
+              buy_date={(item as ISTransaction).buy_date}
+              mode={mode}
             />
           </DialogContent>
         </Dialog>

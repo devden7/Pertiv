@@ -68,6 +68,30 @@ export interface ISItemUser {
   name: string;
 }
 
+export interface ISBorrowTransaction {
+  id: string;
+  status: string;
+  loan_key: string;
+  loan_handled_by: string;
+  loan_date: string;
+  created_at: string;
+  canceled_at: string;
+  return_handled_by: string;
+  date_returned: string;
+  returned_key: string;
+  userId: string;
+  user: ISItemUser;
+  items: ISItemBorrow[];
+}
+
+export interface ISItemBorrow {
+  id: string;
+  book_title: string;
+  book_imageUrl: string;
+  book_price: number;
+  quantity: number;
+}
+
 export interface IDashboard {
   pieChart: IPieChart;
   areaChart: IAreaChart;

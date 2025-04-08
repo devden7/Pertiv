@@ -1,13 +1,13 @@
 import React from 'react';
 import { Table, TableHeader, TableRow, TableHead } from '@/components/ui/table';
-import { ISTransaction } from '@/model/staff.model';
+import { ISBorrowTransaction, ISTransaction } from '@/model/staff.model';
 import TransactionList from './TransactionList';
 import FormConfirmBook from './FormConfirmBook';
 import { PaginationWithLinks } from '@/components/ui/pagination-with-links';
 import SearchInput from '@/components/shared/SearchInput';
 
 interface Props {
-  data: ISTransaction[];
+  data: ISTransaction[] | ISBorrowTransaction[];
   page: number;
   pageSize: number;
   totalCount: number;
@@ -49,14 +49,18 @@ const TransactionContent = ({
               <TableHead>ORDER ID</TableHead>
               <TableHead>NAME</TableHead>
               <TableHead>EMAIL</TableHead>
-              <TableHead className="max-w-[150px]">BUYING DATE</TableHead>
-              <TableHead>TOTAL PRICE</TableHead>
+
+              <TableHead className="max-w-[150px]">
+                {mode !== 'bookBorrowing' ? 'BUYING DATE' : 'LOAN DATE'}
+              </TableHead>
+              {mode !== 'bookBorrowing' && <TableHead>TOTAL PRICE</TableHead>}
               <TableHead>HANDLE BY</TableHead>
               <TableHead>STATUS</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
-          <TransactionList data={data} />
+          {data.length === 0 && <p>List not found</p>}
+          <TransactionList data={data} mode={mode} />
         </Table>
       </section>
       {totalCount > 0 && (
