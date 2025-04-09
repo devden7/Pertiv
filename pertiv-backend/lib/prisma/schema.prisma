@@ -17,13 +17,13 @@ model User {
   role     String
   image    String?
 
-  membership Membership?
   cart     Cart[]
   collection Collection[]
   orders   Order[]
   books_borrowed BookBorrowed[]
   Book_selling BookSelling[]
   Book_borrowing BookBorrowing[]
+  membership_transaction MembershipTransaction[]
 }
 
 model Penalty {
@@ -39,12 +39,35 @@ model Penalty {
 
 model Membership {
   id       String @id @default(uuid())
-  type     String
+  name           String    @unique
+  description    String    
+  durationDays   Int       
+  maxBorrow      Int       
+  maxReturn      Int       
+  price          Float     
+  createdAt      DateTime  @default(now()) @db.Timestamptz()
+
+  MmembershipTransaction MembershipTransaction[]
+}
+
+model MembershipTransaction {
+  id       String @id @default(uuid())
+  name   String
+  description String
+  durationDays Int
+  maxBorrow Int
+  maxReturn Int
+  price Int
   start_date DateTime @db.Timestamptz()
   end_date   DateTime @db.Timestamptz()
 
-  user_id   String @unique
-  user     User @relation(fields: [user_id], references: [id])
+  created_at DateTime @default(now()) @db.Timestamptz()
+
+  user_id        String
+  membership_id  String
+
+  user          User         @relation(fields: [user_id], references: [id])
+  membership    Membership   @relation(fields: [membership_id], references: [id])
 }
 
 model Publisher {
