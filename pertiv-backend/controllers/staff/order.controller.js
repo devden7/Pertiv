@@ -3,7 +3,6 @@ const logger = require('../../lib/winston/winstonLogger');
 const prisma = require('../../utils/prismaConnection');
 const generateLoanKey = require('../../utils/randomLoanKey');
 const { endDate14Days } = require('../../utils/createEndDateTime');
-const generateReturnedBooknKey = require('../../utils/randomReturnedBookKey');
 
 const transactions = async (req, res, next) => {
   try {
@@ -436,6 +435,20 @@ const confirmReturnBook = async (req, res, next) => {
       error.success = false;
       error.statusCode = 400;
       throw error;
+    }
+    const dateNow = formatISO(new Date());
+    const dateDueReturn = formatISO(findBookBorrowedQuery.ended_at);
+
+    if (dateNow > dateDueReturn) {
+      await prisma.penalty.create({
+        data: {
+          price: 5000,
+          type: 'active',
+          start_date: formatISO(new Date()),
+          end_date: formatISO(addDays(new Date(), 3)),
+          borrowed_id: findBookBorrowedQuery.id,
+        },
+      });
     }
 
     await prisma.bookBorrowed.update({

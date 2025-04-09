@@ -399,6 +399,12 @@ const createBorrowBook = async (req, res, next) => {
       where: {
         bookBorrowed: {
           userId: id,
+          OR: [
+            { status: 'pending' },
+            { status: 'accepted' },
+            { status: 'borrowed' },
+            { status: 'return req' },
+          ],
         },
       },
       include: {
@@ -430,11 +436,37 @@ const createBorrowBook = async (req, res, next) => {
         book_borrowing_id: {
           in: findBooksBorrowingQuery.map((item) => item.id),
         },
+        bookBorrowed: {
+          OR: [
+            { status: 'pending' },
+            { status: 'accepted' },
+            { status: 'borrowed' },
+            { status: 'return req' },
+          ],
+        },
       },
     });
 
     if (existingBorrow) {
       const error = new Error('You have already borrowed this book.');
+      error.success = false;
+      error.statusCode = 400;
+      throw error;
+    }
+    const findPenaltyQuery = await prisma.bookBorrowed.findMany({
+      where: {
+        userId: id,
+        penalty: {
+          type: 'active',
+        },
+      },
+      include: {
+        penalty: true,
+      },
+    });
+
+    if (findPenaltyQuery.length > 0) {
+      const error = new Error('Your account have an active penalty.');
       error.success = false;
       error.statusCode = 400;
       throw error;

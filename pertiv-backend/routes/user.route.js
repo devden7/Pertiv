@@ -1,5 +1,8 @@
 const express = require('express');
-const { registerAccount } = require('../controllers/auth/auth.controller');
+const {
+  registerAccount,
+  penaltyInfo,
+} = require('../controllers/auth/auth.controller');
 const { body } = require('express-validator');
 const { PrismaClient } = require('@prisma/client');
 const {
@@ -96,5 +99,6 @@ router.post('/remove-item-loan-cart', userMiddleware, removeItemFromLoanCart);
 router.post('/borrow-book', userMiddleware, createBorrowBook);
 router.get('/borrow-transactions', userMiddleware, borrowTransactions);
 router.post('/returned-book/:id', userMiddleware, bookReturnRequested);
+router.get('/penalty', userMiddleware, penaltyInfo);
 
 module.exports = router;

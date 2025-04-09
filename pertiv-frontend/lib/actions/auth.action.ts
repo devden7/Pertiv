@@ -46,7 +46,6 @@ export const getUserToken = async () => {
       name: user.payload.name as string,
       role: user.payload.role as string,
       image: user.payload.image as string,
-      is_penalty: user.payload.is_penalty as boolean,
     };
     return { token: getToken.value, ...userInfo };
   } catch (error) {
@@ -79,5 +78,20 @@ export const regiterAccount = async (
     return data;
   } catch (error) {
     console.log('Error from loginAuth action', error);
+  }
+};
+
+export const getPenaltyInfo = async (token?: string) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/user/penalty`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      cache: 'no-store',
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Error from getPenaltyInfo action ', error);
   }
 };

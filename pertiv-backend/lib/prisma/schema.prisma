@@ -16,7 +16,6 @@ model User {
   password String  @db.VarChar(255)
   role     String
   image    String?
-  is_penalty Boolean @default(false)
 
   membership Membership?
   cart     Cart[]
@@ -25,6 +24,17 @@ model User {
   books_borrowed BookBorrowed[]
   Book_selling BookSelling[]
   Book_borrowing BookBorrowing[]
+}
+
+model Penalty {
+  id       String @id @default(uuid())
+  type     String
+  price   Int?
+  start_date DateTime @db.Timestamptz()
+  end_date   DateTime @db.Timestamptz()
+
+  borrowed_id  String @unique
+  bookBorrowed BookBorrowed @relation(fields: [borrowed_id], references: [id])
 }
 
 model Membership {
@@ -214,6 +224,7 @@ model BookBorrowed {
 
   userId         String
   items          ItemBorrowed[]
+  penalty Penalty?
 
   user           User @relation(fields: [userId], references: [id])
 }

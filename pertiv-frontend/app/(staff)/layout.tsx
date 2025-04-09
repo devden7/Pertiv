@@ -14,7 +14,7 @@ const BooksHomePage = async ({ children }: { children: ReactNode }) => {
   return (
     <>
       <SidebarProvider>
-        <AppSidebar />
+        <AppSidebar auth={user} />
         <SidebarContent>{children}</SidebarContent>
       </SidebarProvider>
     </>

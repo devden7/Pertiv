@@ -15,8 +15,12 @@ import { Book, LayoutDashboard, ScrollText } from 'lucide-react';
 import Link from 'next/link';
 import LogoutButton from './LogoutButton';
 import { useSearchParams } from 'next/navigation';
+import { AuthUser } from '@/model/auth.model';
 
-const AppSidebar = () => {
+interface Props {
+  auth: AuthUser | null | undefined;
+}
+const AppSidebar = ({ auth }: Props) => {
   const search = useSearchParams();
   const modeParams = search.get('mode');
   return (
@@ -69,7 +73,7 @@ const AppSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <LogoutButton />
+        <LogoutButton auth={auth} />
       </SidebarFooter>
     </Sidebar>
   );

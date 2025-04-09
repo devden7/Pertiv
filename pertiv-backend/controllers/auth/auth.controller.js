@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const { JWT_SECRET } = require('../../config/env');
 const { validationResult } = require('express-validator');
 const prisma = require('../../utils/prismaConnection');
+const { formatISO } = require('date-fns');
 
 const loginAuth = async (req, res, next) => {
   try {
@@ -48,7 +49,6 @@ const loginAuth = async (req, res, next) => {
         name: findUserQuery.name,
         role: findUserQuery.role,
         image: findUserQuery.image,
-        is_penalty: findUserQuery.is_penalty,
       },
       JWT_SECRET,
       {
@@ -119,7 +119,65 @@ const registerAccount = async (req, res, next) => {
   }
 };
 
+const penaltyInfo = async (req, res, next) => {
+  try {
+    const { id } = req.user;
+    logger.info(`Controller AUTH penaltyInfo - Penalty account : ${id}`);
+    let findPenaltyQuery = await prisma.penalty.findMany({
+      where: {
+        bookBorrowed: {
+          userId: id,
+        },
+        type: 'active',
+      },
+    });
+
+    const dateNow = formatISO(new Date());
+
+    const dateDuePenalty = formatISO(findPenaltyQuery[0].end_date);
+
+    if (dateNow > dateDuePenalty) {
+      findPenaltyQuery = await prisma.penalty.update({
+        where: {
+          id: findPenaltyQuery[0].id,
+          bookBorrowed: {
+            userId: id,
+          },
+          type: 'active',
+        },
+        data: {
+          type: 'inactive',
+        },
+      });
+    }
+
+    const penaltyResult = findPenaltyQuery.map((penalty) => {
+      return {
+        id: penalty.id,
+        type: penalty.type,
+        price: penalty.price,
+        start_date: penalty.start_date,
+        end_date: penalty.end_date,
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      data: penaltyResult,
+    });
+  } catch (error) {
+    logger.error(`ERROR AUTH controller penaltyInfo  - ${error}`);
+
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
 module.exports = {
   loginAuth,
   registerAccount,
+  penaltyInfo,
 };

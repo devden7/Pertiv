@@ -14,32 +14,21 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { useEffect, useState } from 'react';
-import { deleteCookie, getUserToken } from '@/lib/actions/auth.action';
+import { deleteCookie } from '@/lib/actions/auth.action';
 import { useRouter } from 'next/navigation';
 import { AuthUser } from '@/model/auth.model';
 
-const LogoutButton = () => {
+interface Props {
+  auth: AuthUser | null | undefined;
+}
+const LogoutButton = ({ auth }: Props) => {
   const { isMobile } = useSidebar();
-  const [auth, setAuth] = useState<AuthUser | null | undefined>(null);
 
   const router = useRouter();
 
-  useEffect(() => {
-    const getAuth = async () => {
-      const user = await getUserToken();
-      setAuth(user);
-    };
-
-    getAuth();
-  }, []);
-
   const logoutBtnHandler = async () => {
     await deleteCookie();
-    router.push('/login');
-    setTimeout(() => {
-      setAuth(null);
-    }, 3000);
+    router.push('/');
   };
 
   return (

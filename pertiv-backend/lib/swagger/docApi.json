@@ -3647,7 +3647,7 @@
         }
       }
     },
-    "/staff/returned-book/{id}": {
+    "/user/returned-book/{id}": {
       "post": {
         "tags": ["User"],
         "summary": "return requested book",
@@ -3779,6 +3779,57 @@
                 "message": {
                   "type": "string"
                 }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/penalty": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get Penalty information",
+
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "type": { "type": "string" },
+                      "price": { "type": "number" },
+                      "start_date": { "type": "string" },
+                      "end_date": { "type": "string" }
+                    }
+                  }
+                },
+                "totalCount": { "type": "number" }
               }
             }
           },

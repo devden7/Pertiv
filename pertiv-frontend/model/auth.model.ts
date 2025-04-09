@@ -4,6 +4,5 @@ export interface AuthUser {
   name: string;
   role: string;
   image: string;
-  is_penalty: boolean;
   token?: string;
 }
