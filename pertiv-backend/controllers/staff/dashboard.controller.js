@@ -27,17 +27,10 @@ const dashboard = async (req, res, next) => {
           lte: new Date(end).toISOString(),
           gte: new Date(start).toISOString(),
         },
-        OR: [
-          { status: 'accepted' },
-          { status: 'canceled' },
-          { status: 'borrowed' },
-          { status: 'return req' },
-          { status: 'returned' },
-        ],
+
+        status: 'borrowed',
       },
     });
-
-    console.log(findOrderSuccessBorrowingQuery);
 
     //FOR AREA CHART BOOK SELLING
     const findAllTransactionBookSellingQuery = await prisma.order.findMany({
@@ -264,7 +257,10 @@ const dashboard = async (req, res, next) => {
       statusCode: 200,
       message: 'Dashboard Overview',
       data: {
-        pieChart: { bookSellingSuccess: findOrderSuccessQuery },
+        pieChart: {
+          bookSellingSuccess: findOrderSuccessQuery,
+          bookBorrowingSuccess: findOrderSuccessBorrowingQuery,
+        },
         areaChart: {
           transactionsBookSelling: data,
           transactionBookBorrowing: dataBorrowing,

@@ -1,4 +1,8 @@
-import { StaffBookSellingHandle } from '@/model/staff.model';
+import {
+  StaffBookSellingHandle,
+  staffHandlingLoan,
+  staffHandlingReturn,
+} from '@/model/staff.model';
 import React from 'react';
 import {
   Card,
@@ -10,17 +14,19 @@ import {
 import TableStafHandling from './TableStafHandling';
 
 interface Props {
-  data: StaffBookSellingHandle[];
+  data: StaffBookSellingHandle[] | staffHandlingLoan[] | staffHandlingReturn[];
+  title: string;
+  type: string;
 }
-const TopStaffHandling = ({ data }: Props) => {
+const TopStaffHandling = ({ data, title, type }: Props) => {
   return (
     <Card className="flex flex-col mt-3">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Top 10 Staff Handling</CardTitle>
+        <CardTitle>{title}</CardTitle>
         <CardDescription>Staff handling success transaction</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
-        <TableStafHandling data={data} />
+        <TableStafHandling data={data} type={type} />
       </CardContent>
     </Card>
   );

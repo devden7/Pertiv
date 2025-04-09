@@ -1,20 +1,22 @@
 import { TableCell, TableRow } from '@/components/ui/table';
-import { BookSellingSale } from '@/model/staff.model';
+import { BookBorrowingSale, BookSellingSale } from '@/model/staff.model';
 import { formatNumberToRupiah } from '@/utils/formatRupiah';
 import React from 'react';
 
-const TableBookSellingItem = ({
-  book_title,
-  quantity,
-  book_price,
-  calc,
-}: BookSellingSale) => {
+interface Props {
+  data: BookSellingSale | BookBorrowingSale;
+}
+const TableBookSellingItem = ({ data }: Props) => {
   return (
     <TableRow className="font-medium text-zinc-800 text-xs text-center">
-      <TableCell>{book_title}</TableCell>
-      <TableCell>Rp {formatNumberToRupiah(book_price)}</TableCell>
-      <TableCell>{quantity}</TableCell>
-      <TableCell>Rp {formatNumberToRupiah(calc)}</TableCell>
+      <TableCell>{data.book_title}</TableCell>
+      {'book_price' in data && (
+        <TableCell>Rp {formatNumberToRupiah(data.book_price)}</TableCell>
+      )}
+      <TableCell>{data.quantity}</TableCell>
+      {'calc' in data && (
+        <TableCell> {formatNumberToRupiah(data.calc)}</TableCell>
+      )}
       <TableCell></TableCell>
     </TableRow>
   );

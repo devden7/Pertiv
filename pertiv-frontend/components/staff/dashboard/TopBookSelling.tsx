@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookSellingSale } from '@/model/staff.model';
+import { BookBorrowingSale, BookSellingSale } from '@/model/staff.model';
 import {
   Card,
   CardContent,
@@ -9,17 +9,20 @@ import {
 } from '@/components/ui/card';
 import TableBooksSellingSales from './TableBooksSellingSales';
 interface Props {
-  data: BookSellingSale[];
+  data: BookSellingSale[] | BookBorrowingSale[];
+  type: string;
+  title: string;
+  description: string;
 }
-const TopBookSelling = ({ data }: Props) => {
+const TopBookSelling = ({ data, type, title, description }: Props) => {
   return (
     <Card className="flex flex-col mt-3">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Top 10 Books Selling</CardTitle>
-        <CardDescription>Best seller books Selling</CardDescription>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
-        <TableBooksSellingSales data={data} />
+        <TableBooksSellingSales data={data} type={type} />
       </CardContent>
     </Card>
   );

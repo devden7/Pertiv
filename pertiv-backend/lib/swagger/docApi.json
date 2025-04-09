@@ -2225,7 +2225,8 @@
                     "pieChart": {
                       "type": "object",
                       "properties": {
-                        "bookSellingSuccess": { "type": "number" }
+                        "bookSellingSuccess": { "type": "number" },
+                        "bookBorrowingSuccess": { "type": "number" }
                       }
                     },
                     "areaChart": {

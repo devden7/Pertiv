@@ -10,25 +10,23 @@ import {
 import { Label, Pie, PieChart } from 'recharts';
 
 import { type ChartConfig, ChartContainer } from '@/components/ui/chart';
-import { IPieChart } from '@/model/staff.model';
 
 interface Props {
-  books: IPieChart;
+  books: number;
+  type: string;
 }
 
 const chartConfig = {
-  booksSelling: {
-    label: 'bookSellingSuccess',
+  books: {
+    label: 'books',
     color: 'hsl(var(--chart-1))',
   },
 } satisfies ChartConfig;
-const PieCharts = ({ books }: Props) => {
-  const [chartData, setChartData] = useState<
-    { bookSellingSuccess: number }[] | undefined
-  >();
+const PieCharts = ({ books, type }: Props) => {
+  const [chartData, setChartData] = useState<{ books: number }[] | undefined>();
 
   const getData = () => {
-    const newData = [{ ...books }];
+    const newData = [{ books }];
     setChartData(newData);
   };
 
@@ -41,7 +39,7 @@ const PieCharts = ({ books }: Props) => {
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
         <CardTitle>Transaction success</CardTitle>
-        <CardDescription>Book Selling</CardDescription>
+        <CardDescription>{type}</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -51,8 +49,8 @@ const PieCharts = ({ books }: Props) => {
           <PieChart>
             <Pie
               data={chartData}
-              fill="var(--color-booksSelling)"
-              dataKey="bookSellingSuccess"
+              fill="var(--color-books)"
+              dataKey="books"
               innerRadius={60}
               strokeWidth={5}
             >
@@ -71,7 +69,7 @@ const PieCharts = ({ books }: Props) => {
                           y={viewBox.cy}
                           className="fill-foreground text-3xl font-bold"
                         >
-                          {books.bookSellingSuccess}
+                          {books}
                         </tspan>
                         <tspan
                           x={viewBox.cx}

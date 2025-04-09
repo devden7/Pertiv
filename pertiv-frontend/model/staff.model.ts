@@ -97,20 +97,30 @@ export interface IDashboard {
   pieChart: IPieChart;
   areaChart: IAreaChart;
   bookSellingSales: BookSellingSale[];
+  dataBookBorrowed: BookBorrowingSale[];
   staffBookSellingHandle: StaffBookSellingHandle[];
+  staffHandlingLoan: staffHandlingLoan[];
+  staffHandlingReturn: staffHandlingReturn[];
 }
 
 export interface IPieChart {
   bookSellingSuccess: number;
+  bookBorrowingSuccess: number;
 }
 
 export interface IAreaChart {
   transactionsBookSelling: TransactionsBookSelling[];
+  transactionBookBorrowing: TransactionsBookBorrowing[];
 }
 
 export interface TransactionsBookSelling {
   time: string;
-  book_selling: number;
+  bookSelling: number;
+}
+
+export interface TransactionsBookBorrowing {
+  time: string;
+  bookBorrowing: number;
 }
 
 export interface BookSellingSale {
@@ -120,9 +130,24 @@ export interface BookSellingSale {
   calc: number;
 }
 
+export interface BookBorrowingSale {
+  quantity: number;
+  book_title: string;
+}
+
 export interface StaffBookSellingHandle {
   staffName: string;
   totalHandledSuccess: number;
+}
+
+export interface staffHandlingLoan {
+  staffName: string;
+  totalLoanHandled: number;
+}
+
+export interface staffHandlingReturn {
+  staffName: string;
+  totalReturnHandled: number;
 }
 
 export const booksSellingFormSchema = z.object({
