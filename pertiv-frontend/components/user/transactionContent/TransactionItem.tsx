@@ -1,6 +1,8 @@
+'use client';
+
 import { IBorrowTransaction, ITransaction } from '@/model/user.model';
 import { formatNumberToRupiah } from '@/utils/formatRupiah';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -15,20 +17,57 @@ import DateInformation from './DateInformation';
 import TransactionKey from './transactionKey';
 import Link from 'next/link';
 import TableOrderBook from '@/components/shared/TableOrderBook';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Ellipsis } from 'lucide-react';
+import { returnLoanBook } from '@/lib/actions/user.action';
+import { toast } from '@/hooks/use-toast';
+import { badgeStatusColor } from '@/utils/badgeStatusColor';
 
 interface Props {
   mode: string;
   item: ITransaction | IBorrowTransaction;
+  token?: string;
 }
-const TransactionItem = ({ item, mode }: Props) => {
-  const backgroundBadge =
-    item.status === 'pending'
-      ? 'badge_pending'
-      : item.status === 'canceled'
-      ? 'badge_canceled'
-      : item.status === 'success'
-      ? 'badge_success'
-      : 'badge_paid';
+const TransactionItem = ({ item, mode, token }: Props) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const returnBookHandler = async () => {
+    setIsLoading(true);
+    const splitOrderId = item.id.split('#');
+    const response = await returnLoanBook(splitOrderId[1], token);
+
+    if (!response) {
+      toast({
+        variant: 'destructive',
+        title: 'Oh! Something went wrong!',
+        description: 'Internal server error',
+        duration: 2000,
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    if (!response.success && response.statusCode !== 201) {
+      toast({
+        variant: 'destructive',
+        title: response.message,
+        duration: 2000,
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    toast({
+      title: response.message,
+      duration: 2000,
+    });
+    setIsLoading(false);
+  };
   return (
     <TableRow className="font-medium text-zinc-800">
       <TableCell className="p-3 font-semibold text-lg">{item.id}</TableCell>
@@ -39,13 +78,35 @@ const TransactionItem = ({ item, mode }: Props) => {
         </TableCell>
       )}
       <TableCell>
-        <div className={`${backgroundBadge} max-w-20 rounded-md`}>
+        <div className={`${badgeStatusColor(item.status)} max-w-20 rounded-md`}>
           <p className="text-center">{item.status}</p>
         </div>
       </TableCell>
       <TableCell>
         <Dialog>
-          <DialogTrigger>View Details</DialogTrigger>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="cursor-pointer">
+                <Ellipsis size={15} />
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="left">
+              <DropdownMenuItem className="cursor-pointer">
+                <DialogTrigger className="w-full text-left">
+                  View details
+                </DialogTrigger>
+              </DropdownMenuItem>
+              {item.status === 'borrowed' && (
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={returnBookHandler}
+                  disabled={isLoading}
+                >
+                  Return book
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
           <DialogContent className="overflow-auto max-h-[500px]">
             <DialogHeader>
               <DialogTitle>Details Transaction</DialogTitle>
@@ -62,6 +123,7 @@ const TransactionItem = ({ item, mode }: Props) => {
               status={item.status}
               keyValue={
                 (item as ITransaction).buy_key ||
+                (item as IBorrowTransaction).returned_key ||
                 (item as IBorrowTransaction).loan_key
               }
             />
@@ -72,6 +134,8 @@ const TransactionItem = ({ item, mode }: Props) => {
                 paid_at: (item as ITransaction).paid_at,
                 buy_date: (item as ITransaction).buy_date,
                 loan_date: (item as IBorrowTransaction).loan_date,
+                ended_at: (item as IBorrowTransaction).ended_at,
+                date_returned: (item as IBorrowTransaction).date_returned,
               }}
               canceled_at={item.canceled_at}
               mode={mode}

@@ -76,6 +76,7 @@ export interface ISBorrowTransaction {
   loan_date: string;
   created_at: string;
   canceled_at: string;
+  ended_at: string;
   return_handled_by: string;
   date_returned: string;
   returned_key: string;

@@ -3,6 +3,7 @@ const logger = require('../../lib/winston/winstonLogger');
 const prisma = require('../../utils/prismaConnection');
 const generateLoanKey = require('../../utils/randomLoanKey');
 const { endDate14Days } = require('../../utils/createEndDateTime');
+const generateReturnedBooknKey = require('../../utils/randomReturnedBookKey');
 
 const transactions = async (req, res, next) => {
   try {
@@ -213,6 +214,7 @@ const borrowtransactions = async (req, res, next) => {
       loan_handled_by: item.loan_handled_by,
       loan_date: item.loan_date,
       created_at: item.created_at,
+      ended_at: item.ended_at,
       canceled_at: item.canceled_at,
       return_handled_by: item.return_handled_by,
       date_returned: item.date_returned,
@@ -274,7 +276,7 @@ const acceptLoanBook = async (req, res, next) => {
         id: `#${paramsId}`,
       },
       data: {
-        status: 'Take book',
+        status: 'accepted',
         loan_key: generateLoanKey(),
       },
     });
@@ -364,7 +366,7 @@ const confirmLoan = async (req, res, next) => {
     const findBookBorrowedQuery = await prisma.bookBorrowed.findUnique({
       where: {
         loan_key: keyValue,
-        status: 'Take book',
+        status: 'accepted',
       },
     });
 
@@ -381,7 +383,7 @@ const confirmLoan = async (req, res, next) => {
         status: findBookBorrowedQuery.status,
       },
       data: {
-        status: 'on loan',
+        status: 'borrowed',
         loan_handled_by: findStaffQuery.email,
         loan_date: formatISO(new Date()),
         ended_at: endDate14Days(),
@@ -402,6 +404,66 @@ const confirmLoan = async (req, res, next) => {
   }
 };
 
+const confirmReturnBook = async (req, res, next) => {
+  try {
+    const { id } = req.user;
+    const { keyValue } = req.body;
+    logger.info(`Controller STAFF confirmReturned -  Staff ID : ${id}`);
+
+    const findStaffQuery = await prisma.user.findUnique({
+      where: {
+        id,
+        role: 'staff',
+      },
+    });
+
+    if (!findStaffQuery) {
+      const error = new Error('Staff not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const findBookBorrowedQuery = await prisma.bookBorrowed.findUnique({
+      where: {
+        returned_key: keyValue,
+        status: 'return req',
+      },
+    });
+
+    if (!findBookBorrowedQuery) {
+      const error = new Error('invalid returned transaction');
+      error.success = false;
+      error.statusCode = 400;
+      throw error;
+    }
+
+    await prisma.bookBorrowed.update({
+      where: {
+        id: findBookBorrowedQuery.id,
+        status: findBookBorrowedQuery.status,
+      },
+      data: {
+        status: 'returned',
+        return_handled_by: findStaffQuery.email,
+        date_returned: formatISO(new Date()),
+      },
+    });
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'Book successfully returned',
+    });
+  } catch (error) {
+    logger.error(`ERROR STAFF Controller confirmReturned - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   transactions,
   confirmOrder,
@@ -409,4 +471,5 @@ module.exports = {
   acceptLoanBook,
   rejectLoanBook,
   confirmLoan,
+  confirmReturnBook,
 };

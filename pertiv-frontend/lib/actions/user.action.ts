@@ -325,3 +325,24 @@ export const getBorrowTransactions = async (
     console.log('Error from getBookCart action ', error);
   }
 };
+
+export const returnLoanBook = async (borrowId: string, token?: string) => {
+  try {
+    const response = await fetch(
+      `${ENV.API_URL}/user/returned-book/${borrowId}`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const data = await response.json();
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from returnLoanBook action ', error);
+  }
+};

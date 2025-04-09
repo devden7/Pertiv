@@ -59,6 +59,7 @@ export interface IBorrowTransaction {
   loan_handled_by: string;
   loan_date: string;
   created_at: string;
+  ended_at: string;
   canceled_at: string;
   return_handled_by: string;
   date_returned: string;

@@ -26,6 +26,7 @@ const {
   transactions,
   createBorrowBook,
   borrowTransactions,
+  bookReturnRequested,
 } = require('../controllers/user/order.controller');
 
 const router = express.Router();
@@ -94,5 +95,6 @@ router.post('/remove-item-loan-cart', userMiddleware, removeItemFromLoanCart);
 
 router.post('/borrow-book', userMiddleware, createBorrowBook);
 router.get('/borrow-transactions', userMiddleware, borrowTransactions);
+router.post('/returned-book/:id', userMiddleware, bookReturnRequested);
 
 module.exports = router;

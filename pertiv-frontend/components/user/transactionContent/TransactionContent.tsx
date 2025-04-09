@@ -13,6 +13,7 @@ interface Props {
   pageSize: number;
   totalCount: number;
   mode: string;
+  token?: string;
 }
 const TransactionContent = ({
   data,
@@ -20,6 +21,7 @@ const TransactionContent = ({
   pageSize,
   totalCount,
   mode,
+  token,
 }: Props) => {
   return (
     <>
@@ -54,7 +56,7 @@ const TransactionContent = ({
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>
-            <TransactionList data={data} mode={mode} />
+            <TransactionList data={data} mode={mode} token={token} />
           </Table>
           {data.length < 1 && <p className="text-center">List not found</p>}
         </div>

@@ -358,3 +358,26 @@ export const confirmLoanTransaction = async (
     console.log('Error from confirmLoanTransaction action ', error);
   }
 };
+
+export const confirmReturnedTransaction = async (
+  keyValue: string,
+  token?: string
+) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/staff/confirm-return/`, {
+      method: 'POST',
+      body: JSON.stringify({ keyValue }),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from confirmReturnedTransaction action ', error);
+  }
+};

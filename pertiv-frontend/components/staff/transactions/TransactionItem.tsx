@@ -18,6 +18,7 @@ import TableOrderBook from '@/components/shared/TableOrderBook';
 import { Button } from '@/components/ui/button';
 import { acceptLoanBook, rejectLoanBook } from '@/lib/actions/staff.action';
 import { toast } from '@/hooks/use-toast';
+import { badgeStatusColor } from '@/utils/badgeStatusColor';
 
 interface Props {
   item: ISTransaction | ISBorrowTransaction;
@@ -26,14 +27,6 @@ interface Props {
 }
 const TransactionItem = ({ item, mode, token }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
-  const backgroundBadge =
-    item.status === 'pending'
-      ? 'badge_pending'
-      : item.status === 'canceled'
-      ? 'badge_canceled'
-      : item.status === 'success'
-      ? 'badge_success'
-      : 'badge_paid';
 
   const acceptLoanHandler = async () => {
     setIsLoading(true);
@@ -116,8 +109,11 @@ const TransactionItem = ({ item, mode, token }: Props) => {
         {(item as ISTransaction).buy_handled_by ||
           (item as ISBorrowTransaction).loan_handled_by}
       </TableCell>
+      {mode === 'bookBorrowing' && (
+        <TableCell>{(item as ISBorrowTransaction).return_handled_by}</TableCell>
+      )}
       <TableCell>
-        <div className={`${backgroundBadge} max-w-20 rounded-md`}>
+        <div className={`${badgeStatusColor(item.status)} max-w-20 rounded-md`}>
           <p className="text-center">{item.status}</p>
         </div>
       </TableCell>
@@ -144,6 +140,8 @@ const TransactionItem = ({ item, mode, token }: Props) => {
                 paid_at: (item as ISTransaction).paid_at,
                 buy_date: (item as ISTransaction).buy_date,
                 loan_date: (item as ISBorrowTransaction).loan_date,
+                ended_at: (item as ISBorrowTransaction).ended_at,
+                date_returned: (item as ISBorrowTransaction).date_returned,
               }}
               mode={mode}
             />

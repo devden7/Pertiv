@@ -10,7 +10,7 @@ interface Props {
 }
 const TransactionKey = ({ status, keyValue }: Props) => {
   return (
-    (status === 'paid' || status === 'Take book') && (
+    (status === 'paid' || status === 'accepted' || status === 'return req') && (
       <Card>
         <CardHeader>
           <div className="flex gap-2 items-center">

@@ -57,6 +57,9 @@ const TransactionContent = ({
               <TableHead>
                 {mode !== 'bookBorrowing' ? 'HANDLE BY' : 'LOAN HANDLE BY'}
               </TableHead>
+              {mode === 'bookBorrowing' && (
+                <TableHead>RETURN HANDLE BY</TableHead>
+              )}
               <TableHead>STATUS</TableHead>
               <TableHead></TableHead>
             </TableRow>

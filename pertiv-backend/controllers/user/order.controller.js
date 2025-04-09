@@ -5,6 +5,7 @@ const { endDate24Hours } = require('../../utils/createEndDateTime');
 const { formatISO } = require('date-fns');
 const generateOrderKey = require('../../utils/randomOrderKey');
 const prisma = require('../../utils/prismaConnection');
+const generateReturnedBooknKey = require('../../utils/randomReturnedBookKey');
 
 const createOrderBook = async (req, res, next) => {
   try {
@@ -526,6 +527,7 @@ const borrowTransactions = async (req, res, next) => {
       loan_handled_by: item.loan_handled_by,
       loan_date: item.loan_date,
       created_at: item.created_at,
+      ended_at: item.ended_at,
       canceled_at: item.canceled_at,
       return_handled_by: item.return_handled_by,
       date_returned: item.date_returned,
@@ -558,6 +560,53 @@ const borrowTransactions = async (req, res, next) => {
   }
 };
 
+const bookReturnRequested = async (req, res, next) => {
+  try {
+    const paramsId = req.params.id;
+    logger.info(`Controller USER returnRequested -  Borrow ID : ${paramsId}  `);
+    const findOrderQuery = await prisma.bookBorrowed.findUnique({
+      where: {
+        id: `#${paramsId}`,
+      },
+    });
+
+    if (!findOrderQuery) {
+      const error = new Error('Book borrowed not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    if (findOrderQuery.status !== 'borrowed') {
+      const error = new Error('Book borrowed is not valid');
+      error.success = false;
+      error.statusCode = 400;
+      throw error;
+    }
+    await prisma.bookBorrowed.update({
+      where: {
+        id: `#${paramsId}`,
+      },
+      data: {
+        status: 'return req',
+        returned_key: generateReturnedBooknKey(),
+      },
+    });
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'Return requested successfully',
+    });
+  } catch (error) {
+    logger.error(`ERROR USER Controller returnRequested - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   createOrderBook,
   paymentBookDetail,
@@ -566,4 +615,5 @@ module.exports = {
   transactions,
   createBorrowBook,
   borrowTransactions,
+  bookReturnRequested,
 };

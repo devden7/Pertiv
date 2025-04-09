@@ -3257,6 +3257,7 @@
                       "loan_handled_by": { "type": "string" },
                       "loan_date": { "type": "string" },
                       "created_at": { "type": "string" },
+                      "ended_at": { "type": "string" },
                       "canceled_at": { "type": "string" },
                       "return_handled_by": { "type": "string" },
                       "date_returned": { "type": "string" },
@@ -3362,6 +3363,7 @@
                       "loan_handled_by": { "type": "string" },
                       "loan_date": { "type": "string" },
                       "created_at": { "type": "string" },
+                      "ended_at": { "type": "string" },
                       "canceled_at": { "type": "string" },
                       "return_handled_by": { "type": "string" },
                       "date_returned": { "type": "string" },
@@ -3605,6 +3607,157 @@
           },
           "400": {
             "description": "Error: Bad Request/invalid loan transaction",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error: Staff not found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/staff/returned-book/{id}": {
+      "post": {
+        "tags": ["User"],
+        "summary": "return requested book",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "ID of the Borrow",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": { "type": "string" }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Error: book borrowed is not found",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/staff/confirm-return/": {
+      "post": {
+        "tags": ["Staff"],
+        "summary": "Confirm return book borrowed",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "returned KEY",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "keyValue": { "type": "string" }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": { "type": "string" }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request/invalid returned transaction",
             "schema": {
               "type": "object",
               "properties": {

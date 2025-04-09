@@ -27,6 +27,7 @@ import { Input } from '@/components/ui/input';
 import {
   confirmLoanTransaction,
   confirmOrderTransaction,
+  confirmReturnedTransaction,
 } from '@/lib/actions/staff.action';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -61,7 +62,9 @@ const FormConfirmBook = ({ token }: Props) => {
     const response =
       transactionType === 'order'
         ? await confirmOrderTransaction(values.keyValue, token)
-        : await confirmLoanTransaction(values.keyValue, token);
+        : transactionType === 'loan'
+        ? await confirmLoanTransaction(values.keyValue, token)
+        : await confirmReturnedTransaction(values.keyValue, token);
 
     if (!response) {
       return toast({
@@ -109,6 +112,14 @@ const FormConfirmBook = ({ token }: Props) => {
           >
             <DialogTrigger className="w-full text-left">
               Loan book
+            </DialogTrigger>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => setTransactionType('returned')}
+          >
+            <DialogTrigger className="w-full text-left">
+              Returned book
             </DialogTrigger>
           </DropdownMenuItem>
         </DropdownMenuContent>
