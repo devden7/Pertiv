@@ -2240,6 +2240,16 @@
                               "book_selling": { "type": "number" }
                             }
                           }
+                        },
+                        "transactionBookBorrowing": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "time": { "type": "string" },
+                              "bookBorrowing": { "type": "number" }
+                            }
+                          }
                         }
                       }
                     },
@@ -2255,6 +2265,16 @@
                         }
                       }
                     },
+                    "dataBookBorrowed": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "quantity": { "type": "number" },
+                          "book_title": { "type": "string" }
+                        }
+                      }
+                    },
                     "staffBookSellingHandle": {
                       "type": "array",
                       "items": {
@@ -2262,6 +2282,26 @@
                         "properties": {
                           "staffName": { "type": "string" },
                           "totalHandledSuccess": { "type": "number" }
+                        }
+                      }
+                    },
+                    "staffHandlingLoan": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "staffName": { "type": "string" },
+                          "totalLoanHandled": { "type": "number" }
+                        }
+                      }
+                    },
+                    "staffHandlingReturn": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "staffName": { "type": "string" },
+                          "totalReturnHandled": { "type": "number" }
                         }
                       }
                     }
