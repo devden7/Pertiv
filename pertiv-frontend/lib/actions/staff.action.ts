@@ -482,3 +482,25 @@ export const updateMembershipType = async (
     console.log('Error from updateStaff action', error);
   }
 };
+
+export const deleteMembershipType = async (id: string, token?: string) => {
+  try {
+    const response = await fetch(
+      `${ENV.API_URL}/staff/delete-membership/${id}`,
+      {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const data = await response.json();
+
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from deleteStaff action', error);
+  }
+};

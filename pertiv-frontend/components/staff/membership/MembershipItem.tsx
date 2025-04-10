@@ -18,6 +18,8 @@ import { IMembershipType } from '@/model/staff.model';
 import { Ellipsis } from 'lucide-react';
 import React, { useState } from 'react';
 import MembershipForm from './MembershipForm';
+import { useToast } from '@/hooks/use-toast';
+import { deleteMembershipType } from '@/lib/actions/staff.action';
 
 interface Props extends IMembershipType {
   token?: string;
@@ -33,6 +35,30 @@ const MembershipItem = ({
   token,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { toast } = useToast();
+
+  const deleteMembershipHandler = async (id: string) => {
+    const response = await deleteMembershipType(id, token);
+    if (!response) {
+      return toast({
+        variant: 'destructive',
+        title: 'Oh! Something went wrong!',
+        description: 'Internal server error',
+      });
+    }
+    if (!response.success && response.statusCode !== 201) {
+      return toast({
+        variant: 'destructive',
+        title: response.message,
+        duration: 2000,
+      });
+    }
+
+    toast({
+      description: response.message,
+      duration: 2000,
+    });
+  };
   return (
     <TableRow className="font-medium text-zinc-800">
       <TableCell className="text-center">{name}</TableCell>
@@ -52,6 +78,12 @@ const MembershipItem = ({
             <DropdownMenuContent side="left">
               <DropdownMenuItem className="cursor-pointer">
                 <DialogTrigger className="w-full text-left">Edit</DialogTrigger>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => deleteMembershipHandler(id)}
+              >
+                Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
