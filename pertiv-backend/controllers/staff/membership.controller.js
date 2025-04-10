@@ -141,8 +141,47 @@ const updateMembershipType = async (req, res, next) => {
   }
 };
 
+const deleteMembershipType = async (req, res, next) => {
+  try {
+    const paramsId = req.params.id;
+    logger.info(
+      `Controller deleteMembershipType - Deleting membership with ID : ${paramsId}`
+    );
+
+    const findMembershipQuery = await prisma.membership.findUnique({
+      where: { id: paramsId },
+    });
+
+    if (!findMembershipQuery) {
+      const error = new Error('Membership not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    await prisma.membership.delete({
+      where: { id: paramsId },
+    });
+
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'Membership deleted successfully',
+    });
+  } catch (error) {
+    logger.error(`ERROR Controller deleteMembershipType - ${error}`);
+
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   createMembership,
   getMemberships,
   updateMembershipType,
+  deleteMembershipType,
 };

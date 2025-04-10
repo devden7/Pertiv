@@ -28,6 +28,7 @@ const {
   createMembership,
   getMemberships,
   updateMembershipType,
+  deleteMembershipType,
 } = require('../controllers/staff/membership.controller');
 
 const router = express.Router();
@@ -405,5 +406,7 @@ router.put(
   ],
   updateMembershipType
 );
+
+router.delete('/delete-membership/:id', staffMiddleware, deleteMembershipType);
 
 module.exports = router;
