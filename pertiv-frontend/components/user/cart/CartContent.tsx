@@ -31,7 +31,7 @@ const CartContent = ({ data, token }: Props) => {
 
     const response = await createOrder(cartItem, token);
 
-    if (!response || !response.success) {
+    if (!response) {
       toast({
         variant: 'destructive',
         title: 'Oh! Something went wrong!',
@@ -39,6 +39,16 @@ const CartContent = ({ data, token }: Props) => {
         duration: 2000,
       });
 
+      setIsLoading(false);
+      return;
+    }
+
+    if (!response.success && response.statusCode !== 201) {
+      toast({
+        variant: 'destructive',
+        title: response.message,
+        duration: 2000,
+      });
       setIsLoading(false);
       return;
     }

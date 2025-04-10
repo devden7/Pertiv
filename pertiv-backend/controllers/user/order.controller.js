@@ -22,6 +22,18 @@ const createOrderBook = async (req, res, next) => {
       throw error;
     }
 
+    for (let i = 0; i < cartItem.length; i++) {
+      const book = findBooksSellingQuery.find(
+        (item) => item.id === cartItem[i].book_id
+      );
+      if (book.stock < cartItem[i].quantity) {
+        const error = new Error('Out of stock!');
+        error.success = false;
+        error.statusCode = 400;
+        throw error;
+      }
+    }
+
     const totalPrice = cartItem.reduce((acc, item) => {
       const book = findBooksSellingQuery.find((b) => b.id === item.book_id);
       return book ? acc + book.price * item.quantity : acc;
@@ -160,6 +172,13 @@ const purchaseBook = async (req, res, next) => {
         id: `#${paramsId}`,
         userId: id,
       },
+      include: {
+        item_orders: {
+          include: {
+            book_selling: true,
+          },
+        },
+      },
     });
 
     if (!findOrderQuery) {
@@ -189,15 +208,37 @@ const purchaseBook = async (req, res, next) => {
       throw error;
     }
 
-    if (
-      findOrderQuery.status === 'canceled' ||
-      findOrderQuery.status === 'paid'
-    ) {
+    if (findOrderQuery.status !== 'pending') {
       const error = new Error('Order is not valid');
       error.success = false;
       error.statusCode = 400;
       throw error;
     }
+
+    // Check stock berfore purchase
+    for (let i = 0; i < findOrderQuery.item_orders.length; i++) {
+      const book = findOrderQuery.item_orders[i].book_selling;
+      if (book.stock < findOrderQuery.item_orders[i].quantity) {
+        const error = new Error('Out of stock!');
+        error.success = false;
+        error.statusCode = 400;
+        throw error;
+      }
+    }
+
+    // Update stock after purchase (descrement stock)
+    for (let i = 0; i < findOrderQuery.item_orders.length; i++) {
+      const book = findOrderQuery.item_orders[i].book_selling;
+      await prisma.bookSelling.update({
+        where: {
+          id: book.id,
+        },
+        data: {
+          stock: book.stock - findOrderQuery.item_orders[i].quantity,
+        },
+      });
+    }
+
     await prisma.order.update({
       where: {
         id: `#${paramsId}`,
@@ -388,6 +429,7 @@ const createBorrowBook = async (req, res, next) => {
       where: { id: { in: collectionItems.map((item) => item.book_id) } },
     });
 
+    //handling if book not found
     if (findBooksBorrowingQuery.length === 0) {
       const error = new Error('Book not found');
       error.success = false;
@@ -418,6 +460,7 @@ const createBorrowBook = async (req, res, next) => {
       },
     });
 
+    //handling max borrowed book (member premium 5 books and non member 2 books)
     if (findUserMembership.length > 0) {
       const dateNow = formatISO(new Date());
       const endDate = formatISO(findUserMembership[0].end_date);
@@ -443,6 +486,7 @@ const createBorrowBook = async (req, res, next) => {
         self.findIndex((item) => item.book_id === book.book_id) !== index
     );
 
+    //handling if user borrow the same book
     if (duplicateBookBorrow.length > 0) {
       const error = new Error('You will not be able to borrow the same book.');
       error.success = false;
@@ -471,6 +515,7 @@ const createBorrowBook = async (req, res, next) => {
       },
     });
 
+    //handling if user already borrow the same book
     if (existingBorrow.length > 0) {
       const error = new Error('You have already borrowed this book.');
       error.success = false;
@@ -489,11 +534,25 @@ const createBorrowBook = async (req, res, next) => {
       },
     });
 
+    //handling if user have an active penalty
     if (findPenaltyQuery.length > 0) {
       const error = new Error('Your account have an active penalty.');
       error.success = false;
       error.statusCode = 400;
       throw error;
+    }
+
+    const borrowQuantity = 1;
+    for (let i = 0; i < collectionItems.length; i++) {
+      const book = findBooksBorrowingQuery.find(
+        (item) => item.id === collectionItems[i].book_id
+      );
+      if (book.stock < borrowQuantity) {
+        const error = new Error('Out of stock!');
+        error.success = false;
+        error.statusCode = 400;
+        throw error;
+      }
     }
 
     await prisma.bookBorrowed.create({

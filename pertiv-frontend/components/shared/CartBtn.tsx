@@ -24,11 +24,21 @@ const CartBtn = ({ id, token, type, isLoading, setIsLoading }: Props) => {
     setIsLoading(true);
     const response = await addBookToCart(bookId, token);
 
-    if (!response || !response.success) {
+    if (!response) {
       toast({
         variant: 'destructive',
         title: 'Oh! Something went wrong!',
         description: 'Internal server error',
+        duration: 2000,
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    if (!response.success && response.statusCode !== 201) {
+      toast({
+        variant: 'destructive',
+        title: response.message,
         duration: 2000,
       });
       setIsLoading(false);

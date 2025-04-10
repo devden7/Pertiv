@@ -226,6 +226,7 @@ model BookBorrowing {
   writer_id    String
   collection_item CollectionItem[]
   category BookCategoryBorrow[]
+  items ItemBorrowed[]
 
   user        User @relation(fields: [user_id], references: [id])
   publisher   Publisher @relation(fields: [publisher_id], references: [id])
@@ -259,8 +260,10 @@ model ItemBorrowed {
   book_imageUrl String?
 
   borrowed_id String
-  book_borrowing_id String
+  book_borrowing_id String?
+
   bookBorrowed      BookBorrowed @relation(fields: [borrowed_id], references: [id])
+  book_borrowing    BookBorrowing? @relation(fields: [book_borrowing_id], references: [id], onDelete: SetNull)
 }
 
 model Log {

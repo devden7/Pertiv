@@ -40,7 +40,6 @@ interface Props {
   token?: string;
 }
 const BookDetail = ({ type, book, token }: Props) => {
-  console.log(book.publisherName);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
@@ -121,23 +120,31 @@ const BookDetail = ({ type, book, token }: Props) => {
                     </p>
                   </div>
                 )}
-
-                <div className="flex gap-2 justify-center mt-3">
-                  <Button
-                    className="bg-primary-500 hover:bg-primary-600"
-                    onClick={() => orderHandler()}
-                    disabled={isLoading}
-                  >
-                    Order
-                  </Button>
-                  <CartBtn
-                    id={book.id}
-                    token={token}
-                    isLoading={isLoading}
-                    setIsLoading={setIsLoading}
-                    type="text"
-                  />
-                </div>
+                {book.stock === 0 && (
+                  <div className="flex  justify-center mt-3">
+                    <Button variant="outline" className="cursor-default">
+                      No stock
+                    </Button>
+                  </div>
+                )}
+                {book.stock > 0 && (
+                  <div className="flex gap-2 justify-center mt-3">
+                    <Button
+                      className="bg-primary-500 hover:bg-primary-600"
+                      onClick={() => orderHandler()}
+                      disabled={isLoading}
+                    >
+                      Order
+                    </Button>
+                    <CartBtn
+                      id={book.id}
+                      token={token}
+                      isLoading={isLoading}
+                      setIsLoading={setIsLoading}
+                      type="text"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>

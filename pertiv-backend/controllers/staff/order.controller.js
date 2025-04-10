@@ -367,6 +367,13 @@ const confirmLoan = async (req, res, next) => {
         loan_key: keyValue,
         status: 'accepted',
       },
+      include: {
+        items: {
+          include: {
+            book_borrowing: true,
+          },
+        },
+      },
     });
 
     if (!findBookBorrowedQuery) {
@@ -374,6 +381,32 @@ const confirmLoan = async (req, res, next) => {
       error.success = false;
       error.statusCode = 400;
       throw error;
+    }
+
+    const stockQty = 1;
+    // Check stock berfore confirm loan
+    for (let i = 0; i < findBookBorrowedQuery.items.length; i++) {
+      const book = findBookBorrowedQuery.items[i].book_borrowing;
+      if (book.stock < stockQty) {
+        const error = new Error('Out of stock!');
+        error.success = false;
+        error.statusCode = 400;
+        throw error;
+      }
+    }
+
+    // Update stock after confirm loan (descrement stock)
+    for (let i = 0; i < findBookBorrowedQuery.items.length; i++) {
+      const book = findBookBorrowedQuery.items[i].book_borrowing;
+      console.log(book, 'FROM BOOK');
+      await prisma.bookBorrowing.update({
+        where: {
+          id: book.id,
+        },
+        data: {
+          stock: book.stock - stockQty,
+        },
+      });
     }
 
     await prisma.bookBorrowed.update({
