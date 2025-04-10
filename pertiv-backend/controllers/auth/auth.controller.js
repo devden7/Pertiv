@@ -98,7 +98,6 @@ const registerAccount = async (req, res, next) => {
         password: bcrypt.hashSync(password, 10),
         role: 'user',
         image: null,
-        is_penalty: false,
       },
     });
 
