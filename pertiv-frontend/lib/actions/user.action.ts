@@ -358,3 +358,24 @@ export const getMembershipTypeForUser = async () => {
     console.log('Error from getMembershipType action ', error);
   }
 };
+
+export const subscribeMembership = async (id: string, token?: string) => {
+  try {
+    const response = await fetch(
+      `${ENV.API_URL}/user/subscribe-membership/${id}`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    const data = await response.json();
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from subscribeMembership action ', error);
+  }
+};

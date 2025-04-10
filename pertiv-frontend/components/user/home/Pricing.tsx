@@ -1,12 +1,64 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
+import { subscribeMembership } from '@/lib/actions/user.action';
 import { IMembershipType } from '@/model/staff.model';
+import { formatDateTime } from '@/utils/formatDateTime';
 import { formatNumberToRupiah } from '@/utils/formatRupiah';
-import React from 'react';
+import { addDays, formatISO } from 'date-fns';
+import React, { useState } from 'react';
 
 interface Props {
   data: IMembershipType;
+  token?: string;
 }
-const Pricing = ({ data }: Props) => {
+const Pricing = ({ data, token }: Props) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { toast } = useToast();
+
+  const getStartedHandler = async () => {
+    if (!token) {
+      return toast({
+        description: 'Please login Before subscribing to membership',
+        duration: 2000,
+      });
+    }
+
+    const response = await subscribeMembership(data.id, token);
+
+    if (!response) {
+      toast({
+        variant: 'destructive',
+        title: 'Oh! Something went wrong!',
+        description: 'Internal server error',
+        duration: 2000,
+      });
+
+      return;
+    }
+
+    if (!response.success && response.statusCode !== 201) {
+      return toast({
+        variant: 'destructive',
+        title: response.message,
+        duration: 2000,
+      });
+    }
+
+    toast({
+      description: response.message,
+      duration: 2000,
+    });
+  };
   return (
     <section className="bg-white my-3">
       <div className="container">
@@ -157,7 +209,32 @@ const Pricing = ({ data }: Props) => {
                 </span>
               </li>
             </ul>
-            <Button className="btn_primary">Get started</Button>
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+              <DialogTrigger asChild>
+                <Button className="btn_primary">Get started</Button>
+              </DialogTrigger>
+              <DialogContent className="overflow-auto max-h-[500px]">
+                <DialogHeader>
+                  <div className="flex justify-between">
+                    <div>
+                      <DialogTitle>Confirm Subscription</DialogTitle>
+                      <DialogDescription>
+                        Upgrade your account to next level
+                      </DialogDescription>
+                    </div>
+                  </div>
+                </DialogHeader>
+                <p className="text-center text-red-500 text-lg font-semibold">
+                  Your account wil become {data.name} until{' '}
+                  {formatDateTime(
+                    formatISO(addDays(new Date(), data.durationDays))
+                  )}
+                </p>
+                <Button className="btn_primary" onClick={getStartedHandler}>
+                  Subscribe
+                </Button>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>

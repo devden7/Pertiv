@@ -31,7 +31,7 @@ const UserHomePage = async () => {
         detailUrl={'/book-borrowing'}
         token={user ? user.token : undefined}
       />
-      <Pricing data={pricing.data[0]} />
+      <Pricing data={pricing.data[0]} token={user ? user.token : undefined} />
     </>
   );
 };
