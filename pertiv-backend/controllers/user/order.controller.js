@@ -412,11 +412,30 @@ const createBorrowBook = async (req, res, next) => {
       },
     });
 
-    if (calcBorrowedUser.length + findBooksBorrowingQuery.length > 2) {
-      const error = new Error('A maximum of 2 books can be borrowed');
-      error.success = false;
-      error.statusCode = 400;
-      throw error;
+    const findUserMembership = await prisma.membershipTransaction.findMany({
+      where: {
+        user_id: id,
+      },
+    });
+
+    if (findUserMembership.length > 0) {
+      const dateNow = formatISO(new Date());
+      const endDate = formatISO(findUserMembership[0].end_date);
+      if (endDate > dateNow) {
+        if (calcBorrowedUser.length + findBooksBorrowingQuery.length > 5) {
+          const error = new Error('A maximum of 5 books can be borrowed');
+          error.success = false;
+          error.statusCode = 400;
+          throw error;
+        }
+      }
+    } else {
+      if (calcBorrowedUser.length + findBooksBorrowingQuery.length > 2) {
+        const error = new Error('A maximum of 2 books can be borrowed');
+        error.success = false;
+        error.statusCode = 400;
+        throw error;
+      }
     }
 
     const duplicateBookBorrow = collectionItems.filter(
@@ -431,23 +450,28 @@ const createBorrowBook = async (req, res, next) => {
       throw error;
     }
 
-    const existingBorrow = await prisma.itemBorrowed.findFirst({
+    const existingBorrow = await prisma.itemBorrowed.findMany({
       where: {
         book_borrowing_id: {
           in: findBooksBorrowingQuery.map((item) => item.id),
         },
         bookBorrowed: {
-          OR: [
-            { status: 'pending' },
-            { status: 'accepted' },
-            { status: 'borrowed' },
-            { status: 'return req' },
+          AND: [
+            {
+              OR: [
+                { status: 'pending' },
+                { status: 'accepted' },
+                { status: 'borrowed' },
+                { status: 'return req' },
+              ],
+            },
+            { userId: id },
           ],
         },
       },
     });
 
-    if (existingBorrow) {
+    if (existingBorrow.length > 0) {
       const error = new Error('You have already borrowed this book.');
       error.success = false;
       error.statusCode = 400;
