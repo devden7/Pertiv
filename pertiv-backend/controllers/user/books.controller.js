@@ -194,13 +194,44 @@ const getBookListBorrowing = async (req, res, next) => {
             },
           },
         },
+        items: {
+          include: {
+            bookBorrowed: {
+              select: {
+                status: true,
+              },
+            },
+          },
+        },
       },
     });
+
+    const finalResults = data.map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      language: item.language,
+      stock: item.stock,
+      imageUrl: item.imageUrl,
+      book_position: item.book_position,
+      is_member: item.is_member,
+      created_at: item.created_at,
+      user_id: item.user_id,
+      publisher_id: item.publisher_id,
+      writer_id: item.writer_id,
+      user: item.user,
+      publisher: item.publisher,
+      writer: item.writer,
+      category: item.category,
+      totalItemBorrow: item.items
+        .map((list) => list)
+        .filter((book) => book.bookBorrowed.status === 'returned').length,
+    }));
 
     res.status(200).json({
       success: true,
       statusCode: 200,
-      data,
+      data: finalResults,
     });
   } catch (error) {
     logger.error(`ERROR Controller getBookListBorrowing for user  -  ${error}`);

@@ -128,6 +128,7 @@ export type bookItemBorrowing = {
   title: string;
   imageUrl: string | null;
   category: { categories: { name: string } }[];
+  totalItemBorrow: number;
 };
 
 export interface IBookForBorrowing {
@@ -160,4 +161,5 @@ export interface IBookForBorrowing {
       name: string;
     };
   }[];
+  totalItemBorrow: number;
 }

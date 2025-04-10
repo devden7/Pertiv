@@ -73,9 +73,14 @@ const BooksItem = ({ token, book, detailUrl, type }: Props) => {
             token={token}
           />
         )}
-        {'price' in book && (
+        {'price' in book && book.totalItemSold > 0 && (
           <p className="text-xs text-gray-500">
             {book.totalItemSold} Item sold
+          </p>
+        )}
+        {'totalItemBorrow' in book && book.totalItemBorrow > 0 && (
+          <p className="text-xs text-gray-500">
+            {book.totalItemBorrow} Item sold
           </p>
         )}
       </div>

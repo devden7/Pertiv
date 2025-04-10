@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Form,
@@ -32,6 +32,7 @@ const formSchema = z.object({
 });
 
 const AuthForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -43,9 +44,10 @@ const AuthForm = () => {
     },
   });
 
-  const { isSubmitting, errors } = form.formState;
+  const { errors } = form.formState;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsLoading(true);
     const response = await loginAuth(values.email, values.password);
 
     if (!response) {
@@ -66,6 +68,9 @@ const AuthForm = () => {
     if (response.role === 'admin') return router.push('/admin');
     if (response.role === 'staff') return router.push('/staff');
     if (response.role === 'user') return router.push('/');
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
   };
 
   return (
@@ -104,11 +109,7 @@ const AuthForm = () => {
         <p className="text-red-500 font-medium text-sm">
           {errors.errorField?.message}
         </p>
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="bg-primary-500 hover:bg-primary-600 duration-300"
-        >
+        <Button type="submit" disabled={isLoading} className="btn_primary">
           Login
         </Button>
       </form>

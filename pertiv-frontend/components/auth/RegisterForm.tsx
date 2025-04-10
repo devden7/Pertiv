@@ -16,8 +16,10 @@ import { Input } from '@/components/ui/input';
 import { regiterAccount } from '@/lib/actions/auth.action';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 const RegisterForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
   const formSchema = z.object({
@@ -44,10 +46,10 @@ const RegisterForm = () => {
     },
   });
 
-  const { isSubmitting, errors } = form.formState;
+  const { errors } = form.formState;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    setIsLoading(true);
     const response = await regiterAccount(
       values.name,
       values.email,
@@ -77,6 +79,9 @@ const RegisterForm = () => {
     });
 
     router.push('/login');
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
   };
   return (
     <Form {...form}>
@@ -85,7 +90,7 @@ const RegisterForm = () => {
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-0">
               <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input placeholder="Name of the staff" {...field} />
@@ -98,7 +103,7 @@ const RegisterForm = () => {
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-0">
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input
@@ -115,7 +120,7 @@ const RegisterForm = () => {
           control={form.control}
           name="password"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="space-y-0">
               <FormLabel>Password</FormLabel>
               <FormControl>
                 <Input
@@ -128,13 +133,12 @@ const RegisterForm = () => {
             </FormItem>
           )}
         />
-        {errors.errorField !== undefined && (
-          <p className="text-red-500 font-medium text-sm">
-            {errors.errorField?.message}
-          </p>
-        )}
-        <Button type="submit" disabled={isSubmitting}>
-          Submit
+
+        <p className="text-red-500 font-medium text-sm">
+          {errors.errorField?.message}
+        </p>
+        <Button type="submit" disabled={isLoading} className="btn_primary">
+          Register
         </Button>
       </form>
     </Form>
