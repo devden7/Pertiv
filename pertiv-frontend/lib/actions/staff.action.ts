@@ -440,3 +440,45 @@ export const getMembershipType = async (
     console.log('Error from getMembershipType action ', error);
   }
 };
+
+export const updateMembershipType = async (
+  id: string,
+  values: {
+    name: string;
+    description: string;
+    durationDays: number;
+    maxBorrow: number;
+    maxReturn: number;
+    price: number;
+  },
+  token?: string
+) => {
+  try {
+    const response = await fetch(
+      `${ENV.API_URL}/staff/update-membership/${id}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: values.name,
+          description: values.description,
+          durationDays: values.durationDays,
+          maxBorrow: values.maxBorrow,
+          maxReturn: values.maxReturn,
+          price: values.price,
+        }),
+      }
+    );
+    const data = await response.json();
+
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from updateStaff action', error);
+  }
+};

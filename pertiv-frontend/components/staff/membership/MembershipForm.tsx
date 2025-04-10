@@ -9,7 +9,10 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { addMembershipType } from '@/lib/actions/staff.action';
+import {
+  addMembershipType,
+  updateMembershipType,
+} from '@/lib/actions/staff.action';
 import { formMembershipSchema } from '@/model/staff.model';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
@@ -56,7 +59,11 @@ const MembershipForm = ({
   const { isSubmitting } = form.formState;
 
   const onSubmit = async (values: z.infer<typeof formMembershipSchema>) => {
-    const response = await addMembershipType(values, token);
+    const response =
+      type !== 'Edit'
+        ? await addMembershipType(values, token)
+        : await updateMembershipType(id!, values, token);
+
     if (!response) {
       toast({
         variant: 'destructive',
@@ -67,7 +74,7 @@ const MembershipForm = ({
 
       return;
     }
-    console.log(response);
+
     if (!response.success && response.statusCode !== 201) {
       toast({
         variant: 'destructive',

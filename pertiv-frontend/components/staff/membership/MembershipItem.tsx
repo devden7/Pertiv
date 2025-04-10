@@ -1,18 +1,38 @@
+'use client';
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { IMembershipType } from '@/model/staff.model';
-import React from 'react';
+import { Ellipsis } from 'lucide-react';
+import React, { useState } from 'react';
+import MembershipForm from './MembershipForm';
 
 interface Props extends IMembershipType {
   token?: string;
 }
 const MembershipItem = ({
+  id,
   name,
   description,
   durationDays,
   maxBorrow,
   maxReturn,
   price,
+  token,
 }: Props) => {
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <TableRow className="font-medium text-zinc-800">
       <TableCell className="text-center">{name}</TableCell>
@@ -21,7 +41,39 @@ const MembershipItem = ({
       <TableCell className="text-center">{maxBorrow}</TableCell>
       <TableCell className="text-center">{maxReturn}</TableCell>
       <TableCell className="text-center">{price}</TableCell>
-      <TableCell className="text-center">...</TableCell>
+      <TableCell className="text-center">
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="cursor-pointer">
+                <Ellipsis size={15} />
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="left">
+              <DropdownMenuItem className="cursor-pointer">
+                <DialogTrigger className="w-full text-left">Edit</DialogTrigger>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DialogContent className="overflow-auto max-h-[500px]">
+            <DialogHeader>
+              <DialogTitle>Update membership type</DialogTitle>
+            </DialogHeader>
+            <MembershipForm
+              id={id}
+              name={name}
+              description={description}
+              durationDays={durationDays}
+              maxBorrow={maxBorrow}
+              maxReturn={maxReturn}
+              price={price}
+              token={token}
+              setIsOpen={setIsOpen}
+              type="Edit"
+            />
+          </DialogContent>
+        </Dialog>
+      </TableCell>
     </TableRow>
   );
 };
