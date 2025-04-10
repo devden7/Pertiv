@@ -50,6 +50,37 @@ const createMembership = async (req, res, next) => {
   }
 };
 
+const getMemberships = async (req, res, next) => {
+  try {
+    logger.info('Controller STAFF getMemberships - Get all membership type');
+    const page = parseInt(req.query.page) || 1;
+    const LIMIT = 10;
+    const skip = (page - 1) * LIMIT;
+    const findMembershipQuery = await prisma.membership.findMany({
+      skip,
+      take: LIMIT,
+    });
+
+    const countMembership = await prisma.membership.count();
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      data: findMembershipQuery,
+      totalCount: countMembership,
+    });
+  } catch (error) {
+    logger.error(`ERROR STAFF Controller getMemberships  -  ${error}`);
+
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   createMembership,
+  getMemberships,
 };

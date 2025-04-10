@@ -26,6 +26,7 @@ const {
 const { dashboard } = require('../controllers/staff/dashboard.controller');
 const {
   createMembership,
+  getMemberships,
 } = require('../controllers/staff/membership.controller');
 
 const router = express.Router();
@@ -352,5 +353,6 @@ router.post(
   ],
   createMembership
 );
+router.get('/membership-type', staffMiddleware, getMemberships);
 
 module.exports = router;
