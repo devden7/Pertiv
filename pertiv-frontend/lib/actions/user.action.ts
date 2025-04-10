@@ -346,3 +346,15 @@ export const returnLoanBook = async (borrowId: string, token?: string) => {
     console.log('Error from returnLoanBook action ', error);
   }
 };
+
+export const getMembershipTypeForUser = async () => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/user/membership-type`, {
+      cache: 'no-store',
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Error from getMembershipType action ', error);
+  }
+};

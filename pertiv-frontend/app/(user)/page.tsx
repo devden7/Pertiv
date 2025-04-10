@@ -1,9 +1,11 @@
 import BooksHomePage from '@/components/shared/BooksHomePage';
 import Hero from '@/components/user/home/Hero';
+import Pricing from '@/components/user/home/Pricing';
 import { getUserToken } from '@/lib/actions/auth.action';
 import {
   getBooksBorrowingUser,
   getBooksSellingUser,
+  getMembershipTypeForUser,
 } from '@/lib/actions/user.action';
 
 const UserHomePage = async () => {
@@ -11,6 +13,7 @@ const UserHomePage = async () => {
 
   const data = await getBooksSellingUser(5);
   const dataBookBorrowing = await getBooksBorrowingUser(5);
+  const pricing = await getMembershipTypeForUser();
   return (
     <>
       <Hero />
@@ -28,6 +31,7 @@ const UserHomePage = async () => {
         detailUrl={'/book-borrowing'}
         token={user ? user.token : undefined}
       />
+      <Pricing data={pricing.data[0]} />
     </>
   );
 };
