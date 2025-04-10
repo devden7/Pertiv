@@ -363,7 +363,7 @@ const getLoanCartList = async (req, res, next) => {
     });
 
     if (!findLoanCartQuery) {
-      await prisma.cart.create({
+      await prisma.collection.create({
         data: {
           user_id: id,
         },
