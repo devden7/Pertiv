@@ -381,3 +381,40 @@ export const confirmReturnedTransaction = async (
     console.log('Error from confirmReturnedTransaction action ', error);
   }
 };
+
+export const addMembershipType = async (
+  values: {
+    name: string;
+    description: string;
+    durationDays: number;
+    maxBorrow: number;
+    maxReturn: number;
+    price: number;
+  },
+  token?: string
+) => {
+  try {
+    const response = await fetch(`${ENV.API_URL}/staff/add-membership`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        name: values.name,
+        description: values.description,
+        durationDays: values.durationDays,
+        maxBorrow: values.maxBorrow,
+        maxReturn: values.maxReturn,
+        price: values.price,
+      }),
+    });
+    const data = await response.json();
+    if (response.ok) {
+      revalidatePath('/');
+    }
+    return data;
+  } catch (error) {
+    console.log('Error from addMembershipType action ', error);
+  }
+};

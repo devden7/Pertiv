@@ -38,7 +38,10 @@ const createMembership = async (req, res, next) => {
       message: 'Membership created successfully',
     });
   } catch (error) {
-    logger.error('Error STAFF Controller creatingMembership:', error);
+    logger.error(
+      'Error STAFF Controller creatingMembership:',
+      JSON.stringify(error)
+    );
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';

@@ -11,7 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { Book, LayoutDashboard, ScrollText } from 'lucide-react';
+import { Book, LayoutDashboard, ScrollText, Users } from 'lucide-react';
 import Link from 'next/link';
 import LogoutButton from './LogoutButton';
 import { useSearchParams } from 'next/navigation';
@@ -65,6 +65,17 @@ const AppSidebar = ({ auth }: Props) => {
                   >
                     <ScrollText />
                     <span>Manage Transaction</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link
+                    href="/staff/membership"
+                    className="flex gap-2 items-center"
+                  >
+                    <Users />
+                    <span>Manage Membership</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

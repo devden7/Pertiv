@@ -37,7 +37,8 @@ const BookMode = () => {
   };
 
   return (
-    pathname !== '/staff' && (
+    pathname !== '/staff' &&
+    pathname !== '/staff/membership' && (
       <Card className="py-1 px-2 rounded-sm ">
         <DropdownMenu>
           <DropdownMenuTrigger className="text-xs w-24">

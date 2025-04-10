@@ -26,7 +26,6 @@ const createStaffAccount = async (req, res, next) => {
         email,
         password: bcrypt.hashSync(password, 10),
         role: 'staff',
-        is_penalty: false,
       },
     });
 
@@ -64,7 +63,6 @@ const getStaffAccounts = async (req, res, next) => {
         email: true,
         role: true,
         image: true,
-        is_penalty: true,
       },
     });
 

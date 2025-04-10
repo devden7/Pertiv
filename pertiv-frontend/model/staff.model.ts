@@ -257,3 +257,24 @@ export const booksBorrowingFormSchema = z.object({
   ]),
   isMember: z.boolean().default(false),
 });
+
+export const formMembershipSchema = z.object({
+  name: z
+    .string()
+    .min(3, { message: 'Name must be at least 3 characters' })
+    .max(50, { message: 'Name must be max 50 characters' }),
+  description: z
+    .string()
+    .min(3, { message: 'Description must be at least 3 characters' })
+    .max(255, { message: 'Description must be max 255 characters' }),
+  durationDays: z.coerce
+    .number()
+    .min(1, { message: 'durationDays at least 0 item' }),
+  maxBorrow: z.coerce.number().min(1, { message: 'maxBorrow at least 0 item' }),
+  maxReturn: z.coerce.number().min(1, { message: 'maxReturn at least 0 item' }),
+  price: z.coerce
+    .number()
+    .int()
+    .min(1000, { message: 'price must be at least RP 1000' })
+    .max(1000000, { message: 'price must be max RP 1.000.000' }),
+});
