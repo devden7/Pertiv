@@ -150,6 +150,16 @@ export interface staffHandlingReturn {
   totalReturnHandled: number;
 }
 
+export interface IMembershipType {
+  id: string;
+  name: string;
+  description: string;
+  durationDays: number;
+  maxBorrow: number;
+  maxReturn: number;
+  price: number;
+}
+
 export const booksSellingFormSchema = z.object({
   title: z
     .string()

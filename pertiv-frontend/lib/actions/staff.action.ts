@@ -418,3 +418,25 @@ export const addMembershipType = async (
     console.log('Error from addMembershipType action ', error);
   }
 };
+
+export const getMembershipType = async (
+  page: number,
+  search: string,
+  token?: string
+) => {
+  try {
+    const response = await fetch(
+      `${ENV.API_URL}/staff/membership-type?page=${page}&search=${search}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        cache: 'no-store',
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Error from getMembershipType action ', error);
+  }
+};
