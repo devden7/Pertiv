@@ -31,6 +31,7 @@ const {
   borrowTransactions,
   bookReturnRequested,
 } = require('../controllers/user/order.controller');
+const { getMemberships } = require('../controllers/user/membership.controller');
 
 const router = express.Router();
 
@@ -100,5 +101,6 @@ router.post('/borrow-book', userMiddleware, createBorrowBook);
 router.get('/borrow-transactions', userMiddleware, borrowTransactions);
 router.post('/returned-book/:id', userMiddleware, bookReturnRequested);
 router.get('/penalty', userMiddleware, penaltyInfo);
+router.get('/membership-type', getMemberships);
 
 module.exports = router;

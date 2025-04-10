@@ -4180,6 +4180,51 @@
           }
         }
       }
+    },
+    "/user/membership-type": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get list membership type",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": { "type": "string" },
+                      "description": { "type": "string" },
+                      "durationDays": { "type": "number" },
+                      "maxBorrow": { "type": "number" },
+                      "maxReturn": { "type": "number" },
+                      "price": { "type": "number" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
