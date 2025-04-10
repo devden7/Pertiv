@@ -27,6 +27,7 @@ const { dashboard } = require('../controllers/staff/dashboard.controller');
 const {
   createMembership,
   getMemberships,
+  updateMembershipType,
 } = require('../controllers/staff/membership.controller');
 
 const router = express.Router();
@@ -354,5 +355,55 @@ router.post(
   createMembership
 );
 router.get('/membership-type', staffMiddleware, getMemberships);
+
+router.put(
+  '/update-membership/:id',
+  staffMiddleware,
+  [
+    body('name')
+      .trim()
+      .custom(async (value, { req }) => {
+        const prisma = new PrismaClient();
+        const data = await prisma.membership.findMany();
+
+        const findMembershipkQuery = data.find(
+          (item) =>
+            item.name === value.toLowerCase() && item.id !== req.params.id
+        );
+
+        if (findMembershipkQuery) {
+          const error = new Error('Name already exist');
+          error.success = false;
+          error.statusCode = 400;
+          throw error;
+        }
+
+        return true;
+      })
+      .isLength({ min: 3, max: 50 })
+      .withMessage('Title must be at least 3 characters & max 50 characters'),
+    body('description')
+      .trim()
+      .isLength({ min: 3, max: 255 })
+      .withMessage(
+        'Description must be at least 3 characters & max 255 characters'
+      ),
+    body('durationDays')
+      .isInt({ min: 1 })
+      .withMessage('durationDays must be a number and at least 1'),
+    body('maxBorrow')
+      .isInt({ min: 1 })
+      .withMessage('maxBorrow must be a number and at least 1'),
+    body('maxReturn')
+      .isInt({ min: 1 })
+      .withMessage('maxReturn must be a number and at least 1'),
+    body('price')
+      .isInt({ min: 1000, max: 1000000 })
+      .withMessage(
+        'price must be a number and at least RP 1000 and max RP 1.000.000'
+      ),
+  ],
+  updateMembershipType
+);
 
 module.exports = router;

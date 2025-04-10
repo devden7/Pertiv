@@ -19,7 +19,7 @@ const createMembership = async (req, res, next) => {
     }
 
     logger.info(
-      `Controller STAFF createMembership -staff: ${id}  name : ${name}, description : ${description}, price : ${price}, durationDays : ${durationDays}, maxBorrow : ${maxBorrow}, maxReturn : ${maxReturn}`
+      `Controller STAFF createMembership - staff: ${id}  name : ${name}, description : ${description}, price : ${price}, durationDays : ${durationDays}, maxBorrow : ${maxBorrow}, maxReturn : ${maxReturn}`
     );
 
     await prisma.membership.create({
@@ -80,7 +80,69 @@ const getMemberships = async (req, res, next) => {
   }
 };
 
+const updateMembershipType = async (req, res, next) => {
+  try {
+    const { id } = req.user;
+    const paramsId = req.params.id;
+    const { name, description, durationDays, maxBorrow, maxReturn, price } =
+      req.body;
+
+    logger.info(
+      `Controller STAFF updateMembershipType - staff: ${id}, membeshipId: ${paramsId}  name : ${name}, description : ${description}, price : ${price}, durationDays : ${durationDays}, maxBorrow : ${maxBorrow}, maxReturn : ${maxReturn}`
+    );
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error();
+      error.success = false;
+      error.statusCode = 400;
+      error.message = errors.array();
+      throw error;
+    }
+
+    const findMembershipQuery = await prisma.membership.findUnique({
+      where: { id: paramsId },
+    });
+
+    if (!findMembershipQuery) {
+      const error = new Error('Membership type not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    await prisma.membership.update({
+      where: { id: paramsId },
+      data: {
+        name: name.toLowerCase(),
+        description,
+        durationDays,
+        maxBorrow,
+        maxReturn,
+        price,
+      },
+    });
+
+    res.status(201).json({
+      success: true,
+      statusCode: 201,
+      message: 'Membership updated successfully',
+    });
+  } catch (error) {
+    logger.error(
+      `ERROR STAFF Controller updateMembershipType - ${JSON.stringify(error)}`
+    );
+
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 module.exports = {
   createMembership,
   getMemberships,
+  updateMembershipType,
 };
