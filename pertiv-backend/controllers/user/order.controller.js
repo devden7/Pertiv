@@ -97,7 +97,7 @@ const paymentBookDetail = async (req, res, next) => {
       `Controller USER paymentBookDetail -  Order ID : ${paramsId}  User ID : ${id}`
     );
 
-    const findOrderQuery = await prisma.order.findUnique({
+    let findOrderQuery = await prisma.order.findUnique({
       where: {
         id: `#${paramsId}`,
         userId: id,
@@ -117,14 +117,19 @@ const paymentBookDetail = async (req, res, next) => {
     const dateNow = formatISO(new Date());
     const dueDate = formatISO(findOrderQuery.ended_at);
 
-    if (dateNow >= dueDate) {
-      await prisma.order.update({
+    if (dateNow >= dueDate && findOrderQuery.status !== 'success') {
+      findOrderQuery = await prisma.order.update({
         where: {
           id: `#${paramsId}`,
+          userId: id,
+          status: 'pending',
         },
         data: {
           status: 'canceled',
           canceled_at: dueDate,
+        },
+        include: {
+          item_orders: true,
         },
       });
     }

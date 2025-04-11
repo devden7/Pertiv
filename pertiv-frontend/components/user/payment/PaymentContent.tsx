@@ -80,6 +80,9 @@ const PaymentContent = ({ data, token }: Props) => {
               {data.status === 'paid' && (
                 <Badge className="badge_paid">{data.status}</Badge>
               )}
+              {data.status === 'success' && (
+                <Badge className="badge_success">{data.status}</Badge>
+              )}
             </div>
           </div>
           <div className="flex flex-col md:grid md:grid-cols-6 gap-6">

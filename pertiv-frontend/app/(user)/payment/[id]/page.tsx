@@ -1,3 +1,4 @@
+import DataNotFound from '@/components/shared/DataNotFound';
 import PaymentContent from '@/components/user/payment/PaymentContent';
 import { getUserToken } from '@/lib/actions/auth.action';
 import { paymentOrderDetail } from '@/lib/actions/user.action';
@@ -13,7 +14,7 @@ const Payment = async ({ params }: Params) => {
 
   const response = await paymentOrderDetail(`${params.id}`, user.token);
   if (!response.success) {
-    return <p>Not Found</p>;
+    return <DataNotFound data={[]} />;
   }
   return (
     <>
