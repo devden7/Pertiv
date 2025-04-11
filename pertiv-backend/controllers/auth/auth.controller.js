@@ -118,10 +118,11 @@ const registerAccount = async (req, res, next) => {
   }
 };
 
-const penaltyInfo = async (req, res, next) => {
+const userInfo = async (req, res, next) => {
   try {
     const { id } = req.user;
-    logger.info(`Controller AUTH penaltyInfo - Penalty account : ${id}`);
+    logger.info(`Controller AUTH userInfo - userInfo account : ${id}`);
+
     let findPenaltyQuery = await prisma.penalty.findMany({
       where: {
         bookBorrowed: {
@@ -161,13 +162,40 @@ const penaltyInfo = async (req, res, next) => {
       };
     });
 
+    let findUserMembership = await prisma.membershipTransaction.findMany({
+      where: {
+        user_id: id,
+        status: 'active',
+      },
+      orderBy: {
+        start_date: 'desc',
+      },
+    });
+
+    if (findUserMembership.length > 0) {
+      const dateNow = formatISO(new Date());
+      const dateEndMembership = formatISO(findUserMembership[0].end_date);
+
+      if (dateNow > dateEndMembership) {
+        findUserMembership = await prisma.membershipTransaction.update({
+          where: {
+            id: findUserMembership[0].id,
+            status: 'active',
+          },
+          data: {
+            status: 'inactive',
+          },
+        });
+      }
+    }
+
     res.status(200).json({
       success: true,
       statusCode: 200,
-      data: penaltyResult,
+      data: { penalty: penaltyResult, membership: findUserMembership },
     });
   } catch (error) {
-    logger.error(`ERROR AUTH controller penaltyInfo  - ${error}`);
+    logger.error(`ERROR AUTH controller userInfo  - ${error}`);
 
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -179,5 +207,5 @@ const penaltyInfo = async (req, res, next) => {
 module.exports = {
   loginAuth,
   registerAccount,
-  penaltyInfo,
+  userInfo,
 };

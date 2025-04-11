@@ -3839,10 +3839,10 @@
         }
       }
     },
-    "/user/penalty": {
+    "/user/user-info": {
       "get": {
         "tags": ["User"],
-        "summary": "Get Penalty information",
+        "summary": "Get user information",
 
         "security": [
           {
@@ -3858,15 +3858,41 @@
                 "success": { "type": "boolean" },
                 "statusCode": { "type": "number" },
                 "data": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": { "type": "string" },
-                      "type": { "type": "string" },
-                      "price": { "type": "number" },
-                      "start_date": { "type": "string" },
-                      "end_date": { "type": "string" }
+                  "type": "object",
+                  "properties": {
+                    "penalty": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "type": { "type": "string" },
+                          "price": { "type": "number" },
+                          "start_date": { "type": "string" },
+                          "end_date": { "type": "string" }
+                        }
+                      }
+                    },
+                    "membership": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": { "type": "string" },
+                          "status": { "type": "string" },
+                          "name": { "type": "string" },
+                          "description": { "type": "string" },
+                          "durationDays": { "type": "number" },
+                          "maxBorrow": { "type": "number" },
+                          "maxReturn": { "type": "number" },
+                          "price": { "type": "number" },
+                          "start_date": { "type": "string" },
+                          "end_date": { "type": "string" },
+                          "created_at": { "type": "string" },
+                          "user_id": { "type": "string" },
+                          "membership_id": { "type": "string" }
+                        }
+                      }
                     }
                   }
                 },

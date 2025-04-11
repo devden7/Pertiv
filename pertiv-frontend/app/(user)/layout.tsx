@@ -1,13 +1,13 @@
 import UserNavbar from '@/components/user/UserNavbar';
-import { getPenaltyInfo, getUserToken } from '@/lib/actions/auth.action';
+import { getUserInfo, getUserToken } from '@/lib/actions/auth.action';
 import { ReactNode } from 'react';
 
 const UserLayout = async ({ children }: { children: ReactNode }) => {
   const user = await getUserToken();
-  const isPenalty = user ? await getPenaltyInfo(user?.token) : [];
+  const userInfo = user ? await getUserInfo(user?.token) : [];
   return (
     <>
-      <UserNavbar isPenalty={isPenalty.data} auth={user} />
+      <UserNavbar userInfo={userInfo.data} auth={user} />
       <main>{children}</main>
     </>
   );

@@ -47,6 +47,7 @@ const subscribeMembership = async (req, res, next) => {
         where: {
           user_id: id,
           membership_id: paramsId,
+          status: 'active',
         },
         orderBy: {
           start_date: 'desc',
@@ -68,6 +69,7 @@ const subscribeMembership = async (req, res, next) => {
     await prisma.membershipTransaction.create({
       data: {
         name: findMembershipQuery.name,
+        status: 'active',
         description: findMembershipQuery.description,
         durationDays: findMembershipQuery.durationDays,
         maxBorrow: findMembershipQuery.maxBorrow,

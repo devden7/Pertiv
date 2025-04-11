@@ -52,6 +52,7 @@ model Membership {
 
 model MembershipTransaction {
   id       String @id @default(uuid())
+  status String
   name   String
   description String
   durationDays Int

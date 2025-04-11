@@ -163,3 +163,31 @@ export interface IBookForBorrowing {
   }[];
   totalItemBorrow: number;
 }
+
+export interface IUserInfo {
+  penalty: IPenaltyType[];
+  membership: IMembershipType[];
+}
+
+export interface IPenaltyType {
+  id: string;
+  type: string;
+  price: number;
+  start_date: string;
+  end_date: string;
+}
+
+export interface IMembershipType {
+  id: string;
+  name: string;
+  description: string;
+  durationDays: number;
+  maxBorrow: number;
+  maxReturn: number;
+  price: number;
+  start_date: string;
+  end_date: string;
+  created_at: string;
+  user_id: string;
+  membership_id: string;
+}

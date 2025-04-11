@@ -81,9 +81,9 @@ export const regiterAccount = async (
   }
 };
 
-export const getPenaltyInfo = async (token?: string) => {
+export const getUserInfo = async (token?: string) => {
   try {
-    const response = await fetch(`${ENV.API_URL}/user/penalty`, {
+    const response = await fetch(`${ENV.API_URL}/user/user-info`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

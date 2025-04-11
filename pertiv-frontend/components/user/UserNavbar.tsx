@@ -13,18 +13,15 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { AuthUser } from '@/model/auth.model';
 import { formatDateTime } from '@/utils/formatDateTime';
+import { IUserInfo } from '@/model/user.model';
+import { Badge } from '../ui/badge';
+import { format } from 'date-fns';
 
 interface Props {
-  isPenalty: {
-    id: string;
-    type: string;
-    price: number;
-    start_date: string;
-    end_date: string;
-  }[];
+  userInfo: IUserInfo;
   auth: AuthUser | null | undefined;
 }
-const UserNavbar = ({ isPenalty, auth }: Props) => {
+const UserNavbar = ({ userInfo, auth }: Props) => {
   const [isOpenNavbar, setIsOpenNavbar] = useState(false);
   const router = useRouter();
 
@@ -35,11 +32,11 @@ const UserNavbar = ({ isPenalty, auth }: Props) => {
 
   return (
     <>
-      {auth && isPenalty.length > 0 && (
+      {auth && userInfo.penalty.length > 0 && (
         <div className="h-30 bg-red-500">
           <p className="text-white text-center font-semibold py-2 text-sm">
             Your account have an active penalty until{' '}
-            {formatDateTime(isPenalty[0].end_date)}
+            {formatDateTime(userInfo.penalty[0].end_date)}
           </p>
         </div>
       )}
@@ -91,8 +88,20 @@ const UserNavbar = ({ isPenalty, auth }: Props) => {
                       </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
+                      {userInfo.membership.length > 0 && (
+                        <DropdownMenuItem className="hover:bg-white flex flex-col">
+                          <Badge variant="outline">Membership</Badge>
+                          <span className="text-xs">
+                            Until :{' '}
+                            {format(
+                              userInfo.membership[0].end_date,
+                              'dd MMM yyyy'
+                            )}
+                          </span>
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuItem>
-                        <p>Hi, {String(auth?.name)}</p>
+                        Hi, {String(auth?.name)}
                       </DropdownMenuItem>
                       <DropdownMenuItem className="cursor-pointer">
                         <div onClick={() => logoutHandler()}>Logout</div>
