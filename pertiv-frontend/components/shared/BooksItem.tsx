@@ -22,7 +22,7 @@ const BooksItem = ({ token, book, detailUrl, type }: Props) => {
     <div>
       <Link href={`${detailUrl}/${book.id}`}>
         <div className="w-full aspect-square rounded-2xl p-3">
-          <div className="relative h-full w-9/12 object-contain mx-auto overflow-hidden p-5">
+          <div className="relative h-full w-9/12  mx-auto overflow-hidden p-5">
             <Image
               src={ImageHandler(book.imageUrl)}
               alt={book.title}
@@ -30,6 +30,7 @@ const BooksItem = ({ token, book, detailUrl, type }: Props) => {
               sizes="50vw"
               quality={100}
               priority
+              className="object-cover"
             />
           </div>
         </div>

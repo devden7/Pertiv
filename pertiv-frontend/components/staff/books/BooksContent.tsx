@@ -4,6 +4,7 @@ import BooksList from './BooksList';
 import { PaginationWithLinks } from '@/components/ui/pagination-with-links';
 import AddBook from './AddBook';
 import SearchInput from '@/components/shared/SearchInput';
+import DataNotFound from '@/components/shared/DataNotFound';
 
 interface Props {
   data: IBooksSelling[] | IBooksBorrowing[];
@@ -42,7 +43,7 @@ const BooksContent = ({
       />
       <div>
         <div>
-          {data.length === 0 && <p> no books </p>}
+          {data.length === 0 && <DataNotFound data={data} />}
           {data.length > 0 && (
             <BooksList data={data} token={token} mode={mode} />
           )}

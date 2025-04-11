@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { formatNumberToRupiah } from '@/utils/formatRupiah';
 import CartList from './CartList';
 import { ICartList } from '@/model/user.model';
+import DataNotFound from '@/components/shared/DataNotFound';
 
 interface Props {
   data: ICartList;
@@ -69,21 +70,28 @@ const CartContent = ({ data, token }: Props) => {
           <Card className="w-1/2 p-2 max-sm:w-full">
             <h1 className="text-xl font-medium text-center">Books Cart</h1>
             <CartList data={data} token={token} />
-            <div className="flex justify-between">
-              <div className="font-medium">Total</div>
-              <div className="font-medium">
-                {formatNumberToRupiah(calcTotalPrice(data.cart_items))}
+            {data.cart_items.length === 0 && (
+              <DataNotFound data={data.cart_items} />
+            )}
+            {data.cart_items.length > 0 && (
+              <div className="flex justify-between">
+                <div className="font-medium">Total</div>
+                <div className="font-medium">
+                  {formatNumberToRupiah(calcTotalPrice(data.cart_items))}
+                </div>
               </div>
-            </div>
-            <div className="mt-3 flex justify-center">
-              <Button
-                className="bg-primary-500 hover:bg-primary-600"
-                disabled={isLoading}
-                onClick={() => orderHandler()}
-              >
-                Order Now
-              </Button>
-            </div>
+            )}
+            {data.cart_items.length > 0 && (
+              <div className="mt-3 flex justify-center">
+                <Button
+                  className="bg-primary-500 hover:bg-primary-600"
+                  disabled={isLoading}
+                  onClick={() => orderHandler()}
+                >
+                  Order Now
+                </Button>
+              </div>
+            )}
           </Card>
         </div>
       </div>

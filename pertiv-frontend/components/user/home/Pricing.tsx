@@ -27,10 +27,7 @@ const Pricing = ({ data, token }: Props) => {
 
   const getStartedHandler = async () => {
     if (!token) {
-      return toast({
-        description: 'Please login Before subscribing to membership',
-        duration: 2000,
-      });
+      return;
     }
 
     const response = await subscribeMembership(data.id, token);
@@ -62,9 +59,7 @@ const Pricing = ({ data, token }: Props) => {
   return (
     <section className="bg-white my-3">
       <div className="container">
-        <h2 className="font-semibold mb-5 text-xl text-center ">
-          Join membership
-        </h2>
+        <h2 className="font-semibold mb-5 text-xl ">Join membership</h2>
 
         <div className="space-y-8 flex flex-wrap max-sm:gap-3 justify-center items-center lg:space-y-0">
           {/* Pricing Card  */}
@@ -209,9 +204,23 @@ const Pricing = ({ data, token }: Props) => {
                 </span>
               </li>
             </ul>
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <Dialog open={token ? isOpen : false} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
-                <Button className="btn_primary">Get started</Button>
+                <Button
+                  className="btn_primary"
+                  onClick={() => {
+                    if (!token) {
+                      setIsOpen(false);
+                      return toast({
+                        description:
+                          'Please login Before subscribing to membership',
+                        duration: 2000,
+                      });
+                    }
+                  }}
+                >
+                  Get started
+                </Button>
               </DialogTrigger>
               <DialogContent className="overflow-auto max-h-[500px]">
                 <DialogHeader>

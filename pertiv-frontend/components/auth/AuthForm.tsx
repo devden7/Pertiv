@@ -51,6 +51,7 @@ const AuthForm = () => {
     const response = await loginAuth(values.email, values.password);
 
     if (!response) {
+      setIsLoading(false);
       return toast({
         variant: 'destructive',
         title: 'Oh! Something went wrong!',
@@ -62,7 +63,7 @@ const AuthForm = () => {
       form.setError('errorField', {
         message: response.message,
       });
-
+      setIsLoading(false);
       return;
     }
     if (response.role === 'admin') return router.push('/admin');

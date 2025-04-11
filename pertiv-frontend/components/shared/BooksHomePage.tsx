@@ -2,6 +2,7 @@ import { IBookForBorrowing, IBookForSelling } from '@/model/user.model';
 import React from 'react';
 import BooksItem from './BooksItem';
 import Link from 'next/link';
+import DataNotFound from './DataNotFound';
 
 interface Props {
   title: string;
@@ -20,7 +21,7 @@ const BooksHomePage = ({ title, url, detailUrl, token, books }: Props) => {
             Show more...
           </Link>
         </div>
-
+        {books.length === 0 && <DataNotFound data={books} />}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
           {books.map((book) => (
             <BooksItem

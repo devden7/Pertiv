@@ -3,6 +3,7 @@ import AddMembership from './AddMembership';
 import SearchInput from '@/components/shared/SearchInput';
 import { Table, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import MembershipList from './MembershipList';
+import DataNotFound from '@/components/shared/DataNotFound';
 
 interface Props {
   data: IMembershipType[];
@@ -39,6 +40,7 @@ const MembershipContent = ({ data, token }: Props) => {
         </TableHeader>
         <MembershipList data={data} token={token} />
       </Table>
+      {data.length === 0 && <DataNotFound data={data} />}
     </section>
   );
 };

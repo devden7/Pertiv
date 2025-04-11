@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { borrowingBook } from '@/lib/actions/user.action';
+import DataNotFound from '@/components/shared/DataNotFound';
 
 interface Props {
   data: ILoanCartList;
@@ -66,15 +67,20 @@ const LoanCartContent = ({ data, token }: Props) => {
           <Card className="w-1/2 p-2 max-sm:w-full">
             <h1 className="text-xl font-medium text-center">Books Loan Cart</h1>
             <LoanCartList data={data} token={token} />
-            <div className="mt-3 flex justify-center">
-              <Button
-                className="bg-primary-500 hover:bg-primary-600"
-                disabled={isLoading}
-                onClick={() => borrowHandler()}
-              >
-                Borow Now
-              </Button>
-            </div>
+            {data.collection_item.length === 0 && (
+              <DataNotFound data={data.collection_item} />
+            )}
+            {data.collection_item.length > 0 && (
+              <div className="mt-3 flex justify-center">
+                <Button
+                  className="bg-primary-500 hover:bg-primary-600"
+                  disabled={isLoading}
+                  onClick={() => borrowHandler()}
+                >
+                  Borow Now
+                </Button>
+              </div>
+            )}
           </Card>
         </div>
       </div>

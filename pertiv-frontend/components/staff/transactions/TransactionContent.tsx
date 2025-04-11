@@ -5,6 +5,7 @@ import TransactionList from './TransactionList';
 import FormConfirmBook from './FormConfirmBook';
 import { PaginationWithLinks } from '@/components/ui/pagination-with-links';
 import SearchInput from '@/components/shared/SearchInput';
+import DataNotFound from '@/components/shared/DataNotFound';
 
 interface Props {
   data: ISTransaction[] | ISBorrowTransaction[];
@@ -66,7 +67,7 @@ const TransactionContent = ({
           </TableHeader>
           <TransactionList data={data} mode={mode} token={token} />
         </Table>
-        {data.length === 0 && <p>List not found</p>}
+        {data.length === 0 && <DataNotFound data={data} />}
       </section>
       {totalCount > 0 && (
         <div className="my-3">

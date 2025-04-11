@@ -6,6 +6,7 @@ import TransactionList from './TransactionList';
 import { PaginationWithLinks } from '@/components/ui/pagination-with-links';
 import SearchInput from '@/components/shared/SearchInput';
 import BookMode from '@/components/shared/BookMode';
+import DataNotFound from '@/components/shared/DataNotFound';
 
 interface Props {
   data: ITransaction[] | IBorrowTransaction[];
@@ -58,7 +59,7 @@ const TransactionContent = ({
             </TableHeader>
             <TransactionList data={data} mode={mode} token={token} />
           </Table>
-          {data.length < 1 && <p className="text-center">List not found</p>}
+          {data.length === 0 && <DataNotFound data={data} />}
         </div>
       </section>
       {totalCount > 0 && (
