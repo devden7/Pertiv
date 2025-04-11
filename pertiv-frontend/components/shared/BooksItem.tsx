@@ -42,12 +42,20 @@ const BooksItem = ({ token, book, detailUrl, type }: Props) => {
               </Badge>
             ))}
           </div>
-          <div className="flex justify-between">
-            <p className="font-semibold text-xl leading-8 text-black transition-all duration-500">
+          <div
+            className={`${
+              type === '/books-selling' ? 'flex justify-between' : ''
+            }`}
+          >
+            <p
+              className={`font-semibold text-lg break-words min-w-0 ${
+                type === '/books-selling' ? 'max-w-[65%]' : ''
+              } h-14 overflow-hidden`}
+            >
               {book.title}
             </p>
             {'price' in book && (
-              <h6 className="font-semibold text-xl leading-8 text-primary-600">
+              <h6 className="font-semibold text-lg leading-8 text-primary-600">
                 {formatNumberToRupiah(book.price)}
               </h6>
             )}
