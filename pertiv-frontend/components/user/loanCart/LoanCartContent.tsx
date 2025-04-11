@@ -53,7 +53,7 @@ const LoanCartContent = ({ data, token }: Props) => {
       return;
     }
 
-    router.push('/transactions');
+    router.push('/transactions?mode=bookBorrowing');
 
     setTimeout(() => {
       setIsLoading(false);

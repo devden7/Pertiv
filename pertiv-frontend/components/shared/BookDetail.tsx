@@ -7,8 +7,9 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import CartBtn from './CartBtn';
 import { useToast } from '@/hooks/use-toast';
-import { createOrder } from '@/lib/actions/user.action';
+import { borrowingBook, createOrder } from '@/lib/actions/user.action';
 import { useRouter } from 'next/navigation';
+import CartLoanBtn from './CartLoanBtn';
 
 type bookSellingDetail = {
   id: string;
@@ -44,15 +45,22 @@ const BookDetail = ({ type, book, token }: Props) => {
   const { toast } = useToast();
   const router = useRouter();
 
-  const orderHandler = async () => {
+  const orderHandler = async (typeTransction: string) => {
     setIsLoading(true);
     const cartItem = [];
 
-    cartItem.push({ book_id: book.id, quantity: 1 });
+    if (typeTransction === 'buy') {
+      cartItem.push({ book_id: book.id, quantity: 1 });
+    } else {
+      cartItem.push({ book_id: book.id });
+    }
 
-    const response = await createOrder(cartItem, token);
+    const response =
+      typeTransction === 'buy'
+        ? await createOrder(cartItem, token)
+        : await borrowingBook(cartItem, token);
 
-    if (!response || !response.success) {
+    if (!response) {
       toast({
         variant: 'destructive',
         title: 'Oh! Something went wrong!',
@@ -64,9 +72,23 @@ const BookDetail = ({ type, book, token }: Props) => {
       return;
     }
 
-    const splitOrderId = response.data.id.split('#');
+    if (!response.success && response.statusCode !== 201) {
+      toast({
+        variant: 'destructive',
+        title: response.message,
+        duration: 2000,
+      });
 
-    router.push(`/payment/${splitOrderId[1]}`);
+      setIsLoading(false);
+      return;
+    }
+
+    if (typeTransction === 'buy') {
+      const splitOrderId = response.data.id.split('#');
+      router.push(`/payment/${splitOrderId[1]}`);
+    } else {
+      router.push('/transactions?mode=bookBorrowing');
+    }
 
     setTimeout(() => {
       setIsLoading(false);
@@ -127,16 +149,34 @@ const BookDetail = ({ type, book, token }: Props) => {
                     </Button>
                   </div>
                 )}
-                {book.stock > 0 && (
+                {book.stock > 0 && type !== 'Borrowing' && (
                   <div className="flex gap-2 justify-center mt-3">
                     <Button
                       className="bg-primary-500 hover:bg-primary-600"
-                      onClick={() => orderHandler()}
+                      onClick={() => orderHandler('buy')}
                       disabled={isLoading}
                     >
                       Order
                     </Button>
                     <CartBtn
+                      id={book.id}
+                      token={token}
+                      isLoading={isLoading}
+                      setIsLoading={setIsLoading}
+                      type="text"
+                    />
+                  </div>
+                )}
+                {book.stock > 0 && type === 'Borrowing' && (
+                  <div className="flex gap-2 justify-center mt-3">
+                    <Button
+                      className="bg-primary-500 hover:bg-primary-600"
+                      onClick={() => orderHandler('borrow')}
+                      disabled={isLoading}
+                    >
+                      Borrow
+                    </Button>
+                    <CartLoanBtn
                       id={book.id}
                       token={token}
                       isLoading={isLoading}

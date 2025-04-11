@@ -101,7 +101,7 @@ export const decreaseBookFromCart = async (bookId: string, token?: string) => {
 };
 
 export const createOrder = async (
-  cartItem: { book_id: string; quantity: number }[],
+  cartItem: { book_id: string; quantity?: number }[],
   token?: string
 ) => {
   try {
