@@ -6,13 +6,26 @@ const getBookListSelling = async (req, res, next) => {
     logger.info(
       'Controller getBookListSelling - Get all book selling for user'
     );
-    const take = req.query.limit ? parseInt(req.query.limit, 10) : undefined;
+    const search = req.query.search || '';
+    const page = parseInt(req.query.page) || 1;
+    const LIMIT = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * LIMIT;
+    const keyword = search
+      ? {
+          title: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        }
+      : {};
 
     const booksSellingQuery = await prisma.bookSelling.findMany({
-      take: take,
+      skip,
+      take: LIMIT,
       orderBy: {
         created_at: 'desc',
       },
+      where: keyword,
       include: {
         user: {
           select: {
@@ -77,10 +90,15 @@ const getBookListSelling = async (req, res, next) => {
         .reduce((acc, item) => acc + item.quantity, 0),
     }));
 
+    const countBook = await prisma.bookSelling.count({
+      where: keyword,
+    });
+
     res.status(200).json({
       success: true,
       statusCode: 200,
       data: finalResults,
+      totalCount: countBook,
     });
   } catch (error) {
     logger.error(`ERROR Controller getBookListSelling for user  -  ${error}`);
@@ -160,13 +178,26 @@ const getBookListBorrowing = async (req, res, next) => {
     logger.info(
       'Controller getBookListBorrowing - Get all book selling for user'
     );
-    const take = req.query.limit ? parseInt(req.query.limit, 10) : undefined;
+    const search = req.query.search || '';
+    const page = parseInt(req.query.page) || 1;
+    const LIMIT = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * LIMIT;
+    const keyword = search
+      ? {
+          title: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        }
+      : {};
 
     const data = await prisma.bookBorrowing.findMany({
-      take: take,
+      skip,
+      take: LIMIT,
       orderBy: {
         created_at: 'desc',
       },
+      where: keyword,
       include: {
         user: {
           select: {
@@ -228,10 +259,15 @@ const getBookListBorrowing = async (req, res, next) => {
         .filter((book) => book.bookBorrowed.status === 'returned').length,
     }));
 
+    const countBook = await prisma.bookBorrowing.count({
+      where: keyword,
+    });
+
     res.status(200).json({
       success: true,
       statusCode: 200,
       data: finalResults,
+      totalCount: countBook,
     });
   } catch (error) {
     logger.error(`ERROR Controller getBookListBorrowing for user  -  ${error}`);

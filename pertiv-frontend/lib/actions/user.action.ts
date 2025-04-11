@@ -3,10 +3,14 @@
 import { ENV } from '@/utils/config';
 import { revalidatePath } from 'next/cache';
 
-export const getBooksSellingUser = async (limit: number) => {
+export const getBooksSellingUser = async (
+  search?: string,
+  page?: number,
+  limit?: number
+) => {
   try {
     const response = await fetch(
-      `${ENV.API_URL}/user/books-selling?limit=${limit}`
+      `${ENV.API_URL}/user/books-selling?limit=${limit}&page=${page}&search=${search}`
     );
     const data = await response.json();
     return data;
@@ -201,10 +205,14 @@ export const getTransactions = async (
   }
 };
 
-export const getBooksBorrowingUser = async (limit: number) => {
+export const getBooksBorrowingUser = async (
+  search?: string,
+  page?: number,
+  limit?: number
+) => {
   try {
     const response = await fetch(
-      `${ENV.API_URL}/user/books-borrowing?limit=${limit}`
+      `${ENV.API_URL}/user/books-borrowing?limit=${limit}&page=${page}&search=${search}`
     );
     const data = await response.json();
     return data;

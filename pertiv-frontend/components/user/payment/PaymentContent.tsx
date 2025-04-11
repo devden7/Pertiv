@@ -17,6 +17,8 @@ import { cancelPurchaseBook, purchaseBook } from '@/lib/actions/user.action';
 import { useToast } from '@/hooks/use-toast';
 import TableOrderBook from '../../shared/TableOrderBook';
 import { IPaymentUser } from '@/model/user.model';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 interface Props {
   data: IPaymentUser;
@@ -24,22 +26,42 @@ interface Props {
 }
 
 const PaymentContent = ({ data, token }: Props) => {
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const router = useRouter();
 
   const purchaseHandler = async () => {
+    setIsLoading(true);
     const splitOrderId = data.id.split('#');
     const response = await purchaseBook(splitOrderId[1], token);
 
-    if (!response || !response.success) {
+    if (!response) {
       toast({
         variant: 'destructive',
         title: 'Oh! Something went wrong!',
         description: 'Internal server error',
         duration: 2000,
       });
-
+      setIsLoading(false);
       return;
     }
+
+    if (!response.success && response.statusCode !== 201) {
+      toast({
+        variant: 'destructive',
+        title: response.message,
+        duration: 2000,
+      });
+
+      setIsLoading(false);
+      return;
+    }
+
+    router.push('/transactions');
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
   };
 
   const cancelPurchaseHandler = async () => {
@@ -118,6 +140,7 @@ const PaymentContent = ({ data, token }: Props) => {
                       size="sm"
                       className="bg-primary-500 hover:bg-primary-600"
                       onClick={purchaseHandler}
+                      disabled={isLoading}
                     >
                       Pay now
                     </Button>
@@ -127,6 +150,7 @@ const PaymentContent = ({ data, token }: Props) => {
                       variant="outline"
                       size="sm"
                       onClick={cancelPurchaseHandler}
+                      disabled={isLoading}
                     >
                       Cancel
                     </Button>

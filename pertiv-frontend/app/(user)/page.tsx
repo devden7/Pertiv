@@ -11,8 +11,8 @@ import {
 const UserHomePage = async () => {
   const user = await getUserToken();
 
-  const data = await getBooksSellingUser(5);
-  const dataBookBorrowing = await getBooksBorrowingUser(5);
+  const data = await getBooksSellingUser('', 1, 5);
+  const dataBookBorrowing = await getBooksBorrowingUser('', 1, 5);
   const pricing = await getMembershipTypeForUser();
   return (
     <>

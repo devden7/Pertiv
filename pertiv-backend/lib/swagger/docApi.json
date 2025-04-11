@@ -1029,6 +1029,41 @@
       "get": {
         "tags": ["User"],
         "summary": "Get list books for selling",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Input page number",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page": { "type": "number" }
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "description": "search keyword",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "search": { "type": "string" }
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "limit data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": { "type": "string" }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -1090,7 +1125,8 @@
                       "totalItemSold": { "type": "number" }
                     }
                   }
-                }
+                },
+                "totalCount": { "type": "number" }
               }
             }
           },
@@ -2742,6 +2778,41 @@
       "get": {
         "tags": ["User"],
         "summary": "Get list books for borrowing",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Input page number",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page": { "type": "number" }
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "description": "search keyword",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "search": { "type": "string" }
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "limit data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": { "type": "string" }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -2804,7 +2875,8 @@
                       "totalItemBorrow": { "type": "nunber" }
                     }
                   }
-                }
+                },
+                "totalCount": { "type": "number" }
               }
             }
           },
