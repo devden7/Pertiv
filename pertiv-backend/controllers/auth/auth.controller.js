@@ -131,23 +131,24 @@ const penaltyInfo = async (req, res, next) => {
       },
     });
 
-    const dateNow = formatISO(new Date());
+    if (findPenaltyQuery.length > 0) {
+      const dateNow = formatISO(new Date());
+      const dateDuePenalty = formatISO(findPenaltyQuery[0].end_date);
 
-    const dateDuePenalty = formatISO(findPenaltyQuery[0].end_date);
-
-    if (dateNow > dateDuePenalty) {
-      findPenaltyQuery = await prisma.penalty.update({
-        where: {
-          id: findPenaltyQuery[0].id,
-          bookBorrowed: {
-            userId: id,
+      if (dateNow > dateDuePenalty) {
+        findPenaltyQuery = await prisma.penalty.update({
+          where: {
+            id: findPenaltyQuery[0].id,
+            bookBorrowed: {
+              userId: id,
+            },
+            type: 'active',
           },
-          type: 'active',
-        },
-        data: {
-          type: 'inactive',
-        },
-      });
+          data: {
+            type: 'inactive',
+          },
+        });
+      }
     }
 
     const penaltyResult = findPenaltyQuery.map((penalty) => {

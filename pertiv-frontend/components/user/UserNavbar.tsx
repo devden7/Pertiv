@@ -32,9 +32,10 @@ const UserNavbar = ({ isPenalty, auth }: Props) => {
     await deleteCookie();
     router.push('/');
   };
+
   return (
     <>
-      {isPenalty && (
+      {auth && isPenalty.length > 0 && (
         <div className="h-30 bg-red-500">
           <p className="text-white text-center font-semibold py-2 text-sm">
             Your account have an active penalty until{' '}

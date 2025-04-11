@@ -2,7 +2,8 @@ const { formatISO } = require('date-fns/formatISO');
 const logger = require('../../lib/winston/winstonLogger');
 const prisma = require('../../utils/prismaConnection');
 const generateLoanKey = require('../../utils/randomLoanKey');
-const { endDate14Days } = require('../../utils/createEndDateTime');
+const { endDateBorrowed } = require('../../utils/createEndDateTime');
+const { addDays } = require('date-fns');
 
 const transactions = async (req, res, next) => {
   try {
@@ -398,7 +399,6 @@ const confirmLoan = async (req, res, next) => {
     // Update stock after confirm loan (descrement stock)
     for (let i = 0; i < findBookBorrowedQuery.items.length; i++) {
       const book = findBookBorrowedQuery.items[i].book_borrowing;
-      console.log(book, 'FROM BOOK');
       await prisma.bookBorrowing.update({
         where: {
           id: book.id,
@@ -409,6 +409,18 @@ const confirmLoan = async (req, res, next) => {
       });
     }
 
+    const findUserMembership = await prisma.membershipTransaction.findMany({
+      where: {
+        user_id: findBookBorrowedQuery.userId,
+      },
+      orderBy: {
+        start_date: 'desc',
+      },
+    });
+
+    const checkMaxReturnedBook =
+      findUserMembership.length > 0 ? findUserMembership[0].maxReturn : 14;
+
     await prisma.bookBorrowed.update({
       where: {
         id: findBookBorrowedQuery.id,
@@ -418,7 +430,7 @@ const confirmLoan = async (req, res, next) => {
         status: 'borrowed',
         loan_handled_by: findStaffQuery.email,
         loan_date: formatISO(new Date()),
-        ended_at: endDate14Days(),
+        ended_at: endDateBorrowed(checkMaxReturnedBook),
       },
     });
     res.status(201).json({

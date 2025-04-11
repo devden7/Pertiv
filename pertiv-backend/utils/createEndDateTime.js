@@ -4,7 +4,8 @@ const endDate24Hours = () => {
   return addHours(new Date(), 24);
 };
 
-const endDate14Days = () => {
-  return addDays(new Date(), 14);
+const endDateBorrowed = (duration) => {
+  return addDays(new Date(), duration);
 };
-module.exports = { endDate24Hours, endDate14Days };
+
+module.exports = { endDate24Hours, endDateBorrowed };
