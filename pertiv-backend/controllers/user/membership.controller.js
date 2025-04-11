@@ -42,6 +42,31 @@ const subscribeMembership = async (req, res, next) => {
       throw error;
     }
 
+    const findPenaltyQuery = await prisma.bookBorrowed.findFirst({
+      where: {
+        userId: id,
+        penalty: {
+          type: 'active',
+        },
+      },
+      orderBy: {
+        penalty: {
+          start_date: 'desc',
+        },
+      },
+    });
+
+    if (findPenaltyQuery) {
+      const dateNow = formatISO(new Date());
+      const dateDueReturn = formatISO(findPenaltyQuery.ended_at);
+      if (dateDueReturn > dateNow) {
+        const error = new Error('Your account have an active penalty.');
+        error.success = false;
+        error.statusCode = 400;
+        throw error;
+      }
+    }
+
     const findMembershipTransactionQuery =
       await prisma.membershipTransaction.findMany({
         where: {

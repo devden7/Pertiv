@@ -130,6 +130,9 @@ const userInfo = async (req, res, next) => {
         },
         type: 'active',
       },
+      orderBy: {
+        start_date: 'desc',
+      },
     });
 
     if (findPenaltyQuery.length > 0) {

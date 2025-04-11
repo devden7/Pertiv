@@ -527,24 +527,30 @@ const createBorrowBook = async (req, res, next) => {
       error.statusCode = 400;
       throw error;
     }
-    const findPenaltyQuery = await prisma.bookBorrowed.findMany({
+    const findPenaltyQuery = await prisma.bookBorrowed.findFirst({
       where: {
         userId: id,
         penalty: {
           type: 'active',
         },
       },
-      include: {
-        penalty: true,
+      orderBy: {
+        penalty: {
+          start_date: 'desc',
+        },
       },
     });
 
     //handling if user have an active penalty
-    if (findPenaltyQuery.length > 0) {
-      const error = new Error('Your account have an active penalty.');
-      error.success = false;
-      error.statusCode = 400;
-      throw error;
+    if (findPenaltyQuery > 0) {
+      const dateNow = formatISO(addDays(new Date(), 4));
+      const dateDueReturn = formatISO(findPenaltyQuery.ended_at);
+      if (dateDueReturn > dateNow) {
+        const error = new Error('Your account have an active penalty.');
+        error.success = false;
+        error.statusCode = 400;
+        throw error;
+      }
     }
 
     const borrowQuantity = 1;
