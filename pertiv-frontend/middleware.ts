@@ -21,34 +21,41 @@ export async function middleware(request: NextRequest) {
   }
 
   if (token) {
-    const secret = new TextEncoder().encode(ENV.JWT_SECRET);
-    const user = await jwtVerify(token.value, secret);
-    const role = user.payload.role as Role;
+    try {
+      const secret = new TextEncoder().encode(ENV.JWT_SECRET);
+      const user = await jwtVerify(token.value, secret);
+      const role = user.payload.role as Role;
 
-    const routePath =
-      role === 'admin'
-        ? ROLE_PATHS.admin
-        : role === 'staff'
-        ? ROLE_PATHS.staff
-        : ROLE_PATHS.user;
+      const routePath =
+        role === 'admin'
+          ? ROLE_PATHS.admin
+          : role === 'staff'
+          ? ROLE_PATHS.staff
+          : ROLE_PATHS.user;
 
-    if (authRoutes.some((item) => item === pathname)) {
-      return NextResponse.redirect(new URL(routePath, request.url));
-    }
+      if (authRoutes.some((item) => item === pathname)) {
+        return NextResponse.redirect(new URL(routePath, request.url));
+      }
 
-    if ((role === 'admin') !== pathname.startsWith(ROLE_PATHS.admin)) {
-      return NextResponse.redirect(new URL(routePath, request.url));
-    }
+      if ((role === 'admin') !== pathname.startsWith(ROLE_PATHS.admin)) {
+        return NextResponse.redirect(new URL(routePath, request.url));
+      }
 
-    if ((role === 'staff') !== pathname.startsWith(ROLE_PATHS.staff)) {
-      return NextResponse.redirect(new URL(routePath, request.url));
-    }
+      if ((role === 'staff') !== pathname.startsWith(ROLE_PATHS.staff)) {
+        return NextResponse.redirect(new URL(routePath, request.url));
+      }
 
-    if (
-      role === 'user' &&
-      protectedUserRoutes.some((item) => item === pathname)
-    ) {
-      return NextResponse.next();
+      if (
+        role === 'user' &&
+        protectedUserRoutes.some((item) => item === pathname)
+      ) {
+        return NextResponse.next();
+      }
+    } catch (err) {
+      const response = NextResponse.redirect(new URL('/login', request.url));
+      response.cookies.delete('token');
+      console.log(err, 'from token middlewaree');
+      return response;
     }
   }
 }

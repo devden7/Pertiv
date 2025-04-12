@@ -14,7 +14,6 @@ const UserHomePage = async () => {
   const data = await getBooksSellingUser('', 1, 5);
   const dataBookBorrowing = await getBooksBorrowingUser('', 1, 5);
   const pricing = await getMembershipTypeForUser();
-  console.log(pricing);
   return (
     <>
       <Hero />
