@@ -134,10 +134,10 @@ const getStaffAccountDetail = async (req, res, next) => {
 const updateStaffAccount = async (req, res, next) => {
   try {
     const paramsId = req.params.id;
-    const { name, email, password } = req.body;
+    const { name, password } = req.body;
 
     logger.info(
-      `Controller updateStaffAccount - Updating staff account with ID : ${paramsId} - Name : ${name} - Email : ${email}`
+      `Controller updateStaffAccount - Updating staff account with ID : ${paramsId} - Name : ${name} `
     );
 
     const errors = validationResult(req);
@@ -169,13 +169,11 @@ const updateStaffAccount = async (req, res, next) => {
       where: { id: paramsId },
       data: {
         name,
-        email,
         password:
           password !== '' && !checkPassword
             ? bcrypt.hashSync(password, 10)
             : findStaffQuery.password,
         role: 'staff',
-        is_penalty: false,
       },
     });
 

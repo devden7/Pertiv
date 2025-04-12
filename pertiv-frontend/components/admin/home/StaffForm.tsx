@@ -124,6 +124,7 @@ const StaffForm = ({ email, name, id = '', type, token, setIsOpen }: Props) => {
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input
+                  disabled={type !== 'Add'}
                   placeholder="Email of the staff"
                   type="email"
                   {...field}

@@ -21,36 +21,46 @@ const TableItem = ({
   image,
   token,
 }: Props) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   const deleteStaffHandler = async (id: string) => {
+    setIsLoading(true);
     const response = await deleteStaff(id, token);
     if (!response) {
-      return toast({
+      toast({
         variant: 'destructive',
         title: 'Oh! Something went wrong!',
         description: 'Internal server error',
       });
+      setIsLoading(false);
+      return;
     }
 
     if (!response.success && response.statusCode !== 201) {
-      return console.log('Error Response');
+      toast({
+        variant: 'destructive',
+        title: response.message,
+        duration: 2000,
+      });
+      setIsLoading(false);
+      return;
     }
 
     toast({
       description: response.message,
       duration: 2000,
     });
+    setIsLoading(false);
   };
 
   return (
-    <TableRow>
-      <TableCell className="font-medium">{index + 1}</TableCell>
+    <TableRow className="text-center">
       <TableCell>{name}</TableCell>
       <TableCell>{email}</TableCell>
       <TableCell>{role}</TableCell>
       <TableCell>
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-2 flex-wrap justify-center">
           <div>
             <Button variant="outline" onClick={() => setIsOpen(true)}>
               Details
@@ -75,6 +85,7 @@ const TableItem = ({
             <Button
               className="bg-red-500 hover:bg-red-700"
               onClick={() => deleteStaffHandler(id)}
+              disabled={isLoading}
             >
               Delete
             </Button>

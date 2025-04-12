@@ -21,6 +21,9 @@ type bookSellingDetail = {
   publisherName: string;
   writerName: string;
   category: { categories: { name: string } }[];
+  user: {
+    name: string;
+  };
 };
 type bookBorrowingDetail = {
   id: string;
@@ -33,6 +36,9 @@ type bookBorrowingDetail = {
   publisherName: string;
   writerName: string;
   category: { categories: { name: string } }[];
+  user: {
+    name: string;
+  };
 };
 
 interface Props {
@@ -107,13 +113,23 @@ const BookDetail = ({ type, book, token }: Props) => {
                 objectFit="cover"
               />
             </div>
+
             <div className="w-full md:w-1/3">
-              <div className="mt-2 flex gap-2">
-                {book.category.map((cat) => (
-                  <Badge variant="outline" key={cat.categories.name}>
-                    {cat.categories.name}
-                  </Badge>
-                ))}
+              <div className="mt-2 flex justify-between">
+                <div className="flex gap-2">
+                  {book.category.map((cat) => (
+                    <Badge variant="outline" key={cat.categories.name}>
+                      {' '}
+                      {cat.categories.name}
+                    </Badge>
+                  ))}
+                </div>
+                <div>
+                  <span className="text-sm text-gray-600">
+                    Product added by{' '}
+                    {book.user !== null ? book.user.name : 'staff'}
+                  </span>
+                </div>
               </div>
               <h3 className="font-semibold text-lg">{book.title}</h3>
               <div className="text-sm">

@@ -31,11 +31,10 @@ const TableContent = ({ data, token, page, pageSize, totalCount }: Props) => {
             <TableCaption>A list of your staffs.</TableCaption>
             <TableHeader>
               <TableRow>
-                <TableHead>No</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Action</TableHead>
+                <TableHead className="text-center">Name</TableHead>
+                <TableHead className="text-center">Email</TableHead>
+                <TableHead className="text-center">Role</TableHead>
+                <TableHead className="text-center">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableList data={data} token={token} />

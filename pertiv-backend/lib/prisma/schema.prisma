@@ -126,14 +126,14 @@ model BookSelling {
   price Int
   created_at   DateTime @default(now()) @db.Timestamptz()
 
-  user_id      String
+  user_id      String?
   publisher_id String
   writer_id    String
   cart_item     CartItem[]
   item_orders  ItemOrder[]
   category BookCategorySell[]
 
-  user        User @relation(fields: [user_id], references: [id])
+  user        User? @relation(fields: [user_id], references: [id], onDelete: SetNull)
   publisher   Publisher @relation(fields: [publisher_id], references: [id])
   writer      Writer @relation(fields: [writer_id], references: [id])
 }
@@ -222,14 +222,14 @@ model BookBorrowing {
   is_member    Boolean @default(false)
   created_at   DateTime @default(now()) @db.Timestamptz()
 
-  user_id      String
+  user_id      String?
   publisher_id String
   writer_id    String
   collection_item CollectionItem[]
   category BookCategoryBorrow[]
   items ItemBorrowed[]
 
-  user        User @relation(fields: [user_id], references: [id])
+  user        User? @relation(fields: [user_id], references: [id], onDelete: SetNull)
   publisher   Publisher @relation(fields: [publisher_id], references: [id])
   writer      Writer @relation(fields: [writer_id], references: [id])
 }
