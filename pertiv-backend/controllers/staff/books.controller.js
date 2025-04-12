@@ -15,6 +15,7 @@ const addBookSelling = async (req, res, next) => {
       writerName,
       categories,
     } = req.body;
+    const categoriesArr = Array.isArray(categories) ? categories : [categories];
     const { id } = req.user;
     const fileNameImage = req.file
       ? Date.now() + '-' + req.file.originalname
@@ -49,7 +50,7 @@ const addBookSelling = async (req, res, next) => {
     ]);
 
     const categoriesQuery = await Promise.all(
-      categories.map(async (name) =>
+      categoriesArr.map(async (name) =>
         prisma.category.upsert({
           where: { name: name.toLowerCase() },
           update: {},
@@ -62,7 +63,7 @@ const addBookSelling = async (req, res, next) => {
       data: {
         title: title.toLowerCase(),
         description,
-        language,
+        language: language.toLowerCase(),
         stock: parseInt(stock),
         imageUrl,
         price: parseInt(price),
@@ -229,7 +230,7 @@ const updateBookSelling = async (req, res, next) => {
       writerName,
       categories,
     } = req.body;
-
+    const categoriesArr = Array.isArray(categories) ? categories : [categories];
     const fileNameImage =
       !req.file && !image
         ? null
@@ -275,14 +276,14 @@ const updateBookSelling = async (req, res, next) => {
         create: { name: publisherName.toLowerCase() },
       }),
       prisma.writer.upsert({
-        where: { name: writerName },
+        where: { name: writerName.toLowerCase() },
         update: {},
-        create: { name: writerName },
+        create: { name: writerName.toLowerCase() },
       }),
     ]);
 
     const categoriesQuery = await Promise.all(
-      categories.map(async (name) =>
+      categoriesArr.map(async (name) =>
         prisma.category.upsert({
           where: { name: name.toLowerCase() },
           update: {},
@@ -296,7 +297,7 @@ const updateBookSelling = async (req, res, next) => {
       data: {
         title: title?.toLowerCase() || findBookSellingQuery.title,
         description: description || findBookSellingQuery.description,
-        language: language || findBookSellingQuery.language,
+        language: language.toLowerCase() || findBookSellingQuery.language,
         stock: parseInt(stock) || findBookSellingQuery.stock,
         imageUrl,
         price: parseInt(price) || findBookSellingQuery.price,
@@ -392,7 +393,7 @@ const addBookBorrowing = async (req, res, next) => {
       writerName,
       categories,
     } = req.body;
-
+    const categoriesArr = Array.isArray(categories) ? categories : [categories];
     const { id } = req.user;
     const fileNameImage = req.file
       ? Date.now() + '-' + req.file.originalname
@@ -420,14 +421,14 @@ const addBookBorrowing = async (req, res, next) => {
         create: { name: publisherName.toLowerCase() },
       }),
       prisma.writer.upsert({
-        where: { name: writerName },
+        where: { name: writerName.toLowerCase() },
         update: {},
-        create: { name: writerName },
+        create: { name: writerName.toLowerCase() },
       }),
     ]);
 
     const categoriesQuery = await Promise.all(
-      categories.map(async (name) =>
+      categoriesArr.map(async (name) =>
         prisma.category.upsert({
           where: { name: name.toLowerCase() },
           update: {},
@@ -577,7 +578,7 @@ const updateBookBorrowing = async (req, res, next) => {
       writerName,
       categories,
     } = req.body;
-
+    const categoriesArr = Array.isArray(categories) ? categories : [categories];
     const fileNameImage =
       !req.file && !image
         ? null
@@ -623,14 +624,14 @@ const updateBookBorrowing = async (req, res, next) => {
         create: { name: publisherName.toLowerCase() },
       }),
       prisma.writer.upsert({
-        where: { name: writerName },
+        where: { name: writerName.toLowerCase() },
         update: {},
-        create: { name: writerName },
+        create: { name: writerName.toLowerCase() },
       }),
     ]);
 
     const categoriesQuery = await Promise.all(
-      categories.map(async (name) =>
+      categoriesArr.map(async (name) =>
         prisma.category.upsert({
           where: { name: name.toLowerCase() },
           update: {},
@@ -644,7 +645,7 @@ const updateBookBorrowing = async (req, res, next) => {
       data: {
         title: title.toLowerCase() || findBookBorrowingQuery.title,
         description: description || findBookBorrowingQuery.description,
-        language: language || findBookBorrowingQuery.language,
+        language: language.toLowerCase() || findBookBorrowingQuery.language,
         stock: parseInt(stock) ?? findBookBorrowingQuery.stock,
         imageUrl,
         book_position:
