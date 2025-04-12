@@ -9,6 +9,7 @@ import { IStaff } from '@/model/admin.model';
 import TableList from './TableList';
 import AddStaff from './AddStaff';
 import { PaginationWithLinks } from '@/components/ui/pagination-with-links';
+import DataNotFound from '@/components/shared/DataNotFound';
 
 interface Props {
   data: IStaff[];
@@ -25,7 +26,7 @@ const TableContent = ({ data, token, page, pageSize, totalCount }: Props) => {
         <h1 className="text-xl font-semibold">List staff</h1>
         <p className="text-sm text-slate-500 mb-3">all list of staffs</p>
         <AddStaff token={token} />
-        {data.length === 0 && <p className="text-center">No data</p>}
+        {data.length === 0 && <DataNotFound data={data} />}
         {data.length !== 0 && (
           <Table>
             <TableCaption>A list of your staffs.</TableCaption>

@@ -89,3 +89,25 @@ export const deleteStaff = async (id: string, token?: string) => {
     console.log('Error from deleteStaff action', error);
   }
 };
+
+export const getLogs = async (
+  search?: string,
+  page?: number,
+  token?: string
+) => {
+  try {
+    const response = await fetch(
+      `${ENV.API_URL}/admin/logs?page=${page}&search=${search}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        cache: 'no-store',
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Error from getLogs action ', error);
+  }
+};

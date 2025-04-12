@@ -7,28 +7,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { deleteCookie, getUserToken } from '@/lib/actions/auth.action';
+import { deleteCookie } from '@/lib/actions/auth.action';
 import { AuthUser } from '@/model/auth.model';
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
-const AdminNavbar = () => {
-  const [auth, setAuth] = useState<AuthUser | null | undefined>(null);
-  const router = useRouter();
-  useEffect(() => {
-    const getAuth = async () => {
-      const user = await getUserToken();
-      setAuth(user);
-    };
+interface Props {
+  auth: AuthUser | null | undefined;
+}
 
-    getAuth();
-  }, []);
+const AdminNavbar = ({ auth }: Props) => {
+  const router = useRouter();
+
   const logoutHandler = async () => {
     await deleteCookie();
     router.push('/login');
-    setTimeout(() => {
-      setAuth(null);
-    }, 3000);
   };
   return (
     <header>
@@ -41,21 +33,24 @@ const AdminNavbar = () => {
               </Link>
             </div>
             {auth && (
-              <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <div className="rounded-full">
-                    <div className="size-8 rounded-full bg-red-500"></div>
-                  </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem>
-                    <p>Hi, {String(auth?.name)}</p>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    <div onClick={() => logoutHandler()}>Logout</div>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="flex gap-4 items-center text-white font-medium">
+                <Link href="/admin/log">Logs</Link>
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <div className="rounded-full">
+                      <div className="size-8 rounded-full bg-red-500"></div>
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>
+                      <p>Hi, {String(auth?.name)}</p>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer">
+                      <div onClick={() => logoutHandler()}>Logout</div>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             )}
           </div>
         </div>

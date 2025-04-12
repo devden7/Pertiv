@@ -6,3 +6,10 @@ export interface IStaff {
   role: string;
   image: string | null;
 }
+
+export interface ILogs {
+  id: string;
+  level: string;
+  message: string;
+  createdAt: string;
+}
