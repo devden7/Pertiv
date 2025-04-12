@@ -65,10 +65,10 @@ model MembershipTransaction {
   created_at DateTime @default(now()) @db.Timestamptz()
 
   user_id        String
-  membership_id  String
+  membership_id  String?
 
   user          User         @relation(fields: [user_id], references: [id])
-  membership    Membership   @relation(fields: [membership_id], references: [id])
+  membership    Membership?   @relation(fields: [membership_id], references: [id], onDelete: SetNull)
 }
 
 model Publisher {

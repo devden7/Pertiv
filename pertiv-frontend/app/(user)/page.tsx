@@ -14,6 +14,7 @@ const UserHomePage = async () => {
   const data = await getBooksSellingUser('', 1, 5);
   const dataBookBorrowing = await getBooksBorrowingUser('', 1, 5);
   const pricing = await getMembershipTypeForUser();
+  console.log(pricing);
   return (
     <>
       <Hero />
@@ -31,7 +32,7 @@ const UserHomePage = async () => {
         detailUrl={'/book-borrowing'}
         token={user ? user.token : undefined}
       />
-      <Pricing data={pricing.data[0]} token={user ? user.token : undefined} />
+      <Pricing data={pricing.data} token={user ? user.token : undefined} />
     </>
   );
 };
