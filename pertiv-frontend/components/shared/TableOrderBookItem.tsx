@@ -20,16 +20,27 @@ const TableOrderBookItem = ({
   return (
     <TableRow>
       <TableCell className="hidden md:table-cell">
-        <div className="relative aspect-square rounded-md object-cover size-16">
-          <Image src={ImageHandler(book_imageUrl)} alt={book_title} fill />
+        <div className="relative aspect-[2/3] w-24">
+          <Image
+            src={ImageHandler(book_imageUrl)}
+            alt={book_title}
+            fill
+            sizes="50vw"
+            quality={100}
+            className="object-cover p-2"
+          />
         </div>
       </TableCell>
-      <TableCell className="font-medium max-w-40 break_text">
+      <TableCell className="font-medium max-w-40 break_text text-center">
         {book_title}
       </TableCell>
-      {mode !== 'bookBorrowing' && <TableCell>{quantity}</TableCell>}
       {mode !== 'bookBorrowing' && (
-        <TableCell>Rp {formatNumberToRupiah(book_price)}</TableCell>
+        <TableCell className="text-center">{quantity}</TableCell>
+      )}
+      {mode !== 'bookBorrowing' && (
+        <TableCell className="text-center">
+          Rp {formatNumberToRupiah(book_price)}
+        </TableCell>
       )}
     </TableRow>
   );

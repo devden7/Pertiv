@@ -24,12 +24,18 @@ const TableOrderBook = ({ item_order, mode }: Props) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[80px] hidden md:table-cell">
+              <TableHead className="w-[80px] hidden md:table-cell text-center">
                 Image
               </TableHead>
-              <TableHead className="max-w-[150px]">Item Name</TableHead>
-              {mode !== 'bookBorrowing' && <TableHead>Quantity</TableHead>}
-              {mode !== 'bookBorrowing' && <TableHead>Price</TableHead>}
+              <TableHead className="max-w-[150px] text-center">
+                Item Name
+              </TableHead>
+              {mode !== 'bookBorrowing' && (
+                <TableHead className="text-center">Quantity</TableHead>
+              )}
+              {mode !== 'bookBorrowing' && (
+                <TableHead className="text-center">Price</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableOrderBookList item_order={item_order} mode={mode} />

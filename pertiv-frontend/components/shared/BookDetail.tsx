@@ -105,12 +105,15 @@ const BookDetail = ({ type, book, token }: Props) => {
       <section className="p-3">
         <div className="container">
           <div className="flex flex-wrap gap-5 justify-center">
-            <div className="relative rounded-md overflow-hidden w-44 h-64 md:w-64 md:h-72">
+            <div className="relative  overflow-hidden w-44 aspect-[2/3]">
               <Image
                 src={ImageHandler(book.imageUrl)}
                 alt={book.title}
                 fill
-                objectFit="cover"
+                sizes="50vw"
+                quality={100}
+                className="object-cover p-3"
+                priority
               />
             </div>
 

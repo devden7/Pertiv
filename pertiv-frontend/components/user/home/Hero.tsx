@@ -10,7 +10,7 @@ const Hero = () => {
               Explore the world through books
             </h1>
             <div>
-              <Image src={hero} alt="hero" width={300} height={300} />
+              <Image src={hero} alt="hero" width={300} height={300} priority />
             </div>
           </div>
         </div>

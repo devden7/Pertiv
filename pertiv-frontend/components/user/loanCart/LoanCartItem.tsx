@@ -52,20 +52,20 @@ const LoanCartItem = ({ id, title, imageUrl, token }: Props) => {
   return (
     <div className="mb-4 flex max-sm:flex-col justify-between items-center border-b-[1.5px] border-gray-200">
       <div className="flex gap-2 items-center max-sm:flex-col max-sm:gap-4">
-        <div className="max-sm:w-20 w-24 mx-auto aspect-square rounded-md p-1">
-          <div className="relative w-full h-28 overflow-hidden object-contain">
-            <Image
-              src={ImageHandler(imageUrl)}
-              alt={title}
-              fill
-              sizes="50vw"
-              quality={100}
-              priority
-            />
-          </div>
+        <div className="relative w-24 aspect-[2/3] overflow-hidden">
+          <Image
+            className="object-cover p-2"
+            src={ImageHandler(imageUrl)}
+            alt={title}
+            fill
+            sizes="50vw"
+            quality={100}
+          />
         </div>
         <div>
-          <h1 className="font-semibold max-w-96 break_text">{title}</h1>
+          <h1 className="font-semibold max-w-96 max-md:w-52 break_text">
+            {title}
+          </h1>
         </div>
       </div>
       <div>

@@ -21,18 +21,15 @@ const BooksItem = ({ token, book, detailUrl, type }: Props) => {
   return (
     <div>
       <Link href={`${detailUrl}/${book.id}`}>
-        <div className="w-full aspect-square rounded-2xl p-3">
-          <div className="relative h-full w-9/12  mx-auto overflow-hidden p-5">
-            <Image
-              src={ImageHandler(book.imageUrl)}
-              alt={book.title}
-              fill
-              sizes="50vw"
-              quality={100}
-              priority
-              className="object-cover"
-            />
-          </div>
+        <div className="relative w-9/12 aspect-[2/3] mx-auto overflow-hidden">
+          <Image
+            src={ImageHandler(book.imageUrl)}
+            alt={book.title}
+            fill
+            sizes="50vw"
+            quality={100}
+            className="object-cover p-2"
+          />
         </div>
         <div className="mt-3">
           <div className="mt-2 flex gap-2">

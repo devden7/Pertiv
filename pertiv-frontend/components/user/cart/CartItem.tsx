@@ -74,21 +74,20 @@ const CartItem = ({ id, quantity, title, imageUrl, price, token }: Props) => {
   return (
     <div className="mb-4 flex  max-sm:flex-col justify-between items-center border-b-[1.5px] border-gray-200">
       <div className="flex gap-2 items-center max-sm:flex-col max-sm:gap-4">
-        <div className="max-sm:w-32  w-24 mx-auto aspect-square rounded-md p-1">
-          <div className="relative w-full max-sm:h-52 h-28 overflow-hidden object-contain">
-            <Image
-              className="object-cover"
-              src={ImageHandler(imageUrl)}
-              alt="book"
-              fill
-              sizes="50vw"
-              quality={100}
-              priority
-            />
-          </div>
+        <div className="relative w-24 aspect-[2/3] overflow-hidden">
+          <Image
+            className="object-cover p-2"
+            src={ImageHandler(imageUrl)}
+            alt="book"
+            fill
+            sizes="50vw"
+            quality={100}
+          />
         </div>
         <div className="max-sm:flex max-sm:items-center max-sm:flex-col">
-          <h1 className="font-semibold max-w-96 break_text">{title}</h1>
+          <h1 className="font-semibold max-w-96 max-md:w-52 break_text">
+            {title}
+          </h1>
           <p className="text-xs text-gray-800 mt-5 mb-2">
             <span className="text-primary-500 font-medium">Qty {quantity}</span>{' '}
             X {formatNumberToRupiah(price)}

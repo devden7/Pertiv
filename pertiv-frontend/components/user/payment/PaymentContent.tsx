@@ -68,14 +68,26 @@ const PaymentContent = ({ data, token }: Props) => {
     const splitOrderId = data.id.split('#');
     const response = await cancelPurchaseBook(splitOrderId[1], token);
 
-    if (!response || !response.success) {
+    if (!response) {
       toast({
         variant: 'destructive',
         title: 'Oh! Something went wrong!',
         description: 'Internal server error',
         duration: 2000,
       });
+      setIsLoading(false);
 
+      return;
+    }
+
+    if (!response.success && response.statusCode !== 201) {
+      toast({
+        variant: 'destructive',
+        title: response.message,
+        duration: 2000,
+      });
+
+      setIsLoading(false);
       return;
     }
   };
