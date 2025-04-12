@@ -131,7 +131,9 @@ const BookDetail = ({ type, book, token }: Props) => {
                   </span>
                 </div>
               </div>
-              <h3 className="font-semibold text-lg">{book.title}</h3>
+              <h3 className="font-semibold text-lg max-w-full break_text">
+                {book.title}
+              </h3>
               <div className="text-sm">
                 <div className="flex justify-between">
                   <p className="text-slate-500">Stock</p>

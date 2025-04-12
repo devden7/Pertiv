@@ -87,9 +87,9 @@ const CartItem = ({ id, quantity, title, imageUrl, price, token }: Props) => {
             />
           </div>
         </div>
-        <div className="max-sm:flex max-sm:items-center max max-sm:flex-col">
-          <h1 className="font-semibold">{title}</h1>
-          <p className="text-xs text-gray-800 mt-5">
+        <div className="max-sm:flex max-sm:items-center max-sm:flex-col">
+          <h1 className="font-semibold max-w-96 break_text">{title}</h1>
+          <p className="text-xs text-gray-800 mt-5 mb-2">
             <span className="text-primary-500 font-medium">Qty {quantity}</span>{' '}
             X {formatNumberToRupiah(price)}
           </p>

@@ -30,6 +30,10 @@
   .btn_primary {
     @apply bg-primary-500 hover:bg-primary-600 duration-300 !important;
   }
+
+  .break_text {
+    @apply break-words min-w-0;
+  }
 }
 
 @layer base {

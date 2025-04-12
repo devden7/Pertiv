@@ -65,7 +65,7 @@ const LoanCartItem = ({ id, title, imageUrl, token }: Props) => {
           </div>
         </div>
         <div>
-          <h1 className="font-semibold">{title}</h1>
+          <h1 className="font-semibold max-w-96 break_text">{title}</h1>
         </div>
       </div>
       <div>

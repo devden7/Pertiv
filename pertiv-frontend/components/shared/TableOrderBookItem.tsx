@@ -24,7 +24,9 @@ const TableOrderBookItem = ({
           <Image src={ImageHandler(book_imageUrl)} alt={book_title} fill />
         </div>
       </TableCell>
-      <TableCell className="font-medium">{book_title}</TableCell>
+      <TableCell className="font-medium max-w-40 break_text">
+        {book_title}
+      </TableCell>
       {mode !== 'bookBorrowing' && <TableCell>{quantity}</TableCell>}
       {mode !== 'bookBorrowing' && (
         <TableCell>Rp {formatNumberToRupiah(book_price)}</TableCell>

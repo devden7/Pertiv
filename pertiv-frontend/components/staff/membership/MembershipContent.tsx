@@ -1,6 +1,5 @@
 import { IMembershipType } from '@/model/staff.model';
 import AddMembership from './AddMembership';
-import SearchInput from '@/components/shared/SearchInput';
 import { Table, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import MembershipList from './MembershipList';
 import DataNotFound from '@/components/shared/DataNotFound';
@@ -25,7 +24,6 @@ const MembershipContent = ({ data, token }: Props) => {
         </div>
         <AddMembership token={token} />
       </div>
-      <SearchInput placeholder="Search by Name" path="/staff/membership" />
       <Table>
         <TableHeader>
           <TableRow>

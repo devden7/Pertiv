@@ -76,7 +76,7 @@ const BookItem = ({ item, token, mode }: Props) => {
             </div>
           </div>
         </TableCell>
-        <TableCell>{item.title}</TableCell>
+        <TableCell className="max-w-52 break_text">{item.title}</TableCell>
         <TableCell className="text-center">{item.language}</TableCell>
         <TableCell className="text-center">{item.stock}</TableCell>
         {mode !== 'bookBorrowing' && (
