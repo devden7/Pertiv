@@ -13,9 +13,11 @@ const AdminHomePage = async ({ searchParams }: ParamsProps) => {
     return notFound();
   }
   const page = parseInt(searchParams.page) || 1;
+
+  const search = searchParams.search || '';
   const SIZE = 10;
 
-  const data = await getStaffs(page, user.token);
+  const data = await getStaffs(search, page, user.token);
 
   return (
     <>

@@ -50,11 +50,34 @@ const createStaffAccount = async (req, res, next) => {
 const getStaffAccounts = async (req, res, next) => {
   try {
     logger.info('Controller getStaffAccounts - Get all staff accounts');
+    const { search } = req.query;
     const page = parseInt(req.query.page) || 1;
     const LIMIT = 10;
     const skip = (page - 1) * LIMIT;
+    const keyword = search
+      ? {
+          role: 'staff',
+          OR: [
+            {
+              name: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
+            {
+              email: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        }
+      : {
+          role: 'staff',
+        };
+
     const findDataQuery = await prisma.user.findMany({
-      where: { role: 'staff' },
+      where: keyword,
       skip,
       take: LIMIT,
       select: {
@@ -67,9 +90,7 @@ const getStaffAccounts = async (req, res, next) => {
     });
 
     const countOrder = await prisma.user.count({
-      where: {
-        role: 'staff',
-      },
+      where: keyword,
     });
 
     res.status(200).json({

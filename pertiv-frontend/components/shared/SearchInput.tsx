@@ -31,7 +31,7 @@ const SearchInput = ({ placeholder, path }: Props) => {
     return () => clearTimeout(debounceTyping);
   }, [keyword]);
   return (
-    <div className="max-sm:w-1/2 w-[30%] mb-3">
+    <div className="max-sm:w-1/2 w-[30%] my-3">
       <Label
         htmlFor="default-search"
         className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"

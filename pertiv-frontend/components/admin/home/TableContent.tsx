@@ -10,6 +10,7 @@ import TableList from './TableList';
 import AddStaff from './AddStaff';
 import { PaginationWithLinks } from '@/components/ui/pagination-with-links';
 import DataNotFound from '@/components/shared/DataNotFound';
+import SearchInput from '@/components/shared/SearchInput';
 
 interface Props {
   data: IStaff[];
@@ -26,6 +27,10 @@ const TableContent = ({ data, token, page, pageSize, totalCount }: Props) => {
         <h1 className="text-xl font-semibold">List staff</h1>
         <p className="text-sm text-slate-500 mb-3">all list of staffs</p>
         <AddStaff token={token} />
+        <SearchInput
+          placeholder="Search by Name or Email"
+          path={page ? `/admin?page=${page}` : '/admin'}
+        />
         {data.length === 0 && <DataNotFound data={data} />}
         {data.length !== 0 && (
           <Table>

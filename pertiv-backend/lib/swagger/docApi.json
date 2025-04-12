@@ -202,6 +202,17 @@
                 "page": { "type": "number" }
               }
             }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "description": "Search name or email",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "search": { "type": "string" }
+              }
+            }
           }
         ],
         "security": [

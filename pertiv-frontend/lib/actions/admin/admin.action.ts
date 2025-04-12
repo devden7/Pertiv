@@ -3,14 +3,21 @@
 import { ENV } from '@/utils/config';
 import { revalidatePath } from 'next/cache';
 
-export const getStaffs = async (page: number, token?: string) => {
+export const getStaffs = async (
+  search?: string,
+  page?: number,
+  token?: string
+) => {
   try {
-    const response = await fetch(`${ENV.API_URL}/admin/staffs?page=${page}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      cache: 'no-store',
-    });
+    const response = await fetch(
+      `${ENV.API_URL}/admin/staffs?page=${page}&search=${search}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        cache: 'no-store',
+      }
+    );
     const data = await response.json();
     return data;
   } catch (error) {
