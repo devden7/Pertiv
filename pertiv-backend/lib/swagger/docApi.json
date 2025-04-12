@@ -4398,6 +4398,92 @@
           }
         }
       }
+    },
+    "/admin/logs": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Get list activity logs",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Input page number",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "page": { "type": "number" }
+              }
+            }
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "description": "search keyword",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "search": { "type": "string" }
+              }
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "level": { "type": "string" },
+                      "message": { "type": "string" },
+                      "createdAt": { "type": "string" }
+                    }
+                  }
+                },
+                "totalCount": { "type": "number" }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

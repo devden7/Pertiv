@@ -9,6 +9,7 @@ const {
 const { body } = require('express-validator');
 const { PrismaClient } = require('@prisma/client');
 const adminMiddleware = require('../middleware/adminAuth');
+const getActivityLogs = require('../controllers/admin/log.controller');
 const router = express.Router();
 
 router.post(
@@ -90,4 +91,5 @@ router.put(
 
 router.delete('/delete-staff/:id', adminMiddleware, deleteStaffAccount);
 
+router.get('/logs', getActivityLogs);
 module.exports = router;
