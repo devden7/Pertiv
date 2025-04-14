@@ -38,7 +38,11 @@ const AdminNavbar = ({ auth }: Props) => {
                 <DropdownMenu>
                   <DropdownMenuTrigger>
                     <div className="rounded-full">
-                      <div className="size-8 rounded-full bg-red-500"></div>
+                      <div className="size-8 rounded-full bg-gray-400 flex justify-center items-center">
+                        <span className="capitalize font-bold">
+                          {auth.name[0]}
+                        </span>
+                      </div>
                     </div>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>

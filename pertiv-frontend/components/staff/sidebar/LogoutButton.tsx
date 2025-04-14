@@ -40,7 +40,9 @@ const LogoutButton = ({ auth }: Props) => {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="h-8 w-8 bg-red-500 rounded-full"></div>
+              <div className="h-8 w-8 bg-gray-400 flex justify-center items-center rounded-full">
+                <span className="capitalize font-bold">{auth?.name[0]}</span>
+              </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{auth?.name}</span>
                 <span className="truncate text-xs">{auth?.email}</span>

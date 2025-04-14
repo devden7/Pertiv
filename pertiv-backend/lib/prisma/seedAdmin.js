@@ -20,7 +20,6 @@ const createAdminAccount = async () => {
         email: EMAIL_ADMIN,
         password: bcrypt.hashSync(PASSWORD_ADMIN, 10),
         role: 'admin',
-        is_penalty: false,
       },
     });
 

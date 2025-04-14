@@ -93,7 +93,7 @@ const RegisterForm = () => {
             <FormItem className="space-y-0">
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Name of the staff" {...field} />
+                <Input placeholder="Name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -106,11 +106,7 @@ const RegisterForm = () => {
             <FormItem className="space-y-0">
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Email of the staff"
-                  type="email"
-                  {...field}
-                />
+                <Input placeholder="Email" type="email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -123,11 +119,7 @@ const RegisterForm = () => {
             <FormItem className="space-y-0">
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Password of the staff"
-                  type="password"
-                  {...field}
-                />
+                <Input placeholder="Password" type="password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
