@@ -37,6 +37,17 @@ export interface IBooksBorrowing {
     name: string;
   };
   category: string[];
+  items: {
+    bookBorrowed: {
+      id: string;
+      status: string;
+      date_returned: string;
+      created_at: string;
+      user: {
+        name: string;
+      };
+    };
+  }[];
 }
 
 export interface ISTransaction {

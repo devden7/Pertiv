@@ -28,6 +28,10 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
+import { Card } from '@/components/ui/card';
+import { formatDateTime } from '@/utils/formatDateTime';
+import { badgeStatusColor } from '@/utils/badgeStatusColor';
+import DataNotFound from '@/components/shared/DataNotFound';
 
 interface Props {
   token: string;
@@ -37,6 +41,7 @@ interface Props {
 
 const BookItem = ({ item, token, mode }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [dialogMode, setDialogMode] = useState('Edit');
   const { toast } = useToast();
   const deleteBookHandler = async (id: string) => {
     const response =
@@ -106,7 +111,10 @@ const BookItem = ({ item, token, mode }: Props) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent side="left">
                 <DropdownMenuItem className="cursor-pointer">
-                  <DialogTrigger className="w-full text-left">
+                  <DialogTrigger
+                    className="w-full text-left"
+                    onClick={() => setDialogMode('Edit')}
+                  >
                     Edit
                   </DialogTrigger>
                 </DropdownMenuItem>
@@ -116,24 +124,90 @@ const BookItem = ({ item, token, mode }: Props) => {
                 >
                   Delete
                 </DropdownMenuItem>
+                {mode === 'bookBorrowing' && (
+                  <DropdownMenuItem>
+                    <DialogTrigger
+                      className="w-full text-left"
+                      onClick={() => setDialogMode('History')}
+                    >
+                      History borrowing
+                    </DialogTrigger>
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
             <DialogContent className="overflow-auto max-h-[500px]">
-              <DialogHeader>
-                <DialogTitle>Update book</DialogTitle>
-                <DialogDescription>Update a new book</DialogDescription>
-              </DialogHeader>
-              <BookForm
-                book={{
-                  ...item,
-                  publisher: item.publisher.name,
-                  writer: item.writer.name,
-                }}
-                setIsOpen={setIsOpen}
-                type="Edit"
-                mode={mode}
-                token={token}
-              />
+              {dialogMode === 'Edit' && (
+                <>
+                  <DialogHeader>
+                    <DialogTitle>Update book</DialogTitle>
+                    <DialogDescription>Update a new book</DialogDescription>
+                  </DialogHeader>
+                  <BookForm
+                    book={{
+                      ...item,
+                      publisher: item.publisher.name,
+                      writer: item.writer.name,
+                    }}
+                    setIsOpen={setIsOpen}
+                    type="Edit"
+                    mode={mode}
+                    token={token}
+                  />
+                </>
+              )}
+
+              {dialogMode === 'History' && (
+                <>
+                  <DialogHeader>
+                    <DialogTitle>History Borrowing book</DialogTitle>
+                  </DialogHeader>
+                  <div>
+                    {(item as IBooksBorrowing).items.length === 0 && (
+                      <DataNotFound data={(item as IBooksBorrowing).items} />
+                    )}
+                    <div className="flex flex-col gap-3">
+                      {(item as IBooksBorrowing).items.map((history) => (
+                        <Card
+                          key={history.bookBorrowed.id}
+                          className="p-3 flex flex-col gap-3"
+                        >
+                          <p>
+                            User :{' '}
+                            <span className="font-semibold">
+                              {history.bookBorrowed.user.name}
+                            </span>
+                          </p>
+                          <p>
+                            status :{' '}
+                            <span
+                              className={`${badgeStatusColor(
+                                history.bookBorrowed.status
+                              )} font-semibold p-1 rounded-md`}
+                            >
+                              {history.bookBorrowed.status}
+                            </span>
+                          </p>
+                          <p>
+                            Loan date :{' '}
+                            <span className="font-semibold">
+                              {formatDateTime(history.bookBorrowed.created_at)}
+                            </span>
+                          </p>
+                          <p>
+                            Returned date :{' '}
+                            <span className="font-semibold">
+                              {formatDateTime(
+                                history.bookBorrowed.date_returned
+                              )}
+                            </span>
+                          </p>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
             </DialogContent>
           </Dialog>
         </TableCell>

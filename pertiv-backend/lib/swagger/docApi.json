@@ -2566,8 +2566,44 @@
                       "imageUrl": { "type": "string", "nullable": true },
                       "created_at": { "type": "boolean" },
                       "user_id": { "type": "boolean" },
-                      "publisher_id": { "type": "boolean" },
-                      "writer_id": { "type": "boolean" }
+                      "publisher": {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" }
+                        }
+                      },
+                      "writer": {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" }
+                        }
+                      },
+                      "category": {
+                        "type": "array"
+                      },
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "bookBorrowed": {
+                              "type": "object",
+                              "properties": {
+                                "id": { "type": "string" },
+                                "status": { "type": "string" },
+                                "date_returned": { "type": "string" },
+                                "created_at": { "type": "string" },
+                                "user": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": { "type": "string" }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 },

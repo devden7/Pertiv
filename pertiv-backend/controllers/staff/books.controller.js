@@ -535,6 +535,24 @@ const getBooksBorrowing = async (req, res, next) => {
             },
           },
         },
+
+        items: {
+          select: {
+            bookBorrowed: {
+              select: {
+                id: true,
+                status: true,
+                date_returned: true,
+                created_at: true,
+                user: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
 
