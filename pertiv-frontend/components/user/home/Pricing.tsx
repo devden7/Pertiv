@@ -11,20 +11,60 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/lib/actions/supabase';
 import { subscribeMembership } from '@/lib/actions/user.action';
 import { IMembershipType } from '@/model/staff.model';
 import { formatDateTime } from '@/utils/formatDateTime';
 import { formatNumberToRupiah } from '@/utils/formatRupiah';
 import { addDays, formatISO } from 'date-fns';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface Props {
   data: IMembershipType[];
   token?: string;
 }
 const Pricing = ({ data, token }: Props) => {
+  const [pricingData, setPricingData] = useState(data);
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('Pricing Membership')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'Membership',
+        },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            return setPricingData([
+              ...pricingData,
+              payload.new as IMembershipType,
+            ]);
+          } else if (payload.eventType === 'DELETE') {
+            return setPricingData([]);
+          } else {
+            const oldBookId = payload.old.id;
+            return setPricingData((prev) => {
+              const takeData = [...prev];
+              const index = takeData.findIndex((item) => item.id === oldBookId);
+              if (index !== -1) {
+                takeData[index] = { ...(payload.new as IMembershipType) };
+              }
+              return takeData;
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [pricingData, setPricingData]);
 
   const getStartedHandler = async () => {
     if (!token) {
@@ -64,9 +104,9 @@ const Pricing = ({ data, token }: Props) => {
         <h2 className="font-semibold mb-5 text-xl ">Join membership</h2>
 
         <div className="space-y-8 flex flex-wrap max-sm:gap-3 justify-center items-center lg:space-y-0">
-          <DataNotFound data={data} />
+          <DataNotFound data={pricingData} />
           {/* Pricing Card  */}
-          {data.length > 0 && (
+          {pricingData.length > 0 && (
             <div className="flex flex-col p-6 w-1/4 max-lg:w-1/2 max-md:w-full text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow">
               <h3 className="mb-4 text-2xl font-semibold">Basic</h3>
               <p className="font-light text-gray-500 sm:text-lg">
@@ -135,17 +175,17 @@ const Pricing = ({ data, token }: Props) => {
             </div>
           )}
           {/* pricing card  */}
-          {data.length > 0 && (
+          {pricingData.length > 0 && (
             <div className="flex flex-col p-6 w-1/4 max-lg:w-1/2 max-md:w-full text-center text-gray-900 bg-white rounded-lg border-2 border-primary-500 shadow xl:p-8">
               <h3 className="mb-4 text-2xl font-semibold capitalize">
-                {data[0].name}
+                {pricingData[0].name}
               </h3>
               <p className="font-light text-gray-500 sm:text-lg">
-                {data[0].description}
+                {pricingData[0].description}
               </p>
               <div className="flex justify-center items-baseline my-8">
                 <span className="mr-2 text-5xl font-extrabold">
-                  Rp {formatNumberToRupiah(data[0].price)}
+                  Rp {formatNumberToRupiah(pricingData[0].price)}
                 </span>
               </div>
               {/* list  */}
@@ -167,7 +207,7 @@ const Pricing = ({ data, token }: Props) => {
                   <span>
                     Duration:{' '}
                     <span className="font-semibold">
-                      {data[0].durationDays} days
+                      {pricingData[0].durationDays} days
                     </span>
                   </span>
                 </li>
@@ -188,7 +228,7 @@ const Pricing = ({ data, token }: Props) => {
                   <span>
                     Max borrowed:{' '}
                     <span className="font-semibold">
-                      {data[0].maxBorrow} books
+                      {pricingData[0].maxBorrow} books
                     </span>
                   </span>
                 </li>
@@ -209,7 +249,7 @@ const Pricing = ({ data, token }: Props) => {
                   <span>
                     Max returned:{' '}
                     <span className="font-semibold">
-                      {data[0].maxReturn} days
+                      {pricingData[0].maxReturn} days
                     </span>
                   </span>
                 </li>
@@ -244,9 +284,11 @@ const Pricing = ({ data, token }: Props) => {
                     </div>
                   </DialogHeader>
                   <p className="text-center text-red-500 text-lg font-semibold">
-                    Your account wil become {data[0].name} until{' '}
+                    Your account wil become {pricingData[0].name} until{' '}
                     {formatDateTime(
-                      formatISO(addDays(new Date(), data[0].durationDays))
+                      formatISO(
+                        addDays(new Date(), pricingData[0].durationDays)
+                      )
                     )}
                   </p>
                   <Button className="btn_primary" onClick={getStartedHandler}>

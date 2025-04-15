@@ -1,5 +1,3 @@
-'use client';
-
 import { ImageHandler } from '@/utils/imageHandler';
 import Image from 'next/image';
 import Link from 'next/link';

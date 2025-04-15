@@ -148,8 +148,41 @@ const getBookSellingDetail = async (req, res, next) => {
             },
           },
         },
+        item_orders: {
+          include: {
+            order: {
+              select: {
+                status: true,
+              },
+            },
+          },
+        },
       },
     });
+    const finalResults = {
+      id: bookSellingQuery.id,
+      title: bookSellingQuery.title,
+      description: bookSellingQuery.description,
+      language: bookSellingQuery.language,
+      stock: bookSellingQuery.stock,
+      imageUrl: bookSellingQuery.imageUrl,
+      price: bookSellingQuery.price,
+      created_at: bookSellingQuery.created_at,
+      user_id: bookSellingQuery.user_id,
+      publisher_id: bookSellingQuery.publisher_id,
+      writer_id: bookSellingQuery.writer_id,
+      user: bookSellingQuery.user,
+      publisher: bookSellingQuery.publisher,
+      writer: bookSellingQuery.writer,
+      category: bookSellingQuery.category,
+      totalItemySold: bookSellingQuery.item_orders
+        .map((list) => ({
+          quantity: list.quantity,
+          order: list.order,
+        }))
+        .filter((value) => value.order.status === 'success')
+        .reduce((acc, item) => acc + item.quantity, 0),
+    };
 
     if (!bookSellingQuery) {
       const error = new Error('Book Selling not found');
@@ -161,7 +194,7 @@ const getBookSellingDetail = async (req, res, next) => {
     res.status(200).json({
       success: true,
       statusCode: 200,
-      data: bookSellingQuery,
+      data: finalResults,
     });
   } catch (error) {
     logger.error(`ERROR Controller USER getBookSellingDetail - ${error}`);
@@ -317,6 +350,15 @@ const getBookBorrowingDetail = async (req, res, next) => {
             },
           },
         },
+        items: {
+          include: {
+            bookBorrowed: {
+              select: {
+                status: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -327,10 +369,31 @@ const getBookBorrowingDetail = async (req, res, next) => {
       throw error;
     }
 
+    const finalResults = {
+      id: bookBorrowingQuery.id,
+      title: bookBorrowingQuery.title,
+      description: bookBorrowingQuery.description,
+      book_position: bookBorrowingQuery.book_position,
+      language: bookBorrowingQuery.language,
+      stock: bookBorrowingQuery.stock,
+      imageUrl: bookBorrowingQuery.imageUrl,
+      imageUrl: bookBorrowingQuery.imageUrl,
+      created_at: bookBorrowingQuery.created_at,
+      user_id: bookBorrowingQuery.user_id,
+      publisher_id: bookBorrowingQuery.publisher_id,
+      writer_id: bookBorrowingQuery.writer_id,
+      user: bookBorrowingQuery.user,
+      publisher: bookBorrowingQuery.publisher,
+      writer: bookBorrowingQuery.writer,
+      category: bookBorrowingQuery.category,
+      totalItemBorrow: bookBorrowingQuery.items
+        .map((list) => list)
+        .filter((book) => book.bookBorrowed.status === 'returned').length,
+    };
     res.status(200).json({
       success: true,
       statusCode: 200,
-      data: bookBorrowingQuery,
+      data: finalResults,
     });
   } catch (error) {
     logger.error(`ERROR Controller USER getBookBorrowingDetail - ${error}`);
