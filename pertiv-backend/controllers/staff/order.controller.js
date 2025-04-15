@@ -122,7 +122,7 @@ const confirmOrder = async (req, res, next) => {
 
     const findOrderQuery = await prisma.order.findUnique({
       where: {
-        buy_key: keyValue,
+        buy_key: `#${keyValue}`,
         status: 'paid',
       },
     });
@@ -365,7 +365,7 @@ const confirmLoan = async (req, res, next) => {
 
     const findBookBorrowedQuery = await prisma.bookBorrowed.findUnique({
       where: {
-        loan_key: keyValue,
+        loan_key: `#${keyValue}`,
         status: 'accepted',
       },
       include: {
@@ -470,7 +470,7 @@ const confirmReturnBook = async (req, res, next) => {
 
     const findBookBorrowedQuery = await prisma.bookBorrowed.findUnique({
       where: {
-        returned_key: keyValue,
+        returned_key: `#${keyValue}`,
         status: 'return req',
       },
     });
