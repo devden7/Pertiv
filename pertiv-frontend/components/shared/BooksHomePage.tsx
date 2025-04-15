@@ -87,7 +87,7 @@ const BooksHomePage = ({ title, url, detailUrl, token, books }: Props) => {
         </div>
         {data.length === 0 && <DataNotFound data={data} />}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
-          {(data.length > 5 ? data.slice(0, -1) : data).map((book) => (
+          {(data.length > 5 ? data.slice(0, 5) : data).map((book) => (
             <BooksItem
               key={book.id}
               book={{ ...book }}
