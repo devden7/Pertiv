@@ -67,6 +67,17 @@ const createOrderBook = async (req, res, next) => {
       },
     });
 
+    for (const item of cartItem) {
+      await prisma.bookSelling.update({
+        where: { id: item.book_id },
+        data: {
+          stock: {
+            decrement: parseInt(item.quantity),
+          },
+        },
+      });
+    }
+
     await prisma.cartItem.deleteMany({
       where: {
         book_selling_id: { in: findBooksSellingQuery.map((item) => item.id) },
@@ -231,19 +242,6 @@ const purchaseBook = async (req, res, next) => {
       }
     }
 
-    // Update stock after purchase (descrement stock)
-    for (let i = 0; i < findOrderQuery.item_orders.length; i++) {
-      const book = findOrderQuery.item_orders[i].book_selling;
-      await prisma.bookSelling.update({
-        where: {
-          id: book.id,
-        },
-        data: {
-          stock: book.stock - findOrderQuery.item_orders[i].quantity,
-        },
-      });
-    }
-
     await prisma.order.update({
       where: {
         id: `#${paramsId}`,
@@ -281,6 +279,9 @@ const cancelPurchaseBook = async (req, res, next) => {
       where: {
         id: `#${paramsId}`,
         userId: id,
+      },
+      include: {
+        item_orders: true,
       },
     });
 
@@ -327,7 +328,18 @@ const cancelPurchaseBook = async (req, res, next) => {
         canceled_at: formatISO(new Date()),
       },
     });
-    res.json({
+
+    for (const item of findOrderQuery.item_orders) {
+      await prisma.bookSelling.update({
+        where: { id: item.book_selling_id },
+        data: {
+          stock: {
+            increment: item.quantity,
+          },
+        },
+      });
+    }
+    res.status(201).json({
       success: true,
       statusCode: 201,
       message: 'Your payment is cancelled',
