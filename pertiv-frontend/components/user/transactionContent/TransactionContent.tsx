@@ -35,7 +35,7 @@ const TransactionContent = ({
             <BookMode />
           </div>
           <SearchInput
-            placeholder="Search by ORDER ID"
+            placeholder="Search by Order ID or Book"
             path={
               mode && (mode === 'bookBorrowing' || mode === 'bookSelling')
                 ? `/transactions?mode=${mode}`
@@ -45,16 +45,22 @@ const TransactionContent = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>ORDER ID</TableHead>
+                <TableHead className="text-center">ORDER ID</TableHead>
                 {mode !== 'bookBorrowing' && (
-                  <TableHead className="max-w-[150px]">BUYING DATE</TableHead>
+                  <TableHead className="max-w-[150px] text-center">
+                    BUYING DATE
+                  </TableHead>
                 )}
                 {mode === 'bookBorrowing' && (
-                  <TableHead className="max-w-[150px]">LOAN DATE</TableHead>
+                  <TableHead className="max-w-[150px] text-center">
+                    LOAN DATE
+                  </TableHead>
                 )}
-                {mode !== 'bookBorrowing' && <TableHead>TOTAL PRICE</TableHead>}
-                <TableHead>STATUS</TableHead>
-                <TableHead></TableHead>
+                {mode !== 'bookBorrowing' && (
+                  <TableHead className="text-center">TOTAL PRICE</TableHead>
+                )}
+                <TableHead className="text-center">STATUS</TableHead>
+                <TableHead className="text-center"></TableHead>
               </TableRow>
             </TableHeader>
             <TransactionList data={data} mode={mode} token={token} />

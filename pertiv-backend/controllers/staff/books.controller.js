@@ -109,10 +109,28 @@ const getBooksSelling = async (req, res, next) => {
     const skip = (page - 1) * LIMIT;
     const keyword = search
       ? {
-          title: {
-            contains: search,
-            mode: 'insensitive',
-          },
+          OR: [
+            {
+              title: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
+            {
+              item_orders: {
+                some: {
+                  order: {
+                    user: {
+                      name: {
+                        contains: search,
+                        mode: 'insensitive',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          ],
         }
       : {};
 
@@ -150,6 +168,21 @@ const getBooksSelling = async (req, res, next) => {
             categories: {
               select: {
                 name: true,
+              },
+            },
+          },
+        },
+        item_orders: {
+          select: {
+            order: {
+              select: {
+                id: true,
+                status: true,
+                user: {
+                  select: {
+                    name: true,
+                  },
+                },
               },
             },
           },
@@ -489,10 +522,28 @@ const getBooksBorrowing = async (req, res, next) => {
     const skip = (page - 1) * LIMIT;
     const keyword = search
       ? {
-          title: {
-            contains: search,
-            mode: 'insensitive',
-          },
+          OR: [
+            {
+              title: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
+            {
+              items: {
+                some: {
+                  bookBorrowed: {
+                    user: {
+                      name: {
+                        contains: search,
+                        mode: 'insensitive',
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          ],
         }
       : {};
 
@@ -542,8 +593,6 @@ const getBooksBorrowing = async (req, res, next) => {
               select: {
                 id: true,
                 status: true,
-                date_returned: true,
-                created_at: true,
                 user: {
                   select: {
                     name: true,

@@ -70,15 +70,19 @@ const TransactionItem = ({ item, mode, token }: Props) => {
   };
   return (
     <TableRow className="font-medium text-zinc-800">
-      <TableCell className="p-3 font-semibold text-lg">{item.id}</TableCell>
-      <TableCell>{formatDateTime(item.created_at)}</TableCell>
+      <TableCell className="p-3 font-semibold text-lg text-center">
+        {item.id}
+      </TableCell>
+      <TableCell className="text-center">
+        {formatDateTime(item.created_at)}
+      </TableCell>
       {mode !== 'bookBorrowing' && (
-        <TableCell>
+        <TableCell className="text-center">
           Rp {formatNumberToRupiah((item as ITransaction).total_price)}
         </TableCell>
       )}
-      <TableCell>
-        <div className={`${badgeStatusColor(item.status)} max-w-20 rounded-md`}>
+      <TableCell className="w-[7%]">
+        <div className={`${badgeStatusColor(item.status)} rounded-md`}>
           <p className="text-center">{item.status}</p>
         </div>
       </TableCell>
@@ -86,11 +90,11 @@ const TransactionItem = ({ item, mode, token }: Props) => {
         <Dialog>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <div className="cursor-pointer">
+              <div className="cursor-pointer flex justify-center">
                 <Ellipsis size={15} />
               </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent side="left">
+            <DropdownMenuContent side="right">
               <DropdownMenuItem className="cursor-pointer">
                 <DialogTrigger className="w-full text-left">
                   View details

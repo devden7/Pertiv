@@ -37,7 +37,7 @@ const TransactionContent = ({
           <FormConfirmBook token={token} />
         </div>
         <SearchInput
-          placeholder="Search by Order ID or Name"
+          placeholder="Search by Order ID, Customer name, or Book"
           path={
             mode && (mode === 'bookBorrowing' || mode === 'bookSelling')
               ? `/staff/transactions?mode=${mode}`
@@ -47,21 +47,23 @@ const TransactionContent = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ORDER ID</TableHead>
-              <TableHead>NAME</TableHead>
-              <TableHead>EMAIL</TableHead>
+              <TableHead className="text-center">ORDER ID</TableHead>
+              <TableHead className="text-center">CUSTOMER NAME</TableHead>
+              <TableHead className="text-center">EMAIL</TableHead>
 
-              <TableHead className="max-w-[150px]">
+              <TableHead className="max-w-[150px] text-center">
                 {mode !== 'bookBorrowing' ? 'BUYING DATE' : 'LOAN DATE'}
               </TableHead>
-              {mode !== 'bookBorrowing' && <TableHead>TOTAL PRICE</TableHead>}
-              <TableHead>
+              {mode !== 'bookBorrowing' && (
+                <TableHead className="text-center">TOTAL PRICE</TableHead>
+              )}
+              <TableHead className="text-center">
                 {mode !== 'bookBorrowing' ? 'HANDLE BY' : 'LOAN HANDLE BY'}
               </TableHead>
               {mode === 'bookBorrowing' && (
-                <TableHead>RETURN HANDLE BY</TableHead>
+                <TableHead className="text-center">RETURN HANDLE BY</TableHead>
               )}
-              <TableHead>STATUS</TableHead>
+              <TableHead className="text-center">STATUS</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>

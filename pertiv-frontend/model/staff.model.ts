@@ -17,6 +17,15 @@ export interface IBooksSelling {
     name: string;
   };
   category: string[];
+  item_orders: {
+    order: {
+      id: string;
+      status: string;
+      user: {
+        name: string;
+      };
+    };
+  }[];
 }
 
 export interface IBooksBorrowing {
@@ -41,8 +50,6 @@ export interface IBooksBorrowing {
     bookBorrowed: {
       id: string;
       status: string;
-      date_returned: string;
-      created_at: string;
       user: {
         name: string;
       };

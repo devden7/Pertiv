@@ -29,7 +29,6 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { formatDateTime } from '@/utils/formatDateTime';
 import { badgeStatusColor } from '@/utils/badgeStatusColor';
 import DataNotFound from '@/components/shared/DataNotFound';
 
@@ -124,16 +123,16 @@ const BookItem = ({ item, token, mode }: Props) => {
                 >
                   Delete
                 </DropdownMenuItem>
-                {mode === 'bookBorrowing' && (
-                  <DropdownMenuItem>
-                    <DialogTrigger
-                      className="w-full text-left"
-                      onClick={() => setDialogMode('History')}
-                    >
-                      History borrowing
-                    </DialogTrigger>
-                  </DropdownMenuItem>
-                )}
+
+                <DropdownMenuItem>
+                  <DialogTrigger
+                    className="w-full text-left"
+                    onClick={() => setDialogMode('History')}
+                  >
+                    History
+                    {mode === 'bookBorrowing' ? ' borrowing' : ' selling'}
+                  </DialogTrigger>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <DialogContent className="overflow-auto max-h-[500px]">
@@ -162,50 +161,72 @@ const BookItem = ({ item, token, mode }: Props) => {
                   <DialogHeader>
                     <DialogTitle>History Borrowing book</DialogTitle>
                   </DialogHeader>
-                  <div>
-                    {(item as IBooksBorrowing).items.length === 0 && (
-                      <DataNotFound data={(item as IBooksBorrowing).items} />
-                    )}
-                    <div className="flex flex-col gap-3">
-                      {(item as IBooksBorrowing).items.map((history) => (
-                        <Card
-                          key={history.bookBorrowed.id}
-                          className="p-3 flex flex-col gap-3"
-                        >
-                          <p>
-                            User :{' '}
-                            <span className="font-semibold">
-                              {history.bookBorrowed.user.name}
-                            </span>
-                          </p>
-                          <p>
-                            status :{' '}
-                            <span
-                              className={`${badgeStatusColor(
-                                history.bookBorrowed.status
-                              )} font-semibold p-1 rounded-md`}
-                            >
-                              {history.bookBorrowed.status}
-                            </span>
-                          </p>
-                          <p>
-                            Loan date :{' '}
-                            <span className="font-semibold">
-                              {formatDateTime(history.bookBorrowed.created_at)}
-                            </span>
-                          </p>
-                          <p>
-                            Returned date :{' '}
-                            <span className="font-semibold">
-                              {formatDateTime(
-                                history.bookBorrowed.date_returned
-                              )}
-                            </span>
-                          </p>
-                        </Card>
-                      ))}
+                  {mode === 'bookBorrowing' && (
+                    <div>
+                      {(item as IBooksBorrowing).items.length === 0 && (
+                        <DataNotFound data={(item as IBooksBorrowing).items} />
+                      )}
+                      <div className="flex flex-col gap-3">
+                        {(item as IBooksBorrowing).items.map((history) => (
+                          <Card
+                            key={history.bookBorrowed.id}
+                            className="p-3 flex flex-col gap-3"
+                          >
+                            <p>
+                              User :{' '}
+                              <span className="font-semibold">
+                                {history.bookBorrowed.user.name}
+                              </span>
+                            </p>
+                            <p>
+                              status :{' '}
+                              <span
+                                className={`${badgeStatusColor(
+                                  history.bookBorrowed.status
+                                )} font-semibold p-1 rounded-md`}
+                              >
+                                {history.bookBorrowed.status}
+                              </span>
+                            </p>
+                          </Card>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
+                  {mode !== 'bookBorrowing' && (
+                    <div>
+                      {(item as IBooksSelling).item_orders.length === 0 && (
+                        <DataNotFound
+                          data={(item as IBooksSelling).item_orders}
+                        />
+                      )}
+                      <div className="flex flex-col gap-3">
+                        {(item as IBooksSelling).item_orders.map((history) => (
+                          <Card
+                            key={history.order.id}
+                            className="p-3 flex flex-col gap-3"
+                          >
+                            <p>
+                              User :{' '}
+                              <span className="font-semibold">
+                                {history.order.user.name}
+                              </span>
+                            </p>
+                            <p>
+                              status :{' '}
+                              <span
+                                className={`${badgeStatusColor(
+                                  history.order.status
+                                )} font-semibold p-1 rounded-md`}
+                              >
+                                {history.order.status}
+                              </span>
+                            </p>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
             </DialogContent>

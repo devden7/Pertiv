@@ -664,7 +664,28 @@
                       "created_at": { "type": "boolean" },
                       "user_id": { "type": "boolean" },
                       "publisher_id": { "type": "boolean" },
-                      "writer_id": { "type": "boolean" }
+                      "writer_id": { "type": "boolean" },
+                      "item_orders": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "order": {
+                              "type": "object",
+                              "properties": {
+                                "id": { "type": "string" },
+                                "status": { "type": "string" },
+                                "user": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": { "type": "string" }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 },
@@ -2591,8 +2612,6 @@
                               "properties": {
                                 "id": { "type": "string" },
                                 "status": { "type": "string" },
-                                "date_returned": { "type": "string" },
-                                "created_at": { "type": "string" },
                                 "user": {
                                   "type": "object",
                                   "properties": {

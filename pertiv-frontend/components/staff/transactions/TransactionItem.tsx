@@ -96,28 +96,34 @@ const TransactionItem = ({ item, mode, token }: Props) => {
 
   return (
     <TableRow className="font-medium text-zinc-800">
-      <TableCell className="p-3 font-semibold text-lg">{item.id}</TableCell>
-      <TableCell>{item.user.name}</TableCell>
-      <TableCell>{item.user.email}</TableCell>
-      <TableCell>{formatDateTime(item.created_at)}</TableCell>
+      <TableCell className="p-3 font-semibold text-lg text-center">
+        {item.id}
+      </TableCell>
+      <TableCell className="text-center">{item.user.name}</TableCell>
+      <TableCell className="text-center">{item.user.email}</TableCell>
+      <TableCell className="text-center">
+        {formatDateTime(item.created_at)}
+      </TableCell>
       {mode !== 'bookBorrowing' && (
-        <TableCell>
+        <TableCell className="text-center">
           Rp {formatNumberToRupiah((item as ISTransaction).total_price)}
         </TableCell>
       )}
-      <TableCell>
+      <TableCell className="text-center">
         {(item as ISTransaction).buy_handled_by ||
           (item as ISBorrowTransaction).loan_handled_by}
       </TableCell>
       {mode === 'bookBorrowing' && (
-        <TableCell>{(item as ISBorrowTransaction).return_handled_by}</TableCell>
+        <TableCell className="text-center">
+          {(item as ISBorrowTransaction).return_handled_by}
+        </TableCell>
       )}
-      <TableCell>
-        <div className={`${badgeStatusColor(item.status)} max-w-20 rounded-md`}>
+      <TableCell className="w-[5%]">
+        <div className={`${badgeStatusColor(item.status)}  rounded-md`}>
           <p className="text-center">{item.status}</p>
         </div>
       </TableCell>
-      <TableCell>
+      <TableCell className="text-center">
         <Dialog>
           <DialogTrigger>View Details</DialogTrigger>
           <DialogContent className="overflow-auto max-h-[500px]">

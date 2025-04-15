@@ -364,15 +364,36 @@ const transactions = async (req, res, next) => {
 
     const keyword = search
       ? {
-          AND: [
+          OR: [
             {
-              userId: id,
+              AND: [
+                {
+                  userId: id,
+                },
+                {
+                  id: {
+                    contains: search,
+                    mode: 'insensitive',
+                  },
+                },
+              ],
             },
             {
-              id: {
-                contains: search,
-                mode: 'insensitive',
-              },
+              AND: [
+                {
+                  userId: id,
+                },
+                {
+                  item_orders: {
+                    some: {
+                      book_title: {
+                        contains: search,
+                        mode: 'insensitive',
+                      },
+                    },
+                  },
+                },
+              ],
             },
           ],
         }

@@ -34,7 +34,7 @@ const BooksContent = ({
         <AddBook token={token} />
       </div>
       <SearchInput
-        placeholder="Search by Book Title"
+        placeholder="Search by Book Title or Customer history"
         path={
           mode && (mode === 'bookBorrowing' || mode === 'bookSelling')
             ? `/staff/books?mode=${mode}`

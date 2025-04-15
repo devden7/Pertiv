@@ -29,6 +29,16 @@ const transactions = async (req, res, next) => {
                 mode: 'insensitive',
               },
             },
+            {
+              item_orders: {
+                some: {
+                  book_title: {
+                    contains: search,
+                    mode: 'insensitive',
+                  },
+                },
+              },
+            },
           ],
         }
       : {};
