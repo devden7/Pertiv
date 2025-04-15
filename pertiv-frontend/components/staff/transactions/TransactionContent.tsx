@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import { Table, TableHeader, TableRow, TableHead } from '@/components/ui/table';
 import { ISBorrowTransaction, ISTransaction } from '@/model/staff.model';
 import TransactionList from './TransactionList';
@@ -6,6 +8,8 @@ import FormConfirmBook from './FormConfirmBook';
 import { PaginationWithLinks } from '@/components/ui/pagination-with-links';
 import SearchInput from '@/components/shared/SearchInput';
 import DataNotFound from '@/components/shared/DataNotFound';
+import { supabase } from '@/lib/actions/supabase';
+import { getTransactionDetail } from '@/lib/actions/staff.action';
 
 interface Props {
   data: ISTransaction[] | ISBorrowTransaction[];
@@ -24,6 +28,105 @@ const TransactionContent = ({
   totalCount,
   mode,
 }: Props) => {
+  const [transactionsData, setTransactionData] =
+    useState<(ISTransaction | ISBorrowTransaction)[]>(data);
+  useEffect(() => {
+    const tableName = mode !== 'bookBorrowing' ? 'Order' : 'BookBorrowed';
+
+    const channel = supabase
+      .channel(`List books  ${tableName}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: tableName,
+        },
+        async (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const newData = await getTransactionDetail(
+              payload.new.id.split('#')[1],
+              token
+            );
+            return setTransactionData((prev) => [newData.data, ...prev]);
+          } else if (payload.eventType === 'UPDATE') {
+            if (payload.new.status === 'canceled') {
+              setTransactionData((prev) => {
+                const arr = [...prev];
+                const findData = arr.find((item) => item.id === payload.new.id);
+                const findIndex = arr.findIndex(
+                  (item) => item.id === payload.new.id
+                );
+                if (findIndex !== -1) {
+                  arr[findIndex] = {
+                    ...(findData as ISTransaction | ISBorrowTransaction),
+                    ...(mode !== 'bookBorrowing' && {
+                      canceled_at: payload.new.canceled_at,
+                    }),
+                    ...(mode !== 'bookBorrowing' && {
+                      buy_handled_by: payload.new.buy_handled_by,
+                    }),
+                    ...(mode !== 'bookBorrowing' && {
+                      status: payload.new.status,
+                    }),
+                  };
+                }
+                return arr;
+              });
+            } else if (payload.new.status === 'paid') {
+              setTransactionData((prev) => {
+                const arr = [...prev];
+                const findData = arr.find((item) => item.id === payload.new.id);
+                const findIndex = arr.findIndex(
+                  (item) => item.id === payload.new.id
+                );
+                if (findIndex !== -1) {
+                  arr[findIndex] = {
+                    ...(findData as ISTransaction | ISBorrowTransaction),
+                    ...(mode !== 'bookBorrowing' && {
+                      paid_at: payload.new.paid_at,
+                    }),
+                    ...(mode !== 'bookBorrowing' && {
+                      status: payload.new.status,
+                    }),
+                  };
+                }
+                return arr;
+              });
+            } else if (payload.new.status === 'success') {
+              setTransactionData((prev) => {
+                const arr = [...prev];
+                const findData = arr.find((item) => item.id === payload.new.id);
+                const findIndex = arr.findIndex(
+                  (item) => item.id === payload.new.id
+                );
+                if (findIndex !== -1) {
+                  arr[findIndex] = {
+                    ...(findData as ISTransaction | ISBorrowTransaction),
+                    ...(mode !== 'bookBorrowing' && {
+                      buy_date: payload.new.buy_date,
+                    }),
+                    ...(mode !== 'bookBorrowing' && {
+                      buy_handled_by: payload.new.buy_handled_by,
+                    }),
+                    ...(mode !== 'bookBorrowing' && {
+                      status: payload.new.status,
+                    }),
+                  };
+                }
+                return arr;
+              });
+            }
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [data, mode, setTransactionData]);
+
   return (
     <>
       <section>
@@ -67,9 +170,19 @@ const TransactionContent = ({
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
-          <TransactionList data={data} mode={mode} token={token} />
+          <TransactionList
+            data={
+              mode === 'bookBorrowing'
+                ? (transactionsData as ISBorrowTransaction[])
+                : (transactionsData as ISTransaction[]) || data
+            }
+            mode={mode}
+            token={token}
+          />
         </Table>
-        {data.length === 0 && <DataNotFound data={data} />}
+        {transactionsData.length === 0 && (
+          <DataNotFound data={transactionsData} />
+        )}
       </section>
       {totalCount > 0 && (
         <div className="my-3">

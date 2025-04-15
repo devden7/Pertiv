@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 
 import { Table, TableHeader, TableRow, TableHead } from '@/components/ui/table';
 import { IBorrowTransaction, ITransaction } from '@/model/user.model';
@@ -7,6 +9,7 @@ import { PaginationWithLinks } from '@/components/ui/pagination-with-links';
 import SearchInput from '@/components/shared/SearchInput';
 import BookMode from '@/components/shared/BookMode';
 import DataNotFound from '@/components/shared/DataNotFound';
+import { supabase } from '@/lib/actions/supabase';
 
 interface Props {
   data: ITransaction[] | IBorrowTransaction[];
@@ -24,6 +27,56 @@ const TransactionContent = ({
   mode,
   token,
 }: Props) => {
+  const [transactionsData, setTransactionData] =
+    useState<(ITransaction | IBorrowTransaction)[]>(data);
+
+  useEffect(() => {
+    const tableName = mode !== 'bookBorrowing' ? 'Order' : 'BookBorrowed';
+
+    const channel = supabase
+      .channel(`List books  ${tableName}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: tableName,
+        },
+        async (payload) => {
+          if (payload.eventType === 'UPDATE') {
+            setTransactionData((prev) => {
+              const arr = [...prev];
+              const findData = arr.find((item) => item.id === payload.new.id);
+
+              const findIndex = arr.findIndex(
+                (item) => item.id === payload.new.id
+              );
+              if (findIndex !== -1) {
+                arr[findIndex] = {
+                  ...(findData as ITransaction | IBorrowTransaction),
+                  ...(mode !== 'bookBorrowing' && {
+                    buy_date: payload.new.buy_date,
+                  }),
+                  ...(mode !== 'bookBorrowing' && {
+                    buy_handled_by: payload.new.buy_handled_by,
+                  }),
+                  ...(mode !== 'bookBorrowing' && {
+                    status: payload.new.status,
+                  }),
+                };
+              }
+              return arr;
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [mode, setTransactionData]);
+
   return (
     <>
       <section>
@@ -63,9 +116,19 @@ const TransactionContent = ({
                 <TableHead className="text-center"></TableHead>
               </TableRow>
             </TableHeader>
-            <TransactionList data={data} mode={mode} token={token} />
+            <TransactionList
+              data={
+                mode === 'bookBorrowing'
+                  ? (transactionsData as IBorrowTransaction[])
+                  : (transactionsData as ITransaction[])
+              }
+              mode={mode}
+              token={token}
+            />
           </Table>
-          {data.length === 0 && <DataNotFound data={data} />}
+          {transactionsData.length === 0 && (
+            <DataNotFound data={transactionsData} />
+          )}
         </div>
       </section>
       {totalCount > 0 && (

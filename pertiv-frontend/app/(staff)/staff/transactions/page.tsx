@@ -31,6 +31,7 @@ const Transaction = async ({ searchParams }: ParamsProps) => {
         pageSize={SIZE}
         totalCount={data.totalCount}
         mode={modeBook}
+        key={modeBook}
       />
     </>
   );

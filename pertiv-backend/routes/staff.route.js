@@ -22,6 +22,7 @@ const {
   confirmLoan,
   bookReturnRequested,
   confirmReturnBook,
+  transactionDetail,
 } = require('../controllers/staff/order.controller');
 const { dashboard } = require('../controllers/staff/dashboard.controller');
 const {
@@ -163,6 +164,7 @@ router.put(
 
 router.delete('/delete-book-selling/:id', staffMiddleware, deleteBookSelling);
 router.get('/transactions', staffMiddleware, transactions);
+router.get('/transaction-detail/:id', staffMiddleware, transactionDetail);
 router.post('/confirm-order/', staffMiddleware, confirmOrder);
 router.get('/dashboard', staffMiddleware, dashboard);
 

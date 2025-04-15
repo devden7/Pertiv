@@ -122,6 +122,24 @@ export const getTransactions = async (
   }
 };
 
+export const getTransactionDetail = async (id: string, token?: string) => {
+  try {
+    const response = await fetch(
+      `${ENV.API_URL}/staff/transaction-detail/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        cache: 'no-store',
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Error from getTransactionDetail action ', error);
+  }
+};
+
 export const confirmOrderTransaction = async (
   keyValue: string,
   token?: string

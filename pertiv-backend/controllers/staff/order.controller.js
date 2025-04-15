@@ -110,6 +110,68 @@ const transactions = async (req, res, next) => {
   }
 };
 
+const transactionDetail = async (req, res, next) => {
+  const paramsId = req.params.id;
+  logger.info(`Controller STAFF transactionDetail `);
+  try {
+    const findOrderQuery = await prisma.order.findUnique({
+      where: { id: `#${paramsId}` },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+        item_orders: {
+          select: {
+            id: true,
+            book_title: true,
+            book_imageUrl: true,
+            book_price: true,
+            quantity: true,
+          },
+        },
+      },
+    });
+
+    if (!findOrderQuery) {
+      const error = new Error('Order not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    // Mengirim data yang diinginkan
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      data: {
+        id: findOrderQuery.id,
+        status: findOrderQuery.status,
+        buy_key: findOrderQuery.buy_key,
+        buy_handled_by: findOrderQuery.buy_handled_by,
+        buy_date: findOrderQuery.buy_date,
+        total_price: findOrderQuery.total_price,
+        created_at: findOrderQuery.created_at,
+        ended_at: findOrderQuery.ended_at,
+        canceled_at: findOrderQuery.canceled_at,
+        paid_at: findOrderQuery.paid_at,
+        userId: findOrderQuery.userId,
+        user: findOrderQuery.user,
+        item_order: findOrderQuery.item_orders,
+      },
+    });
+  } catch (error) {
+    logger.error(`ERROR STAFF Controller transactionDetail - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 const confirmOrder = async (req, res, next) => {
   try {
     const { id } = req.user;
@@ -540,4 +602,5 @@ module.exports = {
   rejectLoanBook,
   confirmLoan,
   confirmReturnBook,
+  transactionDetail,
 };
