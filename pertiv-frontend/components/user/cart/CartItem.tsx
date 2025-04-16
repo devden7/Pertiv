@@ -43,7 +43,9 @@ const CartItem = ({ id, quantity, title, imageUrl, price, token }: Props) => {
       duration: 2000,
     });
 
-    setIsLoading(false);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
   };
 
   const addToCartHandler = async (bookId: string) => {
@@ -68,7 +70,9 @@ const CartItem = ({ id, quantity, title, imageUrl, price, token }: Props) => {
       duration: 2000,
     });
 
-    setIsLoading(false);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
   };
 
   return (

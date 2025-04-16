@@ -214,7 +214,7 @@ const BookForm = ({ type, token, book, mode, setIsOpen }: Props) => {
 
     setIsOpen(false);
     toast({
-      description: response1.message || response2.message,
+      description: 'Success',
       duration: 2000,
     });
   };

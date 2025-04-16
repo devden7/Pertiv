@@ -503,7 +503,10 @@ const createBorrowBook = async (req, res, next) => {
       const dateNow = formatISO(new Date());
       const endDate = formatISO(findUserMembership[0].end_date);
       if (endDate > dateNow) {
-        if (calcBorrowedUser.length + findBooksBorrowingQuery.length > 5) {
+        if (
+          calcBorrowedUser.length + findBooksBorrowingQuery.length >
+          findUserMembership[0].maxBorrow
+        ) {
           const error = new Error('A maximum of 5 books can be borrowed');
           error.success = false;
           error.statusCode = 400;
@@ -511,8 +514,8 @@ const createBorrowBook = async (req, res, next) => {
         }
       }
     } else {
-      if (calcBorrowedUser.length + findBooksBorrowingQuery.length > 2) {
-        const error = new Error('A maximum of 2 books can be borrowed');
+      if (calcBorrowedUser.length + findBooksBorrowingQuery.length > 3) {
+        const error = new Error('A maximum of 3 books can be borrowed');
         error.success = false;
         error.statusCode = 400;
         throw error;
@@ -575,7 +578,7 @@ const createBorrowBook = async (req, res, next) => {
     });
 
     //handling if user have an active penalty
-    if (findPenaltyQuery > 0) {
+    if (findPenaltyQuery) {
       const dateNow = formatISO(new Date());
       const dateDueReturn = formatISO(findPenaltyQuery.ended_at);
       if (dateDueReturn > dateNow) {

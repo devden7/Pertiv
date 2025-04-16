@@ -230,11 +230,7 @@ export const booksSellingFormSchema = z.object({
     z.null(),
     z.string(),
   ]),
-  bookPosition: z
-    .string()
-    .min(1, { message: 'bookPosition must be at least 1 character' })
-    .max(10, { message: 'bookPosition must be max 10 characters' })
-    .optional(),
+  bookPosition: z.string().optional(),
   isMember: z.boolean().default(false).optional(),
 });
 

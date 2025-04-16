@@ -150,7 +150,7 @@ const Pricing = ({ data, token }: Props) => {
                     ></path>
                   </svg>
                   <span>
-                    Max borrowed: <span className="font-semibold">2 books</span>
+                    Max borrowed: <span className="font-semibold">3 books</span>
                   </span>
                 </li>
                 <li className="flex items-center space-x-3">

@@ -173,15 +173,17 @@ const TransactionContent = ({
           <TransactionList
             data={
               mode === 'bookBorrowing'
-                ? (transactionsData as ISBorrowTransaction[])
-                : (transactionsData as ISTransaction[]) || data
+                ? data
+                : (transactionsData as ISTransaction[])
             }
             mode={mode}
             token={token}
           />
         </Table>
         {transactionsData.length === 0 && (
-          <DataNotFound data={transactionsData} />
+          <DataNotFound
+            data={mode === 'bookBorrowing' ? data : transactionsData}
+          />
         )}
       </section>
       {totalCount > 0 && (

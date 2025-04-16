@@ -119,7 +119,7 @@ const TransactionContent = ({
             <TransactionList
               data={
                 mode === 'bookBorrowing'
-                  ? (transactionsData as IBorrowTransaction[])
+                  ? (data as IBorrowTransaction[])
                   : (transactionsData as ITransaction[])
               }
               mode={mode}
@@ -127,7 +127,9 @@ const TransactionContent = ({
             />
           </Table>
           {transactionsData.length === 0 && (
-            <DataNotFound data={transactionsData} />
+            <DataNotFound
+              data={mode === 'bookBorrowing' ? data : transactionsData}
+            />
           )}
         </div>
       </section>

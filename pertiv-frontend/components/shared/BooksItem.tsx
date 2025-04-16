@@ -51,7 +51,7 @@ const BooksItem = ({ token, book, detailUrl, type }: Props) => {
             </p>
             {'price' in book && (
               <h6 className="font-semibold text-lg leading-8 text-primary-600">
-                RP {formatNumberToRupiah(book.price)}
+                {formatNumberToRupiah(book.price)}
               </h6>
             )}
           </div>
