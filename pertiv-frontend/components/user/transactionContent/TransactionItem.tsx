@@ -83,7 +83,7 @@ const TransactionItem = ({ item, mode, token }: Props) => {
       )}
       <TableCell className="w-[7%]">
         <div className={`${badgeStatusColor(item.status)} rounded-md`}>
-          <p className="text-center">{item.status}</p>
+          <p className="text-center p-1">{item.status}</p>
         </div>
       </TableCell>
       <TableCell>

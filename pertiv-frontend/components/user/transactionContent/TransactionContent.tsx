@@ -44,29 +44,118 @@ const TransactionContent = ({
         },
         async (payload) => {
           if (payload.eventType === 'UPDATE') {
-            setTransactionData((prev) => {
-              const arr = [...prev];
-              const findData = arr.find((item) => item.id === payload.new.id);
+            if (payload.new.status === 'success' && mode !== 'bookBorrowing') {
+              setTransactionData((prev) => {
+                const arr = [...prev];
+                const findData = arr.find((item) => item.id === payload.new.id);
 
-              const findIndex = arr.findIndex(
-                (item) => item.id === payload.new.id
-              );
-              if (findIndex !== -1) {
-                arr[findIndex] = {
-                  ...(findData as ITransaction | IBorrowTransaction),
-                  ...(mode !== 'bookBorrowing' && {
+                const findIndex = arr.findIndex(
+                  (item) => item.id === payload.new.id
+                );
+                if (findIndex !== -1) {
+                  arr[findIndex] = {
+                    ...(findData as ITransaction),
                     buy_date: payload.new.buy_date,
-                  }),
-                  ...(mode !== 'bookBorrowing' && {
                     buy_handled_by: payload.new.buy_handled_by,
-                  }),
-                  ...(mode !== 'bookBorrowing' && {
                     status: payload.new.status,
-                  }),
-                };
-              }
-              return arr;
-            });
+                  };
+                }
+                return arr;
+              });
+            } else if (payload.new.status === 'canceled') {
+              setTransactionData((prev) => {
+                const arr = [...prev];
+                const findData = arr.find((item) => item.id === payload.new.id);
+                const findIndex = arr.findIndex(
+                  (item) => item.id === payload.new.id
+                );
+                if (findIndex !== -1) {
+                  arr[findIndex] = {
+                    ...(findData as IBorrowTransaction),
+                    canceled_at: payload.new.canceled_at,
+                    status: payload.new.status,
+                  };
+                }
+                return arr;
+              });
+            } else if (
+              payload.new.status === 'accepted' &&
+              mode === 'bookBorrowing'
+            ) {
+              setTransactionData((prev) => {
+                const arr = [...prev];
+                const findData = arr.find((item) => item.id === payload.new.id);
+                const findIndex = arr.findIndex(
+                  (item) => item.id === payload.new.id
+                );
+                if (findIndex !== -1) {
+                  arr[findIndex] = {
+                    ...(findData as IBorrowTransaction),
+                    status: payload.new.status,
+                    loan_key: payload.new.loan_key,
+                  };
+                }
+                return arr;
+              });
+            } else if (
+              payload.new.status === 'borrowed' &&
+              mode === 'bookBorrowing'
+            ) {
+              setTransactionData((prev) => {
+                const arr = [...prev];
+                const findData = arr.find((item) => item.id === payload.new.id);
+                const findIndex = arr.findIndex(
+                  (item) => item.id === payload.new.id
+                );
+                if (findIndex !== -1) {
+                  arr[findIndex] = {
+                    ...(findData as IBorrowTransaction),
+                    loan_date: payload.new.loan_date,
+                    ended_at: payload.new.ended_at,
+                    status: payload.new.status,
+                  };
+                }
+                return arr;
+              });
+            } else if (
+              payload.new.status === 'return req' &&
+              mode === 'bookBorrowing'
+            ) {
+              setTransactionData((prev) => {
+                const arr = [...prev];
+                const findData = arr.find((item) => item.id === payload.new.id);
+                const findIndex = arr.findIndex(
+                  (item) => item.id === payload.new.id
+                );
+                if (findIndex !== -1) {
+                  arr[findIndex] = {
+                    ...(findData as IBorrowTransaction),
+                    returned_key: payload.new.returned_key,
+                    status: payload.new.status,
+                  };
+                }
+                return arr;
+              });
+            } else if (
+              payload.new.status === 'returned' &&
+              mode === 'bookBorrowing'
+            ) {
+              setTransactionData((prev) => {
+                const arr = [...prev];
+                const findData = arr.find((item) => item.id === payload.new.id);
+                const findIndex = arr.findIndex(
+                  (item) => item.id === payload.new.id
+                );
+                if (findIndex !== -1) {
+                  arr[findIndex] = {
+                    ...(findData as IBorrowTransaction),
+                    date_returned: payload.new.date_returned,
+                    status: payload.new.status,
+                  };
+                }
+                return arr;
+              });
+            }
           }
         }
       )
@@ -117,19 +206,13 @@ const TransactionContent = ({
               </TableRow>
             </TableHeader>
             <TransactionList
-              data={
-                mode === 'bookBorrowing'
-                  ? (data as IBorrowTransaction[])
-                  : (transactionsData as ITransaction[])
-              }
+              data={transactionsData as IBorrowTransaction[] | ITransaction[]}
               mode={mode}
               token={token}
             />
           </Table>
           {transactionsData.length === 0 && (
-            <DataNotFound
-              data={mode === 'bookBorrowing' ? data : transactionsData}
-            />
+            <DataNotFound data={transactionsData} />
           )}
         </div>
       </section>

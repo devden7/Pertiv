@@ -9,7 +9,10 @@ import { PaginationWithLinks } from '@/components/ui/pagination-with-links';
 import SearchInput from '@/components/shared/SearchInput';
 import DataNotFound from '@/components/shared/DataNotFound';
 import { supabase } from '@/lib/actions/supabase';
-import { getTransactionDetail } from '@/lib/actions/staff.action';
+import {
+  getTransactionBorrowingDetail,
+  getTransactionDetail,
+} from '@/lib/actions/staff.action';
 
 interface Props {
   data: ISTransaction[] | ISBorrowTransaction[];
@@ -44,10 +47,16 @@ const TransactionContent = ({
         },
         async (payload) => {
           if (payload.eventType === 'INSERT') {
-            const newData = await getTransactionDetail(
-              payload.new.id.split('#')[1],
-              token
-            );
+            const newData =
+              mode !== 'bookBorrowing'
+                ? await getTransactionDetail(
+                    payload.new.id.split('#')[1],
+                    token
+                  )
+                : await getTransactionBorrowingDetail(
+                    payload.new.id.split('#')[1],
+                    token
+                  );
             return setTransactionData((prev) => [newData.data, ...prev]);
           } else if (payload.eventType === 'UPDATE') {
             if (payload.new.status === 'canceled') {
@@ -60,20 +69,16 @@ const TransactionContent = ({
                 if (findIndex !== -1) {
                   arr[findIndex] = {
                     ...(findData as ISTransaction | ISBorrowTransaction),
-                    ...(mode !== 'bookBorrowing' && {
-                      canceled_at: payload.new.canceled_at,
-                    }),
-                    ...(mode !== 'bookBorrowing' && {
-                      buy_handled_by: payload.new.buy_handled_by,
-                    }),
-                    ...(mode !== 'bookBorrowing' && {
-                      status: payload.new.status,
-                    }),
+                    canceled_at: payload.new.canceled_at,
+                    status: payload.new.status,
                   };
                 }
                 return arr;
               });
-            } else if (payload.new.status === 'paid') {
+            } else if (
+              payload.new.status === 'paid' &&
+              mode !== 'bookBorrowing'
+            ) {
               setTransactionData((prev) => {
                 const arr = [...prev];
                 const findData = arr.find((item) => item.id === payload.new.id);
@@ -82,18 +87,17 @@ const TransactionContent = ({
                 );
                 if (findIndex !== -1) {
                   arr[findIndex] = {
-                    ...(findData as ISTransaction | ISBorrowTransaction),
-                    ...(mode !== 'bookBorrowing' && {
-                      paid_at: payload.new.paid_at,
-                    }),
-                    ...(mode !== 'bookBorrowing' && {
-                      status: payload.new.status,
-                    }),
+                    ...(findData as ISTransaction),
+                    paid_at: payload.new.paid_at,
+                    status: payload.new.status,
                   };
                 }
                 return arr;
               });
-            } else if (payload.new.status === 'success') {
+            } else if (
+              payload.new.status === 'success' &&
+              mode !== 'bookBorrowing'
+            ) {
               setTransactionData((prev) => {
                 const arr = [...prev];
                 const findData = arr.find((item) => item.id === payload.new.id);
@@ -102,16 +106,87 @@ const TransactionContent = ({
                 );
                 if (findIndex !== -1) {
                   arr[findIndex] = {
-                    ...(findData as ISTransaction | ISBorrowTransaction),
-                    ...(mode !== 'bookBorrowing' && {
-                      buy_date: payload.new.buy_date,
-                    }),
-                    ...(mode !== 'bookBorrowing' && {
-                      buy_handled_by: payload.new.buy_handled_by,
-                    }),
-                    ...(mode !== 'bookBorrowing' && {
-                      status: payload.new.status,
-                    }),
+                    ...(findData as ISTransaction),
+                    buy_date: payload.new.buy_date,
+                    buy_handled_by: payload.new.buy_handled_by,
+                    status: payload.new.status,
+                  };
+                }
+                return arr;
+              });
+            } else if (
+              payload.new.status === 'borrowed' &&
+              mode === 'bookBorrowing'
+            ) {
+              setTransactionData((prev) => {
+                const arr = [...prev];
+                const findData = arr.find((item) => item.id === payload.new.id);
+                const findIndex = arr.findIndex(
+                  (item) => item.id === payload.new.id
+                );
+                if (findIndex !== -1) {
+                  arr[findIndex] = {
+                    ...(findData as ISBorrowTransaction),
+                    loan_date: payload.new.loan_date,
+                    loan_handled_by: payload.new.loan_handled_by,
+                    ended_at: payload.new.ended_at,
+                    status: payload.new.status,
+                  };
+                }
+                return arr;
+              });
+            } else if (
+              payload.new.status === 'accepted' &&
+              mode === 'bookBorrowing'
+            ) {
+              setTransactionData((prev) => {
+                const arr = [...prev];
+                const findData = arr.find((item) => item.id === payload.new.id);
+                const findIndex = arr.findIndex(
+                  (item) => item.id === payload.new.id
+                );
+                if (findIndex !== -1) {
+                  arr[findIndex] = {
+                    ...(findData as ISBorrowTransaction),
+                    status: payload.new.status,
+                  };
+                }
+                return arr;
+              });
+            } else if (
+              payload.new.status === 'return req' &&
+              mode === 'bookBorrowing'
+            ) {
+              setTransactionData((prev) => {
+                const arr = [...prev];
+                const findData = arr.find((item) => item.id === payload.new.id);
+                const findIndex = arr.findIndex(
+                  (item) => item.id === payload.new.id
+                );
+                if (findIndex !== -1) {
+                  arr[findIndex] = {
+                    ...(findData as ISBorrowTransaction),
+                    status: payload.new.status,
+                  };
+                }
+                return arr;
+              });
+            } else if (
+              payload.new.status === 'returned' &&
+              mode === 'bookBorrowing'
+            ) {
+              setTransactionData((prev) => {
+                const arr = [...prev];
+                const findData = arr.find((item) => item.id === payload.new.id);
+                const findIndex = arr.findIndex(
+                  (item) => item.id === payload.new.id
+                );
+                if (findIndex !== -1) {
+                  arr[findIndex] = {
+                    ...(findData as ISBorrowTransaction),
+                    date_returned: payload.new.date_returned,
+                    return_handled_by: payload.new.return_handled_by,
+                    status: payload.new.status,
                   };
                 }
                 return arr;
@@ -171,19 +246,13 @@ const TransactionContent = ({
             </TableRow>
           </TableHeader>
           <TransactionList
-            data={
-              mode === 'bookBorrowing'
-                ? data
-                : (transactionsData as ISTransaction[])
-            }
+            data={transactionsData as ISTransaction[] | ISBorrowTransaction[]}
             mode={mode}
             token={token}
           />
         </Table>
         {transactionsData.length === 0 && (
-          <DataNotFound
-            data={mode === 'bookBorrowing' ? data : transactionsData}
-          />
+          <DataNotFound data={transactionsData} />
         )}
       </section>
       {totalCount > 0 && (

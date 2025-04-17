@@ -235,6 +235,27 @@ export const getBooksBorrowing = async (
   }
 };
 
+export const getTransactionBorrowingDetail = async (
+  id: string,
+  token?: string
+) => {
+  try {
+    const response = await fetch(
+      `${ENV.API_URL}/staff/borrow-transaction-detail/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        cache: 'no-store',
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log('Error from getTransactionBorrowingDetail action ', error);
+  }
+};
+
 export const updateBookBorrowing = async (
   id: string,
   values: FormData,

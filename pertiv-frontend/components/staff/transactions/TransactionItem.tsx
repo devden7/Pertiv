@@ -26,6 +26,7 @@ interface Props {
   token?: string;
 }
 const TransactionItem = ({ item, mode, token }: Props) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const acceptLoanHandler = async () => {
@@ -58,7 +59,10 @@ const TransactionItem = ({ item, mode, token }: Props) => {
       title: response.message,
       duration: 2000,
     });
-    setIsLoading(false);
+    setIsOpen(false);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
   };
 
   const rejectLoanHandler = async () => {
@@ -91,7 +95,10 @@ const TransactionItem = ({ item, mode, token }: Props) => {
       title: response.message,
       duration: 2000,
     });
-    setIsLoading(false);
+    setIsOpen(false);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
   };
 
   return (
@@ -120,11 +127,11 @@ const TransactionItem = ({ item, mode, token }: Props) => {
       )}
       <TableCell className="w-[5%]">
         <div className={`${badgeStatusColor(item.status)}  rounded-md`}>
-          <p className="text-center">{item.status}</p>
+          <p className="text-center p-1">{item.status}</p>
         </div>
       </TableCell>
       <TableCell className="text-center">
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger>View Details</DialogTrigger>
           <DialogContent className="overflow-auto max-h-[500px]">
             <DialogHeader>

@@ -3702,6 +3702,119 @@
         }
       }
     },
+    "/staff/borrow-transaction-detail/{id}": {
+      "get": {
+        "tags": ["Staff"],
+        "summary": "Get transaction borrow detail",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "order id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": { "type": "string" },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "status": { "type": "string" },
+                      "loan_key": { "type": "string" },
+                      "loan_handled_by": { "type": "string" },
+                      "loan_date": { "type": "string" },
+                      "created_at": { "type": "string" },
+                      "ended_at": { "type": "string" },
+                      "canceled_at": { "type": "string" },
+                      "return_handled_by": { "type": "string" },
+                      "date_returned": { "type": "string" },
+                      "returned_key": { "type": "string" },
+                      "userId": { "type": "string" },
+                      "user": {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" },
+                          "email": { "type": "string" }
+                        }
+                      },
+                      "items": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": { "type": "string" },
+                            "book_title": { "type": "string" },
+                            "book_imageUrl": { "type": "string" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error: Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Error: book borrowed is not found",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "success": { "type": "boolean" },
+              "statusCode": { "type": "number" },
+              "message": {
+                "type": "string"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean" },
+                "statusCode": { "type": "number" },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/staff/accept-loan-book/{id}": {
       "post": {
         "tags": ["Staff"],

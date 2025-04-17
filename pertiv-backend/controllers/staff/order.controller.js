@@ -320,6 +320,51 @@ const borrowtransactions = async (req, res, next) => {
   }
 };
 
+const borrowtransactionDetail = async (req, res, next) => {
+  const paramsId = req.params.id;
+  logger.info(`Controller STAFF borrowtransactionDetail `);
+  try {
+    const findOrderQuery = await prisma.bookBorrowed.findUnique({
+      where: { id: `#${paramsId}` },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+        items: {
+          select: {
+            id: true,
+            book_title: true,
+            book_imageUrl: true,
+          },
+        },
+      },
+    });
+
+    if (!findOrderQuery) {
+      const error = new Error('BookBorrowed not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      data: findOrderQuery,
+    });
+  } catch (error) {
+    logger.error(`ERROR STAFF Controller borrowtransactionDetail - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 const acceptLoanBook = async (req, res, next) => {
   try {
     const paramsId = req.params.id;
@@ -598,6 +643,7 @@ module.exports = {
   transactions,
   confirmOrder,
   borrowtransactions,
+  borrowtransactionDetail,
   acceptLoanBook,
   rejectLoanBook,
   confirmLoan,
