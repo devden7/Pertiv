@@ -56,7 +56,7 @@ const createOrderBook = async (req, res, next) => {
               book_description: book.description,
               book_imageUrl: book.imageUrl,
               book_price: book.price,
-              quantity: parseInt(item.quantity),
+              quantity: item.quantity,
               book_selling_id: book.id,
             };
           }),
@@ -72,7 +72,7 @@ const createOrderBook = async (req, res, next) => {
         where: { id: item.book_id },
         data: {
           stock: {
-            decrement: parseInt(item.quantity),
+            decrement: item.quantity,
           },
         },
       });
@@ -600,6 +600,17 @@ const createBorrowBook = async (req, res, next) => {
         error.statusCode = 400;
         throw error;
       }
+    }
+
+    for (const item of collectionItems) {
+      await prisma.bookBorrowing.update({
+        where: { id: item.book_id },
+        data: {
+          stock: {
+            decrement: borrowQuantity,
+          },
+        },
+      });
     }
 
     await prisma.bookBorrowed.create({

@@ -256,6 +256,16 @@ const borrowtransactions = async (req, res, next) => {
                 mode: 'insensitive',
               },
             },
+            {
+              items: {
+                some: {
+                  book_title: {
+                    contains: search,
+                    mode: 'insensitive',
+                  },
+                },
+              },
+            },
           ],
         }
       : {};
@@ -421,6 +431,9 @@ const rejectLoanBook = async (req, res, next) => {
       where: {
         id: `#${paramsId}`,
       },
+      include: {
+        items: true,
+      },
     });
 
     if (!findOrderQuery) {
@@ -445,6 +458,17 @@ const rejectLoanBook = async (req, res, next) => {
         canceled_at: formatISO(new Date()),
       },
     });
+
+    for (const item of findOrderQuery.items) {
+      await prisma.bookBorrowing.update({
+        where: { id: item.book_borrowing_id },
+        data: {
+          stock: {
+            increment: 1,
+          },
+        },
+      });
+    }
     res.status(201).json({
       success: true,
       statusCode: 201,
@@ -499,31 +523,6 @@ const confirmLoan = async (req, res, next) => {
       error.success = false;
       error.statusCode = 400;
       throw error;
-    }
-
-    const stockQty = 1;
-    // Check stock berfore confirm loan
-    for (let i = 0; i < findBookBorrowedQuery.items.length; i++) {
-      const book = findBookBorrowedQuery.items[i].book_borrowing;
-      if (book.stock < stockQty) {
-        const error = new Error('Out of stock!');
-        error.success = false;
-        error.statusCode = 400;
-        throw error;
-      }
-    }
-
-    // Update stock after confirm loan (descrement stock)
-    for (let i = 0; i < findBookBorrowedQuery.items.length; i++) {
-      const book = findBookBorrowedQuery.items[i].book_borrowing;
-      await prisma.bookBorrowing.update({
-        where: {
-          id: book.id,
-        },
-        data: {
-          stock: book.stock - stockQty,
-        },
-      });
     }
 
     const findUserMembership = await prisma.membershipTransaction.findMany({

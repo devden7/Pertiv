@@ -1,10 +1,13 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import { IBooksBorrowing, IBooksSelling } from '@/model/staff.model';
 import BooksList from './BooksList';
 import { PaginationWithLinks } from '@/components/ui/pagination-with-links';
 import AddBook from './AddBook';
 import SearchInput from '@/components/shared/SearchInput';
 import DataNotFound from '@/components/shared/DataNotFound';
+import { supabase } from '@/lib/actions/supabase';
 
 interface Props {
   data: IBooksSelling[] | IBooksBorrowing[];
@@ -22,6 +25,49 @@ const BooksContent = ({
   totalCount,
   mode,
 }: Props) => {
+  const [books, setBooks] = useState<(IBooksSelling | IBooksBorrowing)[]>(data);
+
+  useEffect(() => {
+    setBooks(data);
+  }, [data]);
+
+  useEffect(() => {
+    const tableName =
+      mode !== 'bookBorrowing' ? 'BookSelling' : 'BookBorrowing';
+    const channel = supabase
+      .channel(`List books  ${tableName}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: tableName,
+        },
+        async (payload) => {
+          if (payload.eventType === 'UPDATE') {
+            setBooks((prev) => {
+              const arr = [...prev];
+              const findData = arr.find((item) => item.id === payload.new.id);
+              const findIndex = arr.findIndex(
+                (item) => item.id === payload.new.id
+              );
+              if (findIndex !== -1) {
+                arr[findIndex] = {
+                  ...(findData as IBooksSelling | IBooksBorrowing),
+                  stock: payload.new.stock,
+                };
+              }
+              return arr;
+            });
+          }
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [mode]);
+
   return (
     <section>
       <div className="flex justify-between items-center">
@@ -43,9 +89,13 @@ const BooksContent = ({
       />
       <div>
         <div>
-          {data.length === 0 && <DataNotFound data={data} />}
-          {data.length > 0 && (
-            <BooksList data={data} token={token} mode={mode} />
+          {books.length === 0 && <DataNotFound data={books} />}
+          {books.length > 0 && (
+            <BooksList
+              data={books as IBooksSelling[] | IBooksBorrowing[]}
+              token={token}
+              mode={mode}
+            />
           )}
           {totalCount > 0 && (
             <div className="my-3">

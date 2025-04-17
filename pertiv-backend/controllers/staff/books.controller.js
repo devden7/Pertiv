@@ -630,6 +630,91 @@ const getBooksBorrowing = async (req, res, next) => {
   }
 };
 
+const getDetailBookBorrowing = async (req, res, next) => {
+  try {
+    const paramsId = req.params.id;
+
+    logger.info(
+      `Controller getDetailBookBorrowing - Get detail books selling ID : ${paramsId}`
+    );
+
+    const bookBorrowingQuery = await prisma.bookBorrowing.findUnique({
+      where: { id: paramsId },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        book_position: true,
+        language: true,
+        stock: true,
+        imageUrl: true,
+        is_member: true,
+        created_at: true,
+        user_id: true,
+        publisher: {
+          select: {
+            name: true,
+          },
+        },
+        writer: {
+          select: {
+            name: true,
+          },
+        },
+        category: {
+          select: {
+            categories: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+
+        items: {
+          select: {
+            bookBorrowed: {
+              select: {
+                id: true,
+                status: true,
+                user: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!bookBorrowingQuery) {
+      const error = new Error('Book borrowing not found');
+      error.success = false;
+      error.statusCode = 404;
+      throw error;
+    }
+    const formatQuery = {
+      ...bookBorrowingQuery,
+      category: bookBorrowingQuery.category.map((c) => c.categories.name),
+    };
+
+    res.status(200).json({
+      success: true,
+      statusCode: 200,
+      data: formatQuery,
+    });
+  } catch (error) {
+    logger.error(`ERROR Controller getDetailBookBorrowing - ${error}`);
+    if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+    }
+    next(error);
+  }
+};
+
 const updateBookBorrowing = async (req, res, next) => {
   try {
     const paramsId = req.params.id;
@@ -808,6 +893,7 @@ module.exports = {
   deleteBookSelling,
   addBookBorrowing,
   getBooksBorrowing,
+  getDetailBookBorrowing,
   updateBookBorrowing,
   deleteBookBorrowing,
 };

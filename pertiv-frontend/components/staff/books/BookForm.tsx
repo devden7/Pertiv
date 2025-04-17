@@ -349,7 +349,7 @@ const BookForm = ({ type, token, book, mode, setIsOpen }: Props) => {
             </FormItem>
           )}
         />
-        {mode === 'bookSelling' && (
+        {mode !== 'bookBorrowing' && (
           <FormField
             control={form.control}
             name="price"

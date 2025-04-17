@@ -10,6 +10,7 @@ const {
   getBooksBorrowing,
   updateBookBorrowing,
   deleteBookBorrowing,
+  getDetailBookBorrowing,
 } = require('../controllers/staff/books.controller');
 const { PrismaClient } = require('@prisma/client');
 const staffMiddleware = require('../middleware/staffAuth');
@@ -298,6 +299,7 @@ router.put(
 );
 
 router.get('/books-borrowing', staffMiddleware, getBooksBorrowing);
+router.get('/book-borrowing/:id', staffMiddleware, getDetailBookBorrowing);
 router.delete(
   '/delete-book-borrowing/:id',
   staffMiddleware,

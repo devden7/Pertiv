@@ -33,6 +33,11 @@ const TransactionContent = ({
 }: Props) => {
   const [transactionsData, setTransactionData] =
     useState<(ISTransaction | ISBorrowTransaction)[]>(data);
+
+  useEffect(() => {
+    setTransactionData(data);
+  }, [data]);
+
   useEffect(() => {
     const tableName = mode !== 'bookBorrowing' ? 'Order' : 'BookBorrowed';
 
@@ -95,65 +100,6 @@ const TransactionContent = ({
                 return arr;
               });
             } else if (
-              payload.new.status === 'success' &&
-              mode !== 'bookBorrowing'
-            ) {
-              setTransactionData((prev) => {
-                const arr = [...prev];
-                const findData = arr.find((item) => item.id === payload.new.id);
-                const findIndex = arr.findIndex(
-                  (item) => item.id === payload.new.id
-                );
-                if (findIndex !== -1) {
-                  arr[findIndex] = {
-                    ...(findData as ISTransaction),
-                    buy_date: payload.new.buy_date,
-                    buy_handled_by: payload.new.buy_handled_by,
-                    status: payload.new.status,
-                  };
-                }
-                return arr;
-              });
-            } else if (
-              payload.new.status === 'borrowed' &&
-              mode === 'bookBorrowing'
-            ) {
-              setTransactionData((prev) => {
-                const arr = [...prev];
-                const findData = arr.find((item) => item.id === payload.new.id);
-                const findIndex = arr.findIndex(
-                  (item) => item.id === payload.new.id
-                );
-                if (findIndex !== -1) {
-                  arr[findIndex] = {
-                    ...(findData as ISBorrowTransaction),
-                    loan_date: payload.new.loan_date,
-                    loan_handled_by: payload.new.loan_handled_by,
-                    ended_at: payload.new.ended_at,
-                    status: payload.new.status,
-                  };
-                }
-                return arr;
-              });
-            } else if (
-              payload.new.status === 'accepted' &&
-              mode === 'bookBorrowing'
-            ) {
-              setTransactionData((prev) => {
-                const arr = [...prev];
-                const findData = arr.find((item) => item.id === payload.new.id);
-                const findIndex = arr.findIndex(
-                  (item) => item.id === payload.new.id
-                );
-                if (findIndex !== -1) {
-                  arr[findIndex] = {
-                    ...(findData as ISBorrowTransaction),
-                    status: payload.new.status,
-                  };
-                }
-                return arr;
-              });
-            } else if (
               payload.new.status === 'return req' &&
               mode === 'bookBorrowing'
             ) {
@@ -171,26 +117,6 @@ const TransactionContent = ({
                 }
                 return arr;
               });
-            } else if (
-              payload.new.status === 'returned' &&
-              mode === 'bookBorrowing'
-            ) {
-              setTransactionData((prev) => {
-                const arr = [...prev];
-                const findData = arr.find((item) => item.id === payload.new.id);
-                const findIndex = arr.findIndex(
-                  (item) => item.id === payload.new.id
-                );
-                if (findIndex !== -1) {
-                  arr[findIndex] = {
-                    ...(findData as ISBorrowTransaction),
-                    date_returned: payload.new.date_returned,
-                    return_handled_by: payload.new.return_handled_by,
-                    status: payload.new.status,
-                  };
-                }
-                return arr;
-              });
             }
           }
         }
@@ -200,7 +126,7 @@ const TransactionContent = ({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [data, mode, setTransactionData]);
+  }, [mode]);
 
   return (
     <>

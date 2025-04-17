@@ -31,6 +31,10 @@ const TransactionContent = ({
     useState<(ITransaction | IBorrowTransaction)[]>(data);
 
   useEffect(() => {
+    setTransactionData(data);
+  }, [data]);
+
+  useEffect(() => {
     const tableName = mode !== 'bookBorrowing' ? 'Order' : 'BookBorrowed';
 
     const channel = supabase
@@ -118,25 +122,6 @@ const TransactionContent = ({
                 return arr;
               });
             } else if (
-              payload.new.status === 'return req' &&
-              mode === 'bookBorrowing'
-            ) {
-              setTransactionData((prev) => {
-                const arr = [...prev];
-                const findData = arr.find((item) => item.id === payload.new.id);
-                const findIndex = arr.findIndex(
-                  (item) => item.id === payload.new.id
-                );
-                if (findIndex !== -1) {
-                  arr[findIndex] = {
-                    ...(findData as IBorrowTransaction),
-                    returned_key: payload.new.returned_key,
-                    status: payload.new.status,
-                  };
-                }
-                return arr;
-              });
-            } else if (
               payload.new.status === 'returned' &&
               mode === 'bookBorrowing'
             ) {
@@ -164,7 +149,7 @@ const TransactionContent = ({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [mode, setTransactionData]);
+  }, [mode]);
 
   return (
     <>
