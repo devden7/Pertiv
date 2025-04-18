@@ -109,6 +109,7 @@ const getBooksSelling = async (req, res, next) => {
     const skip = (page - 1) * LIMIT;
     const keyword = search
       ? {
+          is_deleted: false,
           OR: [
             {
               title: {
@@ -132,7 +133,7 @@ const getBooksSelling = async (req, res, next) => {
             },
           ],
         }
-      : {};
+      : { is_deleted: false };
 
     logger.info('Controller getBooksSelling - Get all book selling');
 
@@ -389,12 +390,9 @@ const deleteBookSelling = async (req, res, next) => {
       throw error;
     }
 
-    await prisma.bookCategorySell.deleteMany({
-      where: { book_id: paramsId },
-    });
-
-    await prisma.bookSelling.delete({
+    await prisma.bookSelling.update({
       where: { id: paramsId },
+      data: { is_deleted: true },
     });
 
     res.status(201).json({
@@ -861,12 +859,9 @@ const deleteBookBorrowing = async (req, res, next) => {
       throw error;
     }
 
-    await prisma.bookCategoryBorrow.deleteMany({
-      where: { book_id: paramsId },
-    });
-
-    await prisma.bookBorrowing.delete({
+    await prisma.bookBorrowing.update({
       where: { id: paramsId },
+      data: { is_deleted: true },
     });
 
     res.status(201).json({

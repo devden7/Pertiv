@@ -328,7 +328,8 @@ router.post(
         const data = await prisma.membership.findMany();
 
         const findMembershipkQuery = data.find(
-          (item) => item.name === value.toLowerCase()
+          (item) =>
+            item.name === value.toLowerCase() && item.is_deleted === false
         );
 
         if (findMembershipkQuery) {

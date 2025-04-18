@@ -242,7 +242,7 @@ export const booksBorrowingFormSchema = z.object({
   description: z
     .string()
     .min(3, { message: 'description must be at least 3 characters' })
-    .max(255, { message: 'description must be max 255 characters' }),
+    .max(5000, { message: 'description must be max 5000 characters' }),
   bookPosition: z
     .string()
     .min(1, { message: 'description must be at least 1 characters' })
@@ -296,7 +296,7 @@ export const formMembershipSchema = z.object({
   description: z
     .string()
     .min(3, { message: 'Description must be at least 3 characters' })
-    .max(255, { message: 'Description must be max 255 characters' }),
+    .max(5000, { message: 'Description must be max 5000 characters' }),
   durationDays: z.coerce
     .number()
     .min(1, { message: 'durationDays at least 0 item' }),

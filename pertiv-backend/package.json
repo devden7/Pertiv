@@ -7,6 +7,7 @@
   "scripts": {
     "start": "nodemon index.js",
     "seedAdmin": "node lib/prisma/seedAdmin",
+    "seedData": "node lib/prisma/seedData",
     "prisma:migrate": "npx prisma migrate dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

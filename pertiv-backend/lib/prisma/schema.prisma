@@ -16,6 +16,7 @@ model User {
   password String  @db.VarChar(255)
   role     String
   image    String?
+  is_deleted Boolean @default(false)
 
   cart     Cart[]
   collection Collection[]
@@ -45,6 +46,7 @@ model Membership {
   maxBorrow      Int       
   maxReturn      Int       
   price          Float     
+  is_deleted Boolean @default(false)
   createdAt      DateTime  @default(now()) @db.Timestamptz()
 
   MmembershipTransaction MembershipTransaction[]
@@ -124,6 +126,7 @@ model BookSelling {
   stock       Int
   imageUrl String?
   price Int
+  is_deleted Boolean @default(false)
   created_at   DateTime @default(now()) @db.Timestamptz()
 
   user_id      String?
@@ -220,6 +223,7 @@ model BookBorrowing {
   stock       Int
   imageUrl String?
   is_member    Boolean @default(false)
+  is_deleted Boolean @default(false)
   created_at   DateTime @default(now()) @db.Timestamptz()
 
   user_id      String?

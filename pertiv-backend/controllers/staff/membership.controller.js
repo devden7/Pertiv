@@ -22,16 +22,39 @@ const createMembership = async (req, res, next) => {
       `Controller STAFF createMembership - staff: ${id}  name : ${name}, description : ${description}, price : ${price}, durationDays : ${durationDays}, maxBorrow : ${maxBorrow}, maxReturn : ${maxReturn}`
     );
 
-    await prisma.membership.create({
-      data: {
+    const existingMembership = await prisma.membership.findFirst({
+      where: {
         name: name.toLowerCase(),
-        description,
-        durationDays,
-        maxBorrow,
-        maxReturn,
-        price,
       },
     });
+
+    if (existingMembership) {
+      if (existingMembership.is_deleted) {
+        await prisma.membership.update({
+          where: { id: existingMembership.id },
+          data: {
+            name: name.toLowerCase(),
+            description,
+            durationDays,
+            maxBorrow,
+            maxReturn,
+            price,
+            is_deleted: false,
+          },
+        });
+      }
+    } else {
+      await prisma.membership.create({
+        data: {
+          name: name.toLowerCase(),
+          description,
+          durationDays,
+          maxBorrow,
+          maxReturn,
+          price,
+        },
+      });
+    }
     res.status(201).json({
       success: true,
       statusCode: 201,
@@ -53,15 +76,17 @@ const createMembership = async (req, res, next) => {
 const getMemberships = async (req, res, next) => {
   try {
     logger.info('Controller STAFF getMemberships - Get all membership type');
-    const page = parseInt(req.query.page) || 1;
-    const LIMIT = 10;
-    const skip = (page - 1) * LIMIT;
     const findMembershipQuery = await prisma.membership.findMany({
-      skip,
-      take: LIMIT,
+      where: {
+        is_deleted: false,
+      },
     });
 
-    const countMembership = await prisma.membership.count();
+    const countMembership = await prisma.membership.count({
+      where: {
+        is_deleted: false,
+      },
+    });
 
     res.status(200).json({
       success: true,
@@ -159,8 +184,9 @@ const deleteMembershipType = async (req, res, next) => {
       throw error;
     }
 
-    await prisma.membership.delete({
+    await prisma.membership.update({
       where: { id: paramsId },
+      data: { is_deleted: true },
     });
 
     res.status(201).json({

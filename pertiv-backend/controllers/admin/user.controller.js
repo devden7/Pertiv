@@ -57,6 +57,7 @@ const getStaffAccounts = async (req, res, next) => {
     const keyword = search
       ? {
           role: 'staff',
+          is_deleted: false,
           OR: [
             {
               name: {
@@ -74,6 +75,7 @@ const getStaffAccounts = async (req, res, next) => {
         }
       : {
           role: 'staff',
+          is_deleted: false,
         };
 
     const findDataQuery = await prisma.user.findMany({
@@ -234,8 +236,11 @@ const deleteStaffAccount = async (req, res, next) => {
       throw error;
     }
 
-    await prisma.user.delete({
+    await prisma.user.update({
       where: { id: paramsId },
+      data: {
+        is_deleted: true,
+      },
     });
     findStaffQuery.password = res.status(201).json({
       success: true,

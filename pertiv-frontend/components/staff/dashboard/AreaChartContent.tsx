@@ -14,11 +14,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import {
-  IAreaChart,
-  TransactionsBookBorrowing,
-  TransactionsBookSelling,
-} from '@/model/staff.model';
+import { IAreaChart } from '@/model/staff.model';
 import { useEffect, useState } from 'react';
 
 const chartConfig = {
@@ -40,20 +36,42 @@ const AreaChartContent = ({ data, timePeriod }: Props) => {
   const [chartData, setChartData] = useState<
     { time: string; bookSelling: number; bookBorrowing: number }[]
   >([]);
-
   useEffect(() => {
-    const arr = [
-      ...data.transactionsBookSelling,
-      ...data.transactionBookBorrowing,
-    ];
-    const newData = arr.map((item) => {
-      return {
-        time: item.time,
-        bookSelling: (item as TransactionsBookSelling).bookSelling || 0,
-        bookBorrowing: (item as TransactionsBookBorrowing).bookBorrowing || 0,
-      };
+    const merged: {
+      time: string;
+      bookSelling: number;
+      bookBorrowing: number;
+    }[] = [];
+
+    data.transactionsBookSelling.forEach((item) => {
+      const existing = merged.find((entry) => entry.time === item.time);
+      if (existing) {
+        existing.bookSelling = item.bookSelling;
+      } else {
+        merged.push({
+          time: item.time,
+          bookSelling: item.bookSelling,
+          bookBorrowing: 0,
+        });
+      }
     });
-    setChartData(newData);
+    data.transactionBookBorrowing.forEach((item) => {
+      const existing = merged.find((entry) => entry.time === item.time);
+      if (existing) {
+        existing.bookBorrowing = item.bookBorrowing;
+      } else {
+        merged.push({
+          time: item.time,
+          bookSelling: 0,
+          bookBorrowing: item.bookBorrowing,
+        });
+      }
+    });
+    merged.sort(
+      (a, b) => new Date(a.time).getTime() - new Date(b.time).getTime()
+    );
+
+    setChartData(merged);
   }, [data, timePeriod]);
   return (
     <Card>
