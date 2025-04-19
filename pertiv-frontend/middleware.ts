@@ -70,6 +70,6 @@ const protectedUserRoutes = [
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+    '/((?!api|_next/static|_next/images|assets|favicon.ico|sitemap.xml|robots.txt).*)',
   ],
 };

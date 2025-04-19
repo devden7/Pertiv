@@ -36,9 +36,6 @@ export const addBookSelling = async (values: FormData, token?: string) => {
     });
     const data = await response.json();
 
-    if (response.status !== 201) {
-      throw response;
-    }
     if (response.ok) {
       revalidatePath('/');
     }
@@ -198,9 +195,6 @@ export const addBookBorrowing = async (values: FormData, token?: string) => {
       body: values,
     });
     const data = await response.json();
-    if (data.statusCode === 500) {
-      throw response;
-    }
     if (response.ok) {
       revalidatePath('/');
     }

@@ -19,6 +19,7 @@ const StaffBooks = async ({ searchParams }: ParamsProps) => {
     modeBook === 'bookBorrowing'
       ? await getBooksBorrowing(page, search, user.token)
       : await getBooksSelling(page, search, user.token);
+
   return (
     <>
       <BooksContent
@@ -28,6 +29,7 @@ const StaffBooks = async ({ searchParams }: ParamsProps) => {
         pageSize={SIZE}
         totalCount={data.totalCount}
         mode={modeBook}
+        key={modeBook}
       />
     </>
   );

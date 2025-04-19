@@ -36,6 +36,13 @@ const addBookSelling = async (req, res, next) => {
       throw error;
     }
 
+    const existingBook = await prisma.bookSelling.findUnique({
+      where: {
+        title: title.toLowerCase(),
+        is_deleted: true,
+      },
+    });
+
     const [publisher, writer] = await Promise.all([
       prisma.publisher.upsert({
         where: { name: publisherName.toLowerCase() },
@@ -58,28 +65,55 @@ const addBookSelling = async (req, res, next) => {
         })
       )
     );
-
-    await prisma.bookSelling.create({
-      data: {
-        title: title.toLowerCase(),
-        description,
-        language: language.toLowerCase(),
-        stock: parseInt(stock),
-        imageUrl,
-        price: parseInt(price),
-        user_id: id,
-        publisher_id: publisher.id,
-        writer_id: writer.id,
-        category: {
-          create: categoriesQuery.map((name) => ({
-            categories: { connect: { name: name.name } },
-          })),
+    if (existingBook) {
+      await prisma.bookSelling.update({
+        where: {
+          title: title.toLowerCase(),
         },
-      },
-      include: {
-        category: true,
-      },
-    });
+        data: {
+          title: title.toLowerCase(),
+          description,
+          language: language.toLowerCase(),
+          stock: parseInt(stock),
+          imageUrl,
+          price: parseInt(price),
+          user_id: id,
+          publisher_id: publisher.id,
+          writer_id: writer.id,
+          category: {
+            create: categoriesQuery.map((name) => ({
+              categories: { connect: { name: name.name } },
+            })),
+          },
+          is_deleted: false,
+        },
+        include: {
+          category: true,
+        },
+      });
+    } else {
+      await prisma.bookSelling.create({
+        data: {
+          title: title.toLowerCase(),
+          description,
+          language: language.toLowerCase(),
+          stock: parseInt(stock),
+          imageUrl,
+          price: parseInt(price),
+          user_id: id,
+          publisher_id: publisher.id,
+          writer_id: writer.id,
+          category: {
+            create: categoriesQuery.map((name) => ({
+              categories: { connect: { name: name.name } },
+            })),
+          },
+        },
+        include: {
+          category: true,
+        },
+      });
+    }
 
     if (req.file) {
       saveImgToFileSystem(fileNameImage, req.file.buffer);
@@ -445,6 +479,13 @@ const addBookBorrowing = async (req, res, next) => {
       throw error;
     }
 
+    const existingBook = await prisma.bookBorrowing.findUnique({
+      where: {
+        title: title.toLowerCase(),
+        is_deleted: true,
+      },
+    });
+
     const [publisher, writer] = await Promise.all([
       prisma.publisher.upsert({
         where: { name: publisherName.toLowerCase() },
@@ -467,30 +508,57 @@ const addBookBorrowing = async (req, res, next) => {
         })
       )
     );
-    console.log(isMember);
-    await prisma.bookBorrowing.create({
-      data: {
-        title: title.toLowerCase(),
-        description,
-        book_position: bookPosition.toLowerCase(),
-        language: language.toLowerCase(),
-        stock: parseInt(stock),
-        is_member: isMember === 'true' ? true : false,
-        imageUrl,
-        user_id: id,
-        publisher_id: publisher.id,
-        writer_id: writer.id,
-        category: {
-          create: categoriesQuery.map((name) => ({
-            categories: { connect: { name: name.name } },
-          })),
+    if (existingBook) {
+      await prisma.bookBorrowing.update({
+        where: {
+          title: title.toLowerCase(),
         },
-      },
-      include: {
-        category: true,
-      },
-    });
-
+        data: {
+          title: title.toLowerCase(),
+          description,
+          book_position: bookPosition.toLowerCase(),
+          language: language.toLowerCase(),
+          stock: parseInt(stock),
+          is_member: isMember === 'true' ? true : false,
+          imageUrl,
+          user_id: id,
+          publisher_id: publisher.id,
+          writer_id: writer.id,
+          category: {
+            create: categoriesQuery.map((name) => ({
+              categories: { connect: { name: name.name } },
+            })),
+          },
+          is_deleted: false,
+        },
+        include: {
+          category: true,
+        },
+      });
+    } else {
+      await prisma.bookBorrowing.create({
+        data: {
+          title: title.toLowerCase(),
+          description,
+          book_position: bookPosition.toLowerCase(),
+          language: language.toLowerCase(),
+          stock: parseInt(stock),
+          is_member: isMember === 'true' ? true : false,
+          imageUrl,
+          user_id: id,
+          publisher_id: publisher.id,
+          writer_id: writer.id,
+          category: {
+            create: categoriesQuery.map((name) => ({
+              categories: { connect: { name: name.name } },
+            })),
+          },
+        },
+        include: {
+          category: true,
+        },
+      });
+    }
     if (req.file) {
       saveImgToFileSystem(fileNameImage, req.file.buffer);
     }
@@ -502,7 +570,9 @@ const addBookBorrowing = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error);
-    logger.error(`ERROR Controller STAFF addBookBorrowing - ${error}`);
+    logger.error(
+      `ERROR Controller STAFF addBookBorrowing - ${JSON.stringify(error)}`
+    );
 
     if (!error.statusCode) {
       error.statusCode = 500;

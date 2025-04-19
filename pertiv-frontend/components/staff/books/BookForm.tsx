@@ -64,10 +64,24 @@ interface Props {
 const BookForm = ({ type, token, book, mode, setIsOpen }: Props) => {
   const [isForBorrowing, setIsForBorrowing] = useState(false);
   const { toast } = useToast();
-  const schema =
-    mode === 'bookBorrowing'
-      ? booksBorrowingFormSchema
-      : booksSellingFormSchema;
+
+  const getBooksSchema = (mode: string, isForBorrowing: boolean) => {
+    if (mode === 'bookBorrowing') {
+      return booksBorrowingFormSchema;
+    }
+
+    if (isForBorrowing) {
+      return booksSellingFormSchema.extend({
+        bookPosition: z
+          .string()
+          .min(1, { message: 'Book position is required' })
+          .max(10, { message: 'Book position must be max 10 characters' }),
+      });
+    }
+
+    return booksSellingFormSchema;
+  };
+  const schema = getBooksSchema(mode!, isForBorrowing);
 
   const defaultFormValue =
     mode === 'bookBorrowing'
@@ -93,6 +107,8 @@ const BookForm = ({ type, token, book, mode, setIsOpen }: Props) => {
           writerName: book ? book.writer : '',
           categories: book ? book.category : [],
           image: book ? book.imageUrl : null,
+          bookPosition: '',
+          isMember: false,
         };
   const form = useForm<z.infer<typeof schema>>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -201,14 +217,31 @@ const BookForm = ({ type, token, book, mode, setIsOpen }: Props) => {
       }
     }
 
-    const allResponses = [response1, response2].filter(Boolean);
+    const failedResponses = [
+      { res: response1, label: 'bookSelling' },
+      { res: response2, label: 'bookBorrowing' },
+    ].filter(
+      (value) => value.res && !value.res.success && value.res.statusCode !== 201
+    );
 
-    if (allResponses.some((res) => !res?.success)) {
-      const firstError = allResponses.find((res) => !res?.success);
+    if (failedResponses.length > 0) {
+      let message = 'Oh! Something went wrong!';
+
+      if (failedResponses.length === 2) {
+        message = 'Book title is already exist';
+      } else if (failedResponses[0].label === 'bookSelling') {
+        message =
+          'Book borrowing successfully added, but book title in bookSelling is already exist';
+        setIsOpen(false);
+      } else if (failedResponses[0].label === 'bookBorrowing') {
+        message =
+          'Book selling successfully added, but book title in bookBorrowing is already exist';
+        setIsOpen(false);
+      }
+
       return toast({
-        variant: 'destructive',
-        title: firstError?.message?.[0]?.msg || 'Oh! Something went wrong!',
-        duration: 2000,
+        title: message,
+        duration: 5000,
       });
     }
 

@@ -21,7 +21,6 @@ const {
   acceptLoanBook,
   rejectLoanBook,
   confirmLoan,
-  bookReturnRequested,
   confirmReturnBook,
   transactionDetail,
   borrowtransactionDetail,
@@ -47,7 +46,8 @@ router.post(
         const data = await prisma.bookSelling.findMany();
 
         const findBookQuery = data.find(
-          (item) => item.title === value.toLowerCase()
+          (item) =>
+            item.title === value.toLowerCase() && item.is_deleted === false
         );
 
         if (findBookQuery) {
@@ -113,7 +113,9 @@ router.put(
 
         const findBookQuery = data.find(
           (item) =>
-            item.title === value.toLowerCase() && item.id !== req.params.id
+            item.title === value.toLowerCase() &&
+            item.id !== req.params.id &&
+            item.is_deleted === false
         );
 
         if (findBookQuery) {
@@ -181,7 +183,8 @@ router.post(
         const data = await prisma.bookBorrowing.findMany();
 
         const findBookQuery = data.find(
-          (item) => item.title === value.toLowerCase()
+          (item) =>
+            item.title === value.toLowerCase() && item.is_deleted === false
         );
 
         if (findBookQuery) {
@@ -245,7 +248,9 @@ router.put(
 
         const findBookQuery = data.find(
           (item) =>
-            item.title === value.toLowerCase() && item.id !== req.params.id
+            item.title === value.toLowerCase() &&
+            item.id !== req.params.id &&
+            item.is_deleted === false
         );
 
         if (findBookQuery) {
