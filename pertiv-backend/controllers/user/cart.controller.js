@@ -5,7 +5,9 @@ const AddToCart = async (req, res, next) => {
   try {
     const { book_id } = req.body;
     const { id } = req.user;
-    logger.info(`Controller USER AddToCart - Add Book : ${book_id}`);
+    logger.info(
+      `Controller AddToCart | User with ID : ${id} | Add Book : ${book_id}`
+    );
     const findBookQuery = await prisma.bookSelling.findUnique({
       where: { id: book_id },
     });
@@ -65,7 +67,7 @@ const AddToCart = async (req, res, next) => {
       message: 'The book has been added to cart successfully.',
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller AddToCart - ${error}`);
+    logger.error(`Controller AddToCart | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -77,7 +79,9 @@ const AddToCart = async (req, res, next) => {
 const getCartList = async (req, res, next) => {
   try {
     const { id } = req.user;
-    logger.info(`Controller USER GetCartList - Cart: `);
+    logger.info(
+      `Controller GetCartList | User with ID : ${id} | Get cart list`
+    );
 
     const findCartQuery = await prisma.cart.findUnique({
       where: { user_id: id },
@@ -140,7 +144,7 @@ const getCartList = async (req, res, next) => {
       data: finalCart,
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller GetCartList - ${error}`);
+    logger.error(`Controller GetCartList | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -154,7 +158,7 @@ const removeItemFromCart = async (req, res, next) => {
     const { book_id } = req.body;
     const { id } = req.user;
     logger.info(
-      `Controller USER removeItemFromCart - Remove Book : ${book_id}`
+      `Controller removeItemFromCart | User with ID : ${id} | Remove Book : ${book_id}`
     );
     const findBookQuery = await prisma.bookSelling.findUnique({
       where: { id: book_id },
@@ -202,7 +206,7 @@ const removeItemFromCart = async (req, res, next) => {
       message: 'The book has been removed from cart successfully.',
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller removeItemFromCart - ${error}`);
+    logger.error(`Controller removeItemFromCart | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -216,7 +220,7 @@ const decreaseItemFromCart = async (req, res, next) => {
     const { book_id } = req.body;
     const { id } = req.user;
     logger.info(
-      `Controller USER decreaseItemFromCart - Remove Book : ${book_id}`
+      `Controller decreaseItemFromCart | User with ID : ${id} | Remove Book : ${book_id}`
     );
     const findBookQuery = await prisma.bookSelling.findUnique({
       where: { id: book_id },
@@ -278,7 +282,7 @@ const decreaseItemFromCart = async (req, res, next) => {
       message: 'The book has been decreased from cart successfully.',
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller decreaseItemFromCart - ${error}`);
+    logger.error(`Controller decreaseItemFromCart | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -292,7 +296,9 @@ const AddToLoanCart = async (req, res, next) => {
     const { book_id } = req.body;
     const { id } = req.user;
 
-    logger.info(`Controller USER AddToLoanCart - Add Book : ${book_id}`);
+    logger.info(
+      `Controller AddToLoanCart | User with ID : ${id} | Add Book : ${book_id}`
+    );
     const findBookQuery = await prisma.bookBorrowing.findUnique({
       where: { id: book_id },
     });
@@ -327,24 +333,21 @@ const AddToLoanCart = async (req, res, next) => {
       error.statusCode = 400;
       throw error;
     } else {
-      const newCartItem = await prisma.collectionItem.create({
+      await prisma.collectionItem.create({
         data: {
           collection_id: cart.id,
           book_id: book_id,
         },
       });
-
-      logger.info(
-        `Controller USER AddToLoanCart - LoanCart Item Added: ${newCartItem}`
-      );
     }
+
     res.status(201).json({
       success: true,
       statusCode: 201,
       message: 'The book has been added to LoanCart successfully.',
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller AddToLoanCart - ${error}`);
+    logger.error(`Controller AddToLoanCart | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -356,7 +359,9 @@ const AddToLoanCart = async (req, res, next) => {
 const getLoanCartList = async (req, res, next) => {
   try {
     const { id } = req.user;
-    logger.info(`Controller USER getLoanCartList - Cart: `);
+    logger.info(
+      `Controller getLoanCartList | User with ID : ${id} | Get Loan cart list`
+    );
 
     const findLoanCartQuery = await prisma.collection.findUnique({
       where: { user_id: id },
@@ -416,7 +421,7 @@ const getLoanCartList = async (req, res, next) => {
       data: finalCart,
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller getLoanCartList - ${error}`);
+    logger.error(`Controller getLoanCartList | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -430,7 +435,7 @@ const removeItemFromLoanCart = async (req, res, next) => {
     const { book_id } = req.body;
     const { id } = req.user;
     logger.info(
-      `Controller USER removeItemFromLoanCart - Remove Book : ${book_id}`
+      `Controller removeItemFromLoanCart | User with ID : ${id} | Remove Book : ${book_id}`
     );
     const findBookQuery = await prisma.bookBorrowing.findUnique({
       where: { id: book_id },
@@ -478,7 +483,7 @@ const removeItemFromLoanCart = async (req, res, next) => {
       message: 'The book has been removed from cart successfully.',
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller removeItemFromLoanCart - ${error}`);
+    logger.error(`Controller removeItemFromLoanCart | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';

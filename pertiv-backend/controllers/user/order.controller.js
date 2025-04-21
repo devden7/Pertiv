@@ -11,6 +11,13 @@ const createOrderBook = async (req, res, next) => {
   try {
     const { cartItem } = req.body;
     const { id } = req.user;
+
+    logger.info(
+      `Controller createOrderBook | User with ID : ${id} | Order Book : ${JSON.stringify(
+        cartItem
+      )}`
+    );
+
     const findBooksSellingQuery = await prisma.bookSelling.findMany({
       where: { id: { in: cartItem.map((item) => item.book_id) } },
     });
@@ -91,7 +98,7 @@ const createOrderBook = async (req, res, next) => {
       data: { id: orderQuery.id },
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller CreateOrderBook - ${error}`);
+    logger.error(`Controller CreateOrderBook | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
     }
@@ -105,7 +112,7 @@ const paymentBookDetail = async (req, res, next) => {
     const { id } = req.user;
 
     logger.info(
-      `Controller USER paymentBookDetail -  Order ID : ${paramsId}  User ID : ${id}`
+      `Controller paymentBookDetail | User with ID : ${id} | Order ID : ${paramsId}`
     );
 
     let findOrderQuery = await prisma.order.findUnique({
@@ -167,7 +174,7 @@ const paymentBookDetail = async (req, res, next) => {
       data,
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller paymentBookDetail - ${error}`);
+    logger.error(`Controller paymentBookDetail | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -181,7 +188,7 @@ const purchaseBook = async (req, res, next) => {
     const paramsId = req.params.id;
     const { id } = req.user;
     logger.info(
-      `Controller USER purchaseBook -  Order ID : ${paramsId}  User ID : ${id}`
+      `Controller purchaseBook | User with ID : ${id} | Purchase Book Order ID : ${paramsId}`
     );
     const findOrderQuery = await prisma.order.findUnique({
       where: {
@@ -259,7 +266,7 @@ const purchaseBook = async (req, res, next) => {
       message: 'Your payment is successfully',
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller purchaseBook - ${error}`);
+    logger.error(`Controller purchaseBook | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -273,7 +280,7 @@ const cancelPurchaseBook = async (req, res, next) => {
     const paramsId = req.params.id;
     const { id } = req.user;
     logger.info(
-      `Controller USER cancelPurchaseBook -  Order ID : ${paramsId}  User ID : ${id}`
+      `Controller cancelPurchaseBook | User with ID : ${id} | Canceled order ID : ${paramsId}`
     );
     const findOrderQuery = await prisma.order.findUnique({
       where: {
@@ -345,7 +352,7 @@ const cancelPurchaseBook = async (req, res, next) => {
       message: 'Your payment is cancelled',
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller cancelPurchaseBook - ${error}`);
+    logger.error(`Controller cancelPurchaseBook | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -399,7 +406,9 @@ const transactions = async (req, res, next) => {
         }
       : { userId: id };
 
-    logger.info(`Controller USER transactions -  User ID : ${id}`);
+    logger.info(
+      `Controller transactions | User with ID : ${id} | Access book selling transactions history`
+    );
     const findOrderQuery = await prisma.order.findMany({
       where: keyword,
       skip,
@@ -442,7 +451,7 @@ const transactions = async (req, res, next) => {
       totalCount: countOrder,
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller transactions - ${error}`);
+    logger.error(`Controller transactions | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -458,7 +467,7 @@ const createBorrowBook = async (req, res, next) => {
     const { id } = req.user;
 
     logger.info(
-      `Controller USER createBorrowBook -  User ID : ${id} & Collection Item : ${JSON.stringify(
+      `Controller USER createBorrowBook | User with ID : ${id} | Borrow book : ${JSON.stringify(
         collectionItems
       )}`
     );
@@ -649,7 +658,7 @@ const createBorrowBook = async (req, res, next) => {
       message: 'Borrowed book successfully.',
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller createBorrowBook - ${error}`);
+    logger.error(`Controller createBorrowBook | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
     }
@@ -681,7 +690,9 @@ const borrowTransactions = async (req, res, next) => {
         }
       : { userId: id };
 
-    logger.info(`Controller USER borrowTransactions -  User ID : ${id}`);
+    logger.info(
+      `Controller borrowTransactions | User with ID : ${id} | Access book borrowing transactions history`
+    );
 
     const findBorrowQuery = await prisma.bookBorrowed.findMany({
       where: keyword,
@@ -724,7 +735,7 @@ const borrowTransactions = async (req, res, next) => {
       totalCount: countBorrowed,
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller borrowTransactions - ${error}`);
+    logger.error(`Controller borrowTransactions | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -735,8 +746,11 @@ const borrowTransactions = async (req, res, next) => {
 
 const bookReturnRequested = async (req, res, next) => {
   try {
+    const { id } = req.user;
     const paramsId = req.params.id;
-    logger.info(`Controller USER returnRequested -  Borrow ID : ${paramsId}  `);
+    logger.info(
+      `Controller bookReturnRequested | User with ID : ${id} | Request borrow with ID : ${paramsId}`
+    );
     const findOrderQuery = await prisma.bookBorrowed.findUnique({
       where: {
         id: `#${paramsId}`,
@@ -771,7 +785,7 @@ const bookReturnRequested = async (req, res, next) => {
       message: 'Return requested successfully',
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller returnRequested - ${error}`);
+    logger.error(`Controller returnRequested - ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';

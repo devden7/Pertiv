@@ -91,5 +91,5 @@ router.put(
 
 router.delete('/delete-staff/:id', adminMiddleware, deleteStaffAccount);
 
-router.get('/logs', getActivityLogs);
+router.get('/logs', adminMiddleware, getActivityLogs);
 module.exports = router;

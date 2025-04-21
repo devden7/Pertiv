@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 const logger = require('../../lib/winston/winstonLogger');
 const { saveImgToFileSystem } = require('../../lib/multer/multer');
 const prisma = require('../../utils/prismaConnection');
+const { Prisma } = require('@prisma/client');
 
 const addBookSelling = async (req, res, next) => {
   try {
@@ -23,7 +24,7 @@ const addBookSelling = async (req, res, next) => {
     const imageUrl = req.file ? `/uploads/${fileNameImage}` : null;
 
     logger.info(
-      `Controller addBookSelling - Create book selling title : ${title}`
+      `Controller addBookSelling | Staff with ID : ${id} | Create book selling title : ${title}`
     );
 
     const errors = validationResult(req);
@@ -33,6 +34,10 @@ const addBookSelling = async (req, res, next) => {
       error.success = false;
       error.statusCode = 400;
       error.message = errors.array();
+      error.field = errors
+        .array()
+        .map((err) => err.path)
+        .join(', ');
       throw error;
     }
 
@@ -125,11 +130,27 @@ const addBookSelling = async (req, res, next) => {
       message: 'The book has been added successfully.',
     });
   } catch (error) {
-    logger.error(`ERROR Controller addBookSelling - ${JSON.stringify(error)}`);
-
-    if (!error.statusCode) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
+      logger.error(
+        `Controller addBookSelling | Failed insert data to database`
+      );
+    } else if (error instanceof Prisma.PrismaClientValidationError) {
+      error.message = 'Internal Server Error';
+      logger.error(
+        `Controller addBookSelling | Failed to get data from database`
+      );
+    } else if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+      logger.error(`Controller addBookSelling | ${error.message}`);
+    } else if (error.field) {
+      logger.error(
+        `Controller addBookSelling | Validation failed | Field ${error.field}`
+      );
+    } else {
+      logger.error('Controller addBookSelling');
     }
     next(error);
   }
@@ -137,6 +158,7 @@ const addBookSelling = async (req, res, next) => {
 
 const getBooksSelling = async (req, res, next) => {
   try {
+    const { id } = req.user;
     const { search } = req.query;
     const page = parseInt(req.query.page) || 1;
     const LIMIT = 10;
@@ -169,7 +191,9 @@ const getBooksSelling = async (req, res, next) => {
         }
       : { is_deleted: false };
 
-    logger.info('Controller getBooksSelling - Get all book selling');
+    logger.info(
+      `Controller getBooksSelling | Staff with ID : ${id} | Get all book selling`
+    );
 
     const findDataQuery = await prisma.bookSelling.findMany({
       skip,
@@ -240,11 +264,17 @@ const getBooksSelling = async (req, res, next) => {
       totalCount: countOrder,
     });
   } catch (error) {
-    logger.error(`ERROR Controller getBooksSelling  -  ${error}`);
-
-    if (!error.statusCode) {
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      error.message = 'Internal Server Error';
+      logger.error(
+        `Controller getBooksSelling | Failed to get data from database`
+      );
+    } else if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
+      logger.error(`Controller getBooksSelling | ${error.message}`);
+    } else {
+      logger.error(`Controller addBookSelling | ${error.message}`);
     }
     next(error);
   }
@@ -252,10 +282,11 @@ const getBooksSelling = async (req, res, next) => {
 
 const getDetailBookSelling = async (req, res, next) => {
   try {
+    const { id } = req.user;
     const paramsId = req.params.id;
 
     logger.info(
-      `Controller getDetailBookSelling - Get detail books selling ID : ${paramsId}`
+      `Controller getDetailBookSelling | Staff with ID : ${id} | Get detail books selling ID : ${paramsId}`
     );
 
     const bookSellingQuery = await prisma.bookSelling.findUnique({
@@ -275,10 +306,17 @@ const getDetailBookSelling = async (req, res, next) => {
       data: bookSellingQuery,
     });
   } catch (error) {
-    logger.error(`ERROR Controller getDetailBookSelling - ${error}`);
-    if (!error.statusCode) {
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      error.message = 'Internal Server Error';
+      logger.error(
+        `Controller getDetailBookSelling | Failed to get data from database`
+      );
+    } else if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
+      logger.error(`Controller getDetailBookSelling | ${error.message}`);
+    } else {
+      logger.error(`Controller getDetailBookSelling | ${error.message}`);
     }
     next(error);
   }
@@ -298,6 +336,7 @@ const updateBookSelling = async (req, res, next) => {
       writerName,
       categories,
     } = req.body;
+    const { id } = req.user;
     const categoriesArr = Array.isArray(categories) ? categories : [categories];
     const fileNameImage =
       !req.file && !image
@@ -313,7 +352,7 @@ const updateBookSelling = async (req, res, next) => {
       : `/uploads/${fileNameImage}`;
 
     logger.info(
-      `Controller updateBookSelling - Updating Book Selling with ID : ${paramsId} - Title : ${title}`
+      `Controller updateBookSelling | Staff with ID : ${id} | Updating Book Selling with ID : ${paramsId} - Title : ${title}`
     );
 
     const errors = validationResult(req);
@@ -323,6 +362,10 @@ const updateBookSelling = async (req, res, next) => {
       error.success = false;
       error.statusCode = 400;
       error.message = errors.array();
+      error.field = errors
+        .array()
+        .map((err) => err.path)
+        .join(', ');
       throw error;
     }
 
@@ -393,13 +436,27 @@ const updateBookSelling = async (req, res, next) => {
       message: 'Book updated successfully',
     });
   } catch (error) {
-    logger.error(
-      `ERROR Controller updateBookSelling - ${JSON.stringify(error)}`
-    );
-
-    if (!error.statusCode) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
+      logger.error(
+        `Controller updateBookSelling | Failed insert data to database`
+      );
+    } else if (error instanceof Prisma.PrismaClientValidationError) {
+      error.message = 'Internal Server Error';
+      logger.error(
+        `Controller updateBookSelling | Failed to get data from database`
+      );
+    } else if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+      logger.error(`Controller updateBookSelling | ${error.message}`);
+    } else if (error.field) {
+      logger.error(
+        `Controller updateBookSelling | Validation failed | Field ${error.field}`
+      );
+    } else {
+      logger.error('Controller updateBookSelling');
     }
     next(error);
   }
@@ -407,10 +464,11 @@ const updateBookSelling = async (req, res, next) => {
 
 const deleteBookSelling = async (req, res, next) => {
   try {
+    const { id } = req.user;
     const paramsId = req.params.id;
 
     logger.info(
-      `Controller deleteBookSelling - Delete book selling with ID: ${paramsId}`
+      `Controller deleteBookSelling | Staff with ID : ${id} | Delete book selling with ID: ${paramsId}`
     );
 
     const findBookQuery = await prisma.bookSelling.findUnique({
@@ -466,7 +524,7 @@ const addBookBorrowing = async (req, res, next) => {
     const imageUrl = req.file ? `/uploads/${fileNameImage}` : null;
 
     logger.info(
-      `Controller STAFF addBookBorrowing - Create book selling title : ${title}`
+      `Controller STAFF addBookBorrowing | | Staff with ID : ${id} | Create book selling title : ${title}`
     );
 
     const errors = validationResult(req);
@@ -476,6 +534,10 @@ const addBookBorrowing = async (req, res, next) => {
       error.success = false;
       error.statusCode = 400;
       error.message = errors.array();
+      error.field = errors
+        .array()
+        .map((err) => err.path)
+        .join(', ');
       throw error;
     }
 
@@ -569,14 +631,27 @@ const addBookBorrowing = async (req, res, next) => {
       message: 'The book has been added successfully.',
     });
   } catch (error) {
-    console.log(error);
-    logger.error(
-      `ERROR Controller STAFF addBookBorrowing - ${JSON.stringify(error)}`
-    );
-
-    if (!error.statusCode) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
+      logger.error(
+        `Controller addBookBorrowing | Failed insert data to database`
+      );
+    } else if (error instanceof Prisma.PrismaClientValidationError) {
+      error.message = 'Internal Server Error';
+      logger.error(
+        `Controller addBookBorrowing | Failed to get data from database`
+      );
+    } else if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+      logger.error(`Controller addBookBorrowing | ${error.message}`);
+    } else if (error.field) {
+      logger.error(
+        `Controller addBookBorrowing | Validation failed | Field ${error.field}`
+      );
+    } else {
+      logger.error('Controller addBookBorrowing');
     }
     next(error);
   }
@@ -584,6 +659,7 @@ const addBookBorrowing = async (req, res, next) => {
 
 const getBooksBorrowing = async (req, res, next) => {
   try {
+    const { id } = req.user;
     const { search } = req.query;
     const page = parseInt(req.query.page) || 1;
     const LIMIT = 10;
@@ -615,7 +691,9 @@ const getBooksBorrowing = async (req, res, next) => {
         }
       : {};
 
-    logger.info('Controller getBooksBorrowing - Get all book selling');
+    logger.info(
+      `Controller getBooksBorrowing | Staff with ID : ${id} | Get all book selling`
+    );
 
     const findDataQuery = await prisma.bookBorrowing.findMany({
       skip,
@@ -700,10 +778,11 @@ const getBooksBorrowing = async (req, res, next) => {
 
 const getDetailBookBorrowing = async (req, res, next) => {
   try {
+    const { id } = req.user;
     const paramsId = req.params.id;
 
     logger.info(
-      `Controller getDetailBookBorrowing - Get detail books selling ID : ${paramsId}`
+      `Controller getDetailBookBorrowing | Staff with ID : ${id} | Get detail books selling ID : ${paramsId}`
     );
 
     const bookBorrowingQuery = await prisma.bookBorrowing.findUnique({
@@ -785,6 +864,7 @@ const getDetailBookBorrowing = async (req, res, next) => {
 
 const updateBookBorrowing = async (req, res, next) => {
   try {
+    const { id } = req.user;
     const paramsId = req.params.id;
     const {
       title,
@@ -813,7 +893,7 @@ const updateBookBorrowing = async (req, res, next) => {
       : `/uploads/${fileNameImage}`;
 
     logger.info(
-      `Controller STAFF updateBookBorrowing - Updating Book Selling with ID : ${paramsId} - Title : ${title}`
+      `Controller STAFF updateBookBorrowing  | Staff with ID : ${id} | Updating Book Selling with ID : ${paramsId} - Title : ${title}`
     );
 
     const errors = validationResult(req);
@@ -823,6 +903,10 @@ const updateBookBorrowing = async (req, res, next) => {
       error.success = false;
       error.statusCode = 400;
       error.message = errors.array();
+      error.field = errors
+        .array()
+        .map((err) => err.path)
+        .join(', ');
       throw error;
     }
 
@@ -898,13 +982,27 @@ const updateBookBorrowing = async (req, res, next) => {
       message: 'Book updated successfully',
     });
   } catch (error) {
-    logger.error(
-      `ERROR STAFF Controller updateBookBorrowing - ${JSON.stringify(error)}`
-    );
-
-    if (!error.statusCode) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
+      logger.error(
+        `Controller updateBookBorrowing | Failed insert data to database`
+      );
+    } else if (error instanceof Prisma.PrismaClientValidationError) {
+      error.message = 'Internal Server Error';
+      logger.error(
+        `Controller updateBookBorrowing | Failed to get data from database`
+      );
+    } else if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+      logger.error(`Controller updateBookBorrowing | ${error.message}`);
+    } else if (error.field) {
+      logger.error(
+        `Controller updateBookBorrowing | Validation failed | Field ${error.field}`
+      );
+    } else {
+      logger.error('Controller updateBookBorrowing');
     }
     next(error);
   }
@@ -912,10 +1010,11 @@ const updateBookBorrowing = async (req, res, next) => {
 
 const deleteBookBorrowing = async (req, res, next) => {
   try {
+    const { id } = req.user;
     const paramsId = req.params.id;
 
     logger.info(
-      `Controller STAFF deleteBookBorrowing - Delete book selling with ID: ${paramsId}`
+      `Controller STAFF deleteBookBorrowing  | Staff with ID : ${id} | Delete book selling with ID: ${paramsId}`
     );
 
     const findBookQuery = await prisma.bookBorrowing.findUnique({
@@ -940,7 +1039,7 @@ const deleteBookBorrowing = async (req, res, next) => {
       message: 'The book has been deleted successfully.',
     });
   } catch (error) {
-    logger.error(`ERROR STAFF Controller deleteBookBorrowing - ${error}`);
+    logger.error(`Controller deleteBookBorrowing | ${error}`);
 
     if (!error.statusCode) {
       error.statusCode = 500;

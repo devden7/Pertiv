@@ -4,7 +4,7 @@ const { JWT_SECRET } = require('../config/env');
 
 const adminMiddleware = (req, res, next) => {
   try {
-    logger.info('Accesing ADMIN middleware');
+    logger.info('Admin middleware | Accesing admin middleware');
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
@@ -23,10 +23,18 @@ const adminMiddleware = (req, res, next) => {
       throw error;
     }
 
+    logger.info(
+      `Admin middleware | Admin with ID: ${user.id} | accessed the middleware`
+    );
     req.user = user;
     next();
   } catch (error) {
-    logger.error(`ERROR Middleware adminMiddleware - ${error}`);
+    if (error.name === 'JsonWebTokenError') {
+      error.message = 'Invalid token';
+      error.success = false;
+      error.statusCode = 400;
+    }
+    logger.error(`Admin middleware | ${error.message}`);
     next(error);
   }
 };

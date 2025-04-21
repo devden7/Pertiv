@@ -1,8 +1,10 @@
+const { Prisma } = require('@prisma/client');
 const logger = require('../../lib/winston/winstonLogger');
 const prisma = require('../../utils/prismaConnection');
 
 const getActivityLogs = async (req, res, next) => {
   try {
+    const { id } = req.user;
     const { search } = req.query;
     const page = parseInt(req.query.page) || 1;
     const LIMIT = 20;
@@ -25,7 +27,9 @@ const getActivityLogs = async (req, res, next) => {
           ],
         }
       : {};
-    logger.info('`Controller ADMIN getActivityLogs');
+    logger.info(
+      `Controller getActivityLogs | Admin with ID : ${id} | Get activity logs`
+    );
 
     const data = await prisma.log.findMany({
       skip,
@@ -48,7 +52,18 @@ const getActivityLogs = async (req, res, next) => {
       totalCount: countLogs,
     });
   } catch (error) {
-    logger.error(`ERROR STAFF Controller getActivityLogs - ${error}`);
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      error.message = 'Internal Server Error';
+      return logger.error(
+        `Controller getActivityLogs | Failed to get data from database`
+      );
+    } else if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+      logger.error(`Controller getActivityLogs | ${error.message}`);
+    } else {
+      logger.error(`Controller getActivityLogs`);
+    }
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';

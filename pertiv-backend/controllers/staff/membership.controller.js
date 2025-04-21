@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 const logger = require('../../lib/winston/winstonLogger');
 const prisma = require('../../utils/prismaConnection');
+const { Prisma } = require('@prisma/client');
 
 const createMembership = async (req, res, next) => {
   try {
@@ -15,11 +16,15 @@ const createMembership = async (req, res, next) => {
       error.success = false;
       error.statusCode = 400;
       error.message = errors.array();
+      error.field = errors
+        .array()
+        .map((err) => err.path)
+        .join(', ');
       throw error;
     }
 
     logger.info(
-      `Controller STAFF createMembership - staff: ${id}  name : ${name}, description : ${description}, price : ${price}, durationDays : ${durationDays}, maxBorrow : ${maxBorrow}, maxReturn : ${maxReturn}`
+      `Controller STAFF createMembership | Staff with ID : ${id} | name : ${name}, description : ${description}, price : ${price}, durationDays : ${durationDays}, maxBorrow : ${maxBorrow}, maxReturn : ${maxReturn}`
     );
 
     const existingMembership = await prisma.membership.findFirst({
@@ -61,13 +66,27 @@ const createMembership = async (req, res, next) => {
       message: 'Membership created successfully',
     });
   } catch (error) {
-    logger.error(
-      'Error STAFF Controller creatingMembership:',
-      JSON.stringify(error)
-    );
-    if (!error.statusCode) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
+      logger.error(
+        `Controller createMembership | Failed insert data to database`
+      );
+    } else if (error instanceof Prisma.PrismaClientValidationError) {
+      error.message = 'Internal Server Error';
+      logger.error(
+        `Controller createMembership | Failed to get data from database`
+      );
+    } else if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+      logger.error(`Controller createMembership | ${error.message}`);
+    } else if (error.field) {
+      logger.error(
+        `Controller createMembership | Validation failed | Field ${error.field})}`
+      );
+    } else {
+      logger.error('Controller createMembership');
     }
     next(error);
   }
@@ -75,7 +94,10 @@ const createMembership = async (req, res, next) => {
 
 const getMemberships = async (req, res, next) => {
   try {
-    logger.info('Controller STAFF getMemberships - Get all membership type');
+    const { id } = req.user;
+    logger.info(
+      `Controller STAFF getMemberships | Staff with ID : ${id} | Get all membership type`
+    );
     const findMembershipQuery = await prisma.membership.findMany({
       where: {
         is_deleted: false,
@@ -95,7 +117,7 @@ const getMemberships = async (req, res, next) => {
       totalCount: countMembership,
     });
   } catch (error) {
-    logger.error(`ERROR STAFF Controller getMemberships  -  ${error}`);
+    logger.error(`Controller getMemberships - ${error}`);
 
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -113,7 +135,7 @@ const updateMembershipType = async (req, res, next) => {
       req.body;
 
     logger.info(
-      `Controller STAFF updateMembershipType - staff: ${id}, membeshipId: ${paramsId}  name : ${name}, description : ${description}, price : ${price}, durationDays : ${durationDays}, maxBorrow : ${maxBorrow}, maxReturn : ${maxReturn}`
+      `Controller STAFF updateMembershipType | Staff with ID : ${id} | membeshipId: ${paramsId}  name : ${name}, description : ${description}, price : ${price}, durationDays : ${durationDays}, maxBorrow : ${maxBorrow}, maxReturn : ${maxReturn}`
     );
 
     const errors = validationResult(req);
@@ -122,6 +144,10 @@ const updateMembershipType = async (req, res, next) => {
       error.success = false;
       error.statusCode = 400;
       error.message = errors.array();
+      error.field = errors
+        .array()
+        .map((err) => err.path)
+        .join(', ');
       throw error;
     }
 
@@ -154,13 +180,27 @@ const updateMembershipType = async (req, res, next) => {
       message: 'Membership updated successfully',
     });
   } catch (error) {
-    logger.error(
-      `ERROR STAFF Controller updateMembershipType - ${JSON.stringify(error)}`
-    );
-
-    if (!error.statusCode) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
+      logger.error(
+        `Controller updateMembershipType | Failed insert data to database`
+      );
+    } else if (error instanceof Prisma.PrismaClientValidationError) {
+      error.message = 'Internal Server Error';
+      logger.error(
+        `Controller updateMembershipType | Failed to get data from database`
+      );
+    } else if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+      logger.error(`Controller updateMembershipType | ${error.message}`);
+    } else if (error.field) {
+      logger.error(
+        `Controller updateMembershipType | Validation failed | Field ${error.field})}`
+      );
+    } else {
+      logger.error('Controller updateMembershipType');
     }
     next(error);
   }
@@ -168,9 +208,10 @@ const updateMembershipType = async (req, res, next) => {
 
 const deleteMembershipType = async (req, res, next) => {
   try {
+    const { id } = req.user;
     const paramsId = req.params.id;
     logger.info(
-      `Controller deleteMembershipType - Deleting membership with ID : ${paramsId}`
+      `Controller deleteMembershipType | Staff with ID : ${id} | Deleting membership with ID : ${paramsId}`
     );
 
     const findMembershipQuery = await prisma.membership.findUnique({
@@ -195,7 +236,7 @@ const deleteMembershipType = async (req, res, next) => {
       message: 'Membership deleted successfully',
     });
   } catch (error) {
-    logger.error(`ERROR Controller deleteMembershipType - ${error}`);
+    logger.error(`Controller deleteMembershipType - ${error}`);
 
     if (!error.statusCode) {
       error.statusCode = 500;

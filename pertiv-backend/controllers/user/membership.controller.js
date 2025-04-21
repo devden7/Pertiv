@@ -3,7 +3,7 @@ const prisma = require('../../utils/prismaConnection');
 const { formatISO, addDays, format } = require('date-fns');
 const getMemberships = async (req, res, next) => {
   try {
-    logger.info('Controller USER getMemberships - Get all membership type');
+    logger.info('Controller getMemberships | Get all membership type');
     const findMembershipQuery = await prisma.membership.findMany();
 
     res.status(200).json({
@@ -12,7 +12,7 @@ const getMemberships = async (req, res, next) => {
       data: findMembershipQuery,
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller getMemberships  -  ${error}`);
+    logger.error(`Controller getMemberships | ${error}`);
 
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -27,7 +27,9 @@ const subscribeMembership = async (req, res, next) => {
     const { id } = req.user;
     const paramsId = req.params.id;
 
-    logger.info(`Controller USER subscribeMembership - user: ${id}`);
+    logger.info(
+      `Controller subscribeMembership | User with ID : ${id} | Subscribe membership with ID : ${paramsId}`
+    );
 
     const findMembershipQuery = await prisma.membership.findUnique({
       where: {
@@ -115,7 +117,7 @@ const subscribeMembership = async (req, res, next) => {
       message: 'Subscription successfully',
     });
   } catch (error) {
-    logger.error('Error USER Controller subscribeMembership:', error);
+    logger.error('Controller subscribeMembership | ', error);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';

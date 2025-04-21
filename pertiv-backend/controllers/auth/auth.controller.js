@@ -5,6 +5,7 @@ const { JWT_SECRET } = require('../../config/env');
 const { validationResult } = require('express-validator');
 const prisma = require('../../utils/prismaConnection');
 const { formatISO } = require('date-fns');
+const { Prisma } = require('@prisma/client');
 
 const loginAuth = async (req, res, next) => {
   try {
@@ -12,7 +13,7 @@ const loginAuth = async (req, res, next) => {
 
     const errors = validationResult(req);
 
-    logger.info(`Controller loginAuth - Login informaton email : ${email}`);
+    logger.info(`Controller loginAuth | Login informaton email : ${email}`);
 
     if (!errors.isEmpty()) {
       const error = new Error();
@@ -64,7 +65,7 @@ const loginAuth = async (req, res, next) => {
       role: findUserQuery.role,
     });
   } catch (error) {
-    logger.error(`ERROR Controller loginAuth - ${error}`);
+    logger.error(`Controller loginAuth | ${error}`);
 
     if (!error.statusCode) {
       error.statusCode = 500;
@@ -84,11 +85,15 @@ const registerAccount = async (req, res, next) => {
       error.success = false;
       error.statusCode = 400;
       error.message = errors.array();
+      error.field = errors
+        .array()
+        .map((err) => err.path)
+        .join(', ');
       throw error;
     }
 
     logger.info(
-      `Controller registerAccount - Registration information email : ${email}`
+      `Controller registerAccount | Registration information email : ${email}`
     );
 
     await prisma.user.create({
@@ -107,12 +112,27 @@ const registerAccount = async (req, res, next) => {
       message: 'User registered successfully',
     });
   } catch (error) {
-    console.log(error);
-    logger.error(`ERROR Controller registerAccount - ${JSON.stringify(error)}`);
-
-    if (!error.statusCode) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
+      logger.error(
+        `Controller registerAccount | Failed insert data to database`
+      );
+    } else if (error instanceof Prisma.PrismaClientValidationError) {
+      error.message = 'Internal Server Error';
+      logger.error(
+        `Controller registerAccount | Failed to get data from database`
+      );
+    } else if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+      logger.error(`Controller registerAccount | ${error.message}`);
+    } else if (error.field) {
+      logger.error(
+        `Controller registerAccount | Validation failed | Field ${error.field})}`
+      );
+    } else {
+      logger.error('Controller registerAccount');
     }
     next(error);
   }
@@ -121,7 +141,7 @@ const registerAccount = async (req, res, next) => {
 const userInfo = async (req, res, next) => {
   try {
     const { id } = req.user;
-    logger.info(`Controller AUTH userInfo - userInfo account : ${id}`);
+    logger.info(`Controller userInfo | userInfo account : ${id}`);
 
     let findPenaltyQuery = await prisma.penalty.findMany({
       where: {
@@ -198,7 +218,7 @@ const userInfo = async (req, res, next) => {
       data: { penalty: penaltyResult, membership: findUserMembership },
     });
   } catch (error) {
-    logger.error(`ERROR AUTH controller userInfo  - ${error}`);
+    logger.error(`Controller userInfo | ${error}`);
 
     if (!error.statusCode) {
       error.statusCode = 500;

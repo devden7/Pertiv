@@ -1,12 +1,14 @@
 const prisma = require('../../utils/prismaConnection');
 const logger = require('../../lib/winston/winstonLogger');
 const { groupAnalyticsChart } = require('../../utils/groupAnalyticChart');
+const { Prisma } = require('@prisma/client');
 
 const dashboard = async (req, res, next) => {
   try {
+    const { id } = req.user;
     const { start, end, filter } = req.query;
     logger.info(
-      `Controller STAFF dashboard - StarDate : ${start} || EndDate ${end}`
+      `Controller dashboard | staff with ID : ${id} | accessing dashboard with detail date : StartDate ${start} - EndDate ${end}`
     );
 
     //FOR PIE CHART BOOK SELLING
@@ -273,10 +275,15 @@ const dashboard = async (req, res, next) => {
       },
     });
   } catch (error) {
-    logger.error(`ERROR STAFF Controller dashboard - ${error}`);
-    if (!error.statusCode) {
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      error.message = 'Internal Server Error';
+      logger.error(`Controller dashboard | Failed to get data from database`);
+    } else if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
+      logger.error(`Controller dashboard | ${error.message}`);
+    } else {
+      logger.error(`Controller dashboard ${error}`);
     }
     next(error);
   }

@@ -2,13 +2,15 @@ const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const logger = require('../../lib/winston/winstonLogger');
 const prisma = require('../../utils/prismaConnection');
+const { Prisma } = require('@prisma/client');
 
 const createStaffAccount = async (req, res, next) => {
   try {
+    const { id } = req.user;
     const { name, email, password } = req.body;
 
     logger.info(
-      `Controller createStaffAccount - Create staff account Name : ${name} - Email : ${email}`
+      `Controller createStaffAccount | Admin with ID : ${id} | Creating staff account with Name : ${name} - Email : ${email}`
     );
 
     const errors = validationResult(req);
@@ -17,6 +19,11 @@ const createStaffAccount = async (req, res, next) => {
       error.success = false;
       error.statusCode = 400;
       error.message = errors.array();
+      error.field = errors
+        .array()
+        .map((err) => err.path)
+        .join(', ');
+
       throw error;
     }
 
@@ -35,13 +42,22 @@ const createStaffAccount = async (req, res, next) => {
       message: 'Staff account created successfully',
     });
   } catch (error) {
-    logger.error(
-      `ERROR Controller createStaffAccount - ${JSON.stringify(error)}`
-    );
-
-    if (!error.statusCode) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
+      logger.error(
+        `Controller createStaffAccount | Failed insert data to database`
+      );
+    } else if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+      logger.error(`Controller createStaffAccount | ${error.message}`);
+    } else if (error.field) {
+      logger.error(
+        `Controller createStaffAccount | Validation failed | Field ${error.field})}`
+      );
+    } else {
+      logger.error(`Controller createStaffAccount`);
     }
     next(error);
   }
@@ -49,7 +65,10 @@ const createStaffAccount = async (req, res, next) => {
 
 const getStaffAccounts = async (req, res, next) => {
   try {
-    logger.info('Controller getStaffAccounts - Get all staff accounts');
+    const { id } = req.user;
+    logger.info(
+      `Controller getStaffAccounts | Admin with ID : ${id} | Get all staff accounts`
+    );
     const { search } = req.query;
     const page = parseInt(req.query.page) || 1;
     const LIMIT = 10;
@@ -102,11 +121,17 @@ const getStaffAccounts = async (req, res, next) => {
       totalCount: countOrder,
     });
   } catch (error) {
-    logger.error(`ERROR Controller getStaffAccounts  -  ${error}`);
-
-    if (!error.statusCode) {
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      error.message = 'Internal Server Error';
+      return logger.error(
+        `Controller getStaffAccounts | Failed to get data from database`
+      );
+    } else if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
+      logger.error(`Controller getStaffAccounts | -  ${error.message}`);
+    } else {
+      logger.error(`Controller getStaffAccounts`);
     }
     next(error);
   }
@@ -156,11 +181,12 @@ const getStaffAccountDetail = async (req, res, next) => {
 
 const updateStaffAccount = async (req, res, next) => {
   try {
+    const { id } = req.user;
     const paramsId = req.params.id;
     const { name, password } = req.body;
 
     logger.info(
-      `Controller updateStaffAccount - Updating staff account with ID : ${paramsId} - Name : ${name} `
+      `Controller updateStaffAccount | Admin with ID : ${id} | Updating staff account ID : ${paramsId} - Name : ${name}`
     );
 
     const errors = validationResult(req);
@@ -169,6 +195,10 @@ const updateStaffAccount = async (req, res, next) => {
       error.success = false;
       error.statusCode = 400;
       error.message = errors.array();
+      error.field = errors
+        .array()
+        .map((err) => err.path)
+        .join(', ');
       throw error;
     }
 
@@ -206,13 +236,27 @@ const updateStaffAccount = async (req, res, next) => {
       message: 'Staff account updated successfully',
     });
   } catch (error) {
-    logger.error(
-      `ERROR Controller updateStaffAccount - ${JSON.stringify(error)}`
-    );
-
-    if (!error.statusCode) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
+      logger.error(
+        `Controller updateStaffAccount | Failed insert data to database`
+      );
+    } else if (error instanceof Prisma.PrismaClientValidationError) {
+      error.message = 'Internal Server Error';
+      logger.error(
+        `Controller updateStaffAccount | Failed to get data from database`
+      );
+    } else if (!error.statusCode) {
+      error.statusCode = 500;
+      error.message = 'Internal Server Error';
+      logger.error(`Controller updateStaffAccount | ${error.message}`);
+    } else if (error.field) {
+      logger.error(
+        `Controller updateStaffAccount | Validation failed | Field ${error.field})}`
+      );
+    } else {
+      logger.error(`Controller updateStaffAccount`);
     }
     next(error);
   }
@@ -220,9 +264,10 @@ const updateStaffAccount = async (req, res, next) => {
 
 const deleteStaffAccount = async (req, res, next) => {
   try {
+    const { id } = req.user;
     const paramsId = req.params.id;
     logger.info(
-      `Controller deleteStaffAccount - Deleting staff account with ID : ${paramsId}`
+      `Controller deleteStaffAccount | Admin with ID : ${id} | Deleting staff account with ID : ${paramsId}`
     );
 
     const findStaffQuery = await prisma.user.findUnique({
@@ -248,11 +293,17 @@ const deleteStaffAccount = async (req, res, next) => {
       message: 'Staff account deleted successfully',
     });
   } catch (error) {
-    logger.error(`ERROR Controller deleteStaffAccount - ${error}`);
-
-    if (!error.statusCode) {
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      error.message = 'Internal Server Error';
+      return logger.error(
+        `Controller deleteStaffAccount | Failed to get data from database`
+      );
+    } else if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
+      logger.error(`Controller deleteStaffAccount | ${error.message}`);
+    } else {
+      logger.error(`Controller deleteStaffAccount`);
     }
     next(error);
   }

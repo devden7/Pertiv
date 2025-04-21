@@ -4,7 +4,7 @@ const prisma = require('../../utils/prismaConnection');
 const getBookListSelling = async (req, res, next) => {
   try {
     logger.info(
-      'Controller getBookListSelling - Get all book selling for user'
+      'Controller getBookListSelling | Get all book selling for user'
     );
     const search = req.query.search || '';
     const page = parseInt(req.query.page) || 1;
@@ -101,7 +101,7 @@ const getBookListSelling = async (req, res, next) => {
       totalCount: countBook,
     });
   } catch (error) {
-    logger.error(`ERROR Controller getBookListSelling for user  -  ${error}`);
+    logger.error(`Controller getBookListSelling for user  |  ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -115,7 +115,7 @@ const getBookSellingDetail = async (req, res, next) => {
     const paramsId = req.params.id;
 
     logger.info(
-      `Controller USER getBookSellingDetail - Get detail books selling ID : ${paramsId}`
+      `Controller getBookSellingDetail | Get detail books selling ID : ${paramsId}`
     );
 
     const bookSellingQuery = await prisma.bookSelling.findUnique({
@@ -197,7 +197,7 @@ const getBookSellingDetail = async (req, res, next) => {
       data: finalResults,
     });
   } catch (error) {
-    logger.error(`ERROR Controller USER getBookSellingDetail - ${error}`);
+    logger.error(`Controller getBookSellingDetail | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -209,7 +209,7 @@ const getBookSellingDetail = async (req, res, next) => {
 const getBookListBorrowing = async (req, res, next) => {
   try {
     logger.info(
-      'Controller getBookListBorrowing - Get all book selling for user'
+      'Controller getBookListBorrowing | Get all book borrowing for user'
     );
     const search = req.query.search || '';
     const page = parseInt(req.query.page) || 1;
@@ -303,7 +303,7 @@ const getBookListBorrowing = async (req, res, next) => {
       totalCount: countBook,
     });
   } catch (error) {
-    logger.error(`ERROR Controller getBookListBorrowing for user  -  ${error}`);
+    logger.error(`Controller getBookListBorrowing for user  |  ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -317,7 +317,7 @@ const getBookBorrowingDetail = async (req, res, next) => {
     const paramsId = req.params.id;
 
     logger.info(
-      `Controller USER getBookBorrowingDetail - Get detail books selling ID : ${paramsId}`
+      `Controller USER getBookBorrowingDetail | Get detail books selling ID : ${paramsId}`
     );
 
     const bookBorrowingQuery = await prisma.bookBorrowing.findUnique({
@@ -396,7 +396,7 @@ const getBookBorrowingDetail = async (req, res, next) => {
       data: finalResults,
     });
   } catch (error) {
-    logger.error(`ERROR Controller USER getBookBorrowingDetail - ${error}`);
+    logger.error(`Controller getBookBorrowingDetail | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';

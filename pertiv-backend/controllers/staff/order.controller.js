@@ -43,7 +43,9 @@ const transactions = async (req, res, next) => {
         }
       : {};
 
-    logger.info(`Controller STAFF transactions -  User ID : ${id}`);
+    logger.info(
+      `Controller STAFF transactions | Staff with ID : ${id} | accessing list book selling transactions`
+    );
     const findOrderQuery = await prisma.order.findMany({
       skip,
       take: LIMIT,
@@ -101,7 +103,7 @@ const transactions = async (req, res, next) => {
       totalCount: countOrder,
     });
   } catch (error) {
-    logger.error(`ERROR STAFF Controller transactions - ${error}`);
+    logger.error(`Controller transactions | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -111,8 +113,11 @@ const transactions = async (req, res, next) => {
 };
 
 const transactionDetail = async (req, res, next) => {
+  const { id } = req.user;
   const paramsId = req.params.id;
-  logger.info(`Controller STAFF transactionDetail `);
+  logger.info(
+    `Controller transactionDetail | Staff with ID : ${id} | accessing transaction detail`
+  );
   try {
     const findOrderQuery = await prisma.order.findUnique({
       where: { id: `#${paramsId}` },
@@ -142,7 +147,6 @@ const transactionDetail = async (req, res, next) => {
       throw error;
     }
 
-    // Mengirim data yang diinginkan
     res.status(200).json({
       success: true,
       statusCode: 200,
@@ -163,7 +167,7 @@ const transactionDetail = async (req, res, next) => {
       },
     });
   } catch (error) {
-    logger.error(`ERROR STAFF Controller transactionDetail - ${error}`);
+    logger.error(`Controller transactionDetail | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -270,7 +274,9 @@ const borrowtransactions = async (req, res, next) => {
         }
       : {};
 
-    logger.info(`Controller STAFF borrowtransactions -  User ID : ${id}`);
+    logger.info(
+      `Controller borrowtransactions | Staff with ID : ${id} | accessing list book borrowed transactions`
+    );
     const findBorrowQuery = await prisma.bookBorrowed.findMany({
       skip,
       take: LIMIT,
@@ -321,7 +327,7 @@ const borrowtransactions = async (req, res, next) => {
       totalCount: countBorrow,
     });
   } catch (error) {
-    logger.error(`ERROR STAFF Controller borrowtransactions - ${error}`);
+    logger.error(`Controller borrowtransactions | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -331,8 +337,11 @@ const borrowtransactions = async (req, res, next) => {
 };
 
 const borrowtransactionDetail = async (req, res, next) => {
+  const { id } = req.user;
   const paramsId = req.params.id;
-  logger.info(`Controller STAFF borrowtransactionDetail `);
+  logger.info(
+    `Controller borrowtransactionDetail | Staff with ID : ${id} | accessing borrow transaction detail`
+  );
   try {
     const findOrderQuery = await prisma.bookBorrowed.findUnique({
       where: { id: `#${paramsId}` },
@@ -366,7 +375,7 @@ const borrowtransactionDetail = async (req, res, next) => {
       data: findOrderQuery,
     });
   } catch (error) {
-    logger.error(`ERROR STAFF Controller borrowtransactionDetail - ${error}`);
+    logger.error(`Controller borrowtransactionDetail | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -377,8 +386,11 @@ const borrowtransactionDetail = async (req, res, next) => {
 
 const acceptLoanBook = async (req, res, next) => {
   try {
+    const { id } = req.user;
     const paramsId = req.params.id;
-    logger.info(`Controller USER acceptLoanBook -  Borrow ID : ${paramsId}  `);
+    logger.info(
+      `Controller USER acceptLoanBook | Staff with ID : ${id} | Borrow ID : ${paramsId}`
+    );
     const findOrderQuery = await prisma.bookBorrowed.findUnique({
       where: {
         id: `#${paramsId}`,
@@ -413,7 +425,7 @@ const acceptLoanBook = async (req, res, next) => {
       message: 'Borrowed successfully',
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller acceptLoanBook - ${error}`);
+    logger.error(`Controller acceptLoanBook | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -424,8 +436,11 @@ const acceptLoanBook = async (req, res, next) => {
 
 const rejectLoanBook = async (req, res, next) => {
   try {
+    const { id } = req.user;
     const paramsId = req.params.id;
-    logger.info(`Controller USER rejectLoanBook -  Borrow ID : ${paramsId}  `);
+    logger.info(
+      `Controller rejectLoanBook | Staff with ID : ${id} | Borrow ID : ${paramsId}  `
+    );
 
     const findOrderQuery = await prisma.bookBorrowed.findUnique({
       where: {
@@ -475,7 +490,7 @@ const rejectLoanBook = async (req, res, next) => {
       message: 'Reject book borrowed successfully',
     });
   } catch (error) {
-    logger.error(`ERROR USER Controller rejectLoanBook - ${error}`);
+    logger.error(`Controller rejectLoanBook | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -488,7 +503,9 @@ const confirmLoan = async (req, res, next) => {
   try {
     const { id } = req.user;
     const { keyValue } = req.body;
-    logger.info(`Controller STAFF confirmLoan -  Staff ID : ${id}`);
+    logger.info(
+      `Controller confirmLoan | Staff with ID : ${id} | Confirming loan book`
+    );
 
     const findStaffQuery = await prisma.user.findUnique({
       where: {
@@ -555,7 +572,7 @@ const confirmLoan = async (req, res, next) => {
       message: 'Successfully confirm loan',
     });
   } catch (error) {
-    logger.error(`ERROR STAFF Controller confirmLoan - ${error}`);
+    logger.error(`Controller confirmLoan | ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
@@ -568,7 +585,9 @@ const confirmReturnBook = async (req, res, next) => {
   try {
     const { id } = req.user;
     const { keyValue } = req.body;
-    logger.info(`Controller STAFF confirmReturned -  Staff ID : ${id}`);
+    logger.info(
+      `Controller confirmReturned | Staff with ID : ${id} | Confirming return book`
+    );
 
     const findStaffQuery = await prisma.user.findUnique({
       where: {
@@ -629,7 +648,7 @@ const confirmReturnBook = async (req, res, next) => {
       message: 'Book successfully returned',
     });
   } catch (error) {
-    logger.error(`ERROR STAFF Controller confirmReturned - ${error}`);
+    logger.error(`Controller confirmReturned - ${error}`);
     if (!error.statusCode) {
       error.statusCode = 500;
       error.message = 'Internal Server Error';
