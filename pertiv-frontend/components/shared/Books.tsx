@@ -62,7 +62,11 @@ const Books = ({
                 <div className="mt-3">
                   <div className="mt-2 flex gap-2">
                     {book.category.map((cat) => (
-                      <Badge variant="outline" key={cat.categories.name}>
+                      <Badge
+                        variant="outline"
+                        key={cat.categories.name}
+                        className="capitalize"
+                      >
                         {cat.categories.name}
                       </Badge>
                     ))}
@@ -75,7 +79,7 @@ const Books = ({
                     <p
                       className={`font-semibold text-lg break-words min-w-0 ${
                         type === '/books-selling' ? 'max-w-[65%]' : ''
-                      } h-14 overflow-hidden`}
+                      } h-14 overflow-hidden capitalize`}
                     >
                       {book.title}
                     </p>

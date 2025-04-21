@@ -78,8 +78,12 @@ const BookItem = ({ item, token, mode }: Props) => {
             />
           </div>
         </TableCell>
-        <TableCell className="max-w-52 break_text">{item.title}</TableCell>
-        <TableCell className="text-center">{item.language}</TableCell>
+        <TableCell className="max-w-52 break_text capitalize">
+          {item.title}
+        </TableCell>
+        <TableCell className="text-center capitalize">
+          {item.language}
+        </TableCell>
         <TableCell className="text-center">{item.stock}</TableCell>
         {mode !== 'bookBorrowing' && (
           <TableCell className="text-center">
@@ -87,15 +91,19 @@ const BookItem = ({ item, token, mode }: Props) => {
           </TableCell>
         )}
         {mode === 'bookBorrowing' && (
-          <TableCell className="text-center">
+          <TableCell className="text-center capitalize">
             {(item as IBooksBorrowing).book_position}
           </TableCell>
         )}
-        <TableCell className="text-center">{item.publisher.name}</TableCell>
-        <TableCell className="text-center">{item.writer.name}</TableCell>
-        <TableCell className="text-center">
+        <TableCell className="text-center capitalize">
+          {item.publisher.name}
+        </TableCell>
+        <TableCell className="text-center capitalize">
+          {item.writer.name}
+        </TableCell>
+        <TableCell className="text-center capitalize">
           {item.category.map((category) => (
-            <Badge key={category} variant="outline" className="mr-2">
+            <Badge key={category} variant="outline" className="mr-2 capitalize">
               {category}
             </Badge>
           ))}

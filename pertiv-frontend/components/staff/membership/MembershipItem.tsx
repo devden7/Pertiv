@@ -61,7 +61,7 @@ const MembershipItem = ({
   };
   return (
     <TableRow className="font-medium text-zinc-800">
-      <TableCell className="text-center">{name}</TableCell>
+      <TableCell className="text-center capitalize">{name}</TableCell>
       <TableCell className="text-center">{description}</TableCell>
       <TableCell className="text-center">{durationDays}</TableCell>
       <TableCell className="text-center">{maxBorrow}</TableCell>

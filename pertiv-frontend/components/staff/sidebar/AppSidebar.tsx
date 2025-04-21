@@ -11,10 +11,16 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { Book, LayoutDashboard, ScrollText, Users } from 'lucide-react';
+import {
+  Book,
+  LayoutDashboard,
+  LibraryBig,
+  ScrollText,
+  Users,
+} from 'lucide-react';
 import Link from 'next/link';
 import LogoutButton from './LogoutButton';
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { AuthUser } from '@/model/auth.model';
 
 interface Props {
@@ -23,6 +29,7 @@ interface Props {
 const AppSidebar = ({ auth }: Props) => {
   const search = useSearchParams();
   const modeParams = search.get('mode');
+  const pathname = usePathname();
   return (
     <Sidebar>
       <SidebarHeader />
@@ -31,7 +38,17 @@ const AppSidebar = ({ auth }: Props) => {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <div className="flex items-center justify-center gap-2 rounded-md p-2 ">
+                  <div className="flex aspect-square size-10 items-center justify-center rounded-lg bg-zinc-200">
+                    <LibraryBig size="15" />
+                  </div>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-bold">PERTIV</span>
+                  </div>
+                </div>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={pathname === '/staff'}>
                   <Link href="/staff" className="flex gap-2 items-center">
                     <LayoutDashboard />
                     <span>Dashboard overview</span>
@@ -39,7 +56,10 @@ const AppSidebar = ({ auth }: Props) => {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === '/staff/books'}
+                >
                   <Link
                     href={
                       modeParams
@@ -54,7 +74,10 @@ const AppSidebar = ({ auth }: Props) => {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === '/staff/transactions'}
+                >
                   <Link
                     href={
                       modeParams
@@ -69,7 +92,10 @@ const AppSidebar = ({ auth }: Props) => {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === '/staff/membership'}
+                >
                   <Link
                     href="/staff/membership"
                     className="flex gap-2 items-center"

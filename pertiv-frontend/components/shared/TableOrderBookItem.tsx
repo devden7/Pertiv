@@ -31,7 +31,7 @@ const TableOrderBookItem = ({
           />
         </div>
       </TableCell>
-      <TableCell className="font-medium max-w-40 break_text text-center">
+      <TableCell className="font-medium max-w-40 break_text text-center capitalize">
         {book_title}
       </TableCell>
       {mode !== 'bookBorrowing' && (

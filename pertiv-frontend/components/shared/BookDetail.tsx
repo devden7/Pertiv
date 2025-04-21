@@ -121,7 +121,11 @@ const BookDetail = ({ type, book, token }: Props) => {
               <div className="mt-2 flex justify-between">
                 <div className="flex gap-2">
                   {book.category.map((cat) => (
-                    <Badge variant="outline" key={cat.categories.name}>
+                    <Badge
+                      variant="outline"
+                      key={cat.categories.name}
+                      className="capitalize"
+                    >
                       {' '}
                       {cat.categories.name}
                     </Badge>
@@ -134,7 +138,7 @@ const BookDetail = ({ type, book, token }: Props) => {
                   </span>
                 </div>
               </div>
-              <h3 className="font-semibold text-lg max-w-full break_text">
+              <h3 className="font-semibold text-lg max-w-full break_text capitalize">
                 {book.title}
               </h3>
               <div className="text-sm">
@@ -145,20 +149,20 @@ const BookDetail = ({ type, book, token }: Props) => {
 
                 <div className="flex justify-between">
                   <p className="text-slate-500">Publisher </p>
-                  <p className="font-medium">{book.publisherName}</p>
+                  <p className="font-medium capitalize">{book.publisherName}</p>
                 </div>
                 <div className="flex justify-between">
                   <p className="text-slate-500">Writer </p>
-                  <p className="font-medium">{book.writerName}</p>
+                  <p className="font-medium capitalize">{book.writerName}</p>
                 </div>
                 <div className="flex justify-between">
                   <p className="text-slate-500">Language </p>
-                  <p className="font-medium">{book.language}</p>
+                  <p className="font-medium capitalize">{book.language}</p>
                 </div>
                 {type === 'Borrowing' && (
                   <div className="flex justify-between">
                     <p className="text-slate-500">Book position </p>
-                    <p className="font-medium">
+                    <p className="font-medium capitalize">
                       {(book as bookBorrowingDetail).book_position}
                     </p>
                   </div>

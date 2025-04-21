@@ -89,7 +89,7 @@ const CartItem = ({ id, quantity, title, imageUrl, price, token }: Props) => {
           />
         </div>
         <div className="max-sm:flex max-sm:items-center max-sm:flex-col">
-          <h1 className="font-semibold max-w-96 max-md:w-52 break_text">
+          <h1 className="font-semibold max-w-96 max-md:w-52 break_text capitalize">
             {title}
           </h1>
           <p className="text-xs text-gray-800 mt-5 mb-2">
