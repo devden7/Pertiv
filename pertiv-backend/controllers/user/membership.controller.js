@@ -4,7 +4,11 @@ const { formatISO, addDays, format } = require('date-fns');
 const getMemberships = async (req, res, next) => {
   try {
     logger.info('Controller getMemberships | Get all membership type');
-    const findMembershipQuery = await prisma.membership.findMany();
+    const findMembershipQuery = await prisma.membership.findMany({
+      where: {
+        is_deleted: false,
+      },
+    });
 
     res.status(200).json({
       success: true,

@@ -245,7 +245,7 @@ export const booksBorrowingFormSchema = z.object({
     .max(5000, { message: 'description must be max 5000 characters' }),
   bookPosition: z
     .string()
-    .min(1, { message: 'description must be at least 1 characters' })
+    .min(3, { message: 'description must be at least 1 characters' })
     .max(10, { message: 'description must be max 10 characters' }),
   language: z
     .string()

@@ -39,23 +39,16 @@ const Pricing = ({ data, token }: Props) => {
           table: 'Membership',
         },
         (payload) => {
-          if (payload.eventType === 'INSERT') {
-            return setPricingData([
-              ...pricingData,
-              payload.new as IMembershipType,
-            ]);
-          } else if (payload.eventType === 'DELETE') {
+          if (
+            payload.eventType === 'INSERT' ||
+            (payload.eventType === 'UPDATE' && payload.new.is_deleted === false)
+          ) {
+            return setPricingData([payload.new as IMembershipType]);
+          } else if (
+            payload.eventType === 'UPDATE' &&
+            payload.new.is_deleted === true
+          ) {
             return setPricingData([]);
-          } else {
-            const oldBookId = payload.old.id;
-            return setPricingData((prev) => {
-              const takeData = [...prev];
-              const index = takeData.findIndex((item) => item.id === oldBookId);
-              if (index !== -1) {
-                takeData[index] = { ...(payload.new as IMembershipType) };
-              }
-              return takeData;
-            });
           }
         }
       )

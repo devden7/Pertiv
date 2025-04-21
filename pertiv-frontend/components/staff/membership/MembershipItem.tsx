@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -89,7 +90,10 @@ const MembershipItem = ({
           </DropdownMenu>
           <DialogContent className="overflow-auto max-h-[500px]">
             <DialogHeader>
-              <DialogTitle>Update membership type</DialogTitle>
+              <DialogTitle>Add membership type</DialogTitle>
+              <DialogDescription className="text-sm text-gray-500">
+                Add membership package for user
+              </DialogDescription>
             </DialogHeader>
             <MembershipForm
               id={id}

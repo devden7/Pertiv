@@ -688,8 +688,11 @@ const getBooksBorrowing = async (req, res, next) => {
               },
             },
           ],
+          is_deleted: false,
         }
-      : {};
+      : {
+          is_deleted: false,
+        };
 
     logger.info(
       `Controller getBooksBorrowing | Staff with ID : ${id} | Get all book selling`

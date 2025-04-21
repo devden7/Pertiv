@@ -74,7 +74,7 @@ const BookForm = ({ type, token, book, mode, setIsOpen }: Props) => {
       return booksSellingFormSchema.extend({
         bookPosition: z
           .string()
-          .min(1, { message: 'Book position is required' })
+          .min(3, { message: 'Book position is required' })
           .max(10, { message: 'Book position must be max 10 characters' }),
       });
     }
@@ -224,7 +224,7 @@ const BookForm = ({ type, token, book, mode, setIsOpen }: Props) => {
       (value) => value.res && !value.res.success && value.res.statusCode !== 201
     );
 
-    if (failedResponses.length > 0) {
+    if (failedResponses.length > 0 && isForBorrowing) {
       let message = 'Oh! Something went wrong!';
 
       if (failedResponses.length === 2) {
@@ -243,6 +243,17 @@ const BookForm = ({ type, token, book, mode, setIsOpen }: Props) => {
         title: message,
         duration: 5000,
       });
+    } else {
+      if (
+        (response1 && !response1.success && response1.statusCode !== 201) ||
+        (response2 && !response2.success && response2.statusCode !== 201)
+      ) {
+        return toast({
+          variant: 'destructive',
+          title: response1.message[0].msg || response2.message[0].msg,
+          duration: 5000,
+        });
+      }
     }
 
     setIsOpen(false);

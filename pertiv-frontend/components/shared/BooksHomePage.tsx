@@ -18,7 +18,6 @@ interface Props {
 const BooksHomePage = ({ title, url, detailUrl, token, books }: Props) => {
   const [data, setData] =
     useState<(IBookForSelling | IBookForBorrowing)[]>(books);
-
   useEffect(() => {
     const tableName =
       url === '/books-selling' ? 'BookSelling' : 'BookBorrowing';
@@ -43,7 +42,10 @@ const BooksHomePage = ({ title, url, detailUrl, token, books }: Props) => {
                   );
             const convertData = await newData.json();
             return setData((prev) => [convertData.data, ...prev]);
-          } else if (payload.eventType === 'DELETE') {
+          } else if (
+            payload.eventType === 'UPDATE' &&
+            payload.new.is_deleted === true
+          ) {
             const oldBookId = payload.old.id;
             return setData((prev) => {
               const takeData = [...prev];

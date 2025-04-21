@@ -15,9 +15,10 @@ const getBookListSelling = async (req, res, next) => {
           title: {
             contains: search,
             mode: 'insensitive',
+            is_deleted: false,
           },
         }
-      : {};
+      : { is_deleted: false };
 
     const booksSellingQuery = await prisma.bookSelling.findMany({
       skip,
@@ -220,9 +221,12 @@ const getBookListBorrowing = async (req, res, next) => {
           title: {
             contains: search,
             mode: 'insensitive',
+            is_deleted: false,
           },
         }
-      : {};
+      : {
+          is_deleted: false,
+        };
 
     const data = await prisma.bookBorrowing.findMany({
       skip,
