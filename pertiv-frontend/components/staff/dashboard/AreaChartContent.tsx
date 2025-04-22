@@ -76,22 +76,10 @@ const AreaChartContent = ({ data, timePeriod }: Props) => {
   return (
     <Card>
       <CardHeader>
-        <div className="flex justify-between">
-          <CardTitle>Transaction History</CardTitle>
-          <div>
-            <div className="flex items-center gap-1">
-              <div className="size-3 rounded-sm bg-blue-600"></div>
-              <span className="text-xs">Book Selling</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="size-3 rounded-sm bg-blue-400"></div>
-              <span className="text-xs">Book Borrowing</span>
-            </div>
-          </div>
-        </div>
+        <CardTitle>Transaction History</CardTitle>
         <CardDescription>Showing all transaction history</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-1">
         <ChartContainer
           config={chartConfig}
           className="w-full aspect-square max-h-[203px]"
@@ -102,7 +90,7 @@ const AreaChartContent = ({ data, timePeriod }: Props) => {
               dataKey="time"
               tickLine={false}
               axisLine={false}
-              tickMargin={8}
+              tickMargin={5}
               tickFormatter={(value) => {
                 if (timePeriod === 'yesterday') return value.slice(0, 7);
                 return value;
@@ -130,6 +118,16 @@ const AreaChartContent = ({ data, timePeriod }: Props) => {
             />
           </AreaChart>
         </ChartContainer>
+        <div className="flex justify-center gap-2">
+          <div className="flex items-center gap-1">
+            <div className="size-3 rounded-sm bg-blue-600"></div>
+            <span className="text-xs">Book Selling</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="size-3 rounded-sm bg-blue-400"></div>
+            <span className="text-xs">Book Borrowing</span>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
