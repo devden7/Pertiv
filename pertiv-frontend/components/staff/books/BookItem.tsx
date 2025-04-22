@@ -87,7 +87,7 @@ const BookItem = ({ item, token, mode }: Props) => {
         <TableCell className="text-center">{item.stock}</TableCell>
         {mode !== 'bookBorrowing' && (
           <TableCell className="text-center">
-            Rp {formatNumberToRupiah((item as IBooksSelling).price)}
+            {formatNumberToRupiah((item as IBooksSelling).price)}
           </TableCell>
         )}
         {mode === 'bookBorrowing' && (

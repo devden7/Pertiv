@@ -13,7 +13,7 @@ const TableBookSellingItem = ({ data }: Props) => {
         {data.book_title}
       </TableCell>
       {'book_price' in data && (
-        <TableCell>Rp {formatNumberToRupiah(data.book_price)}</TableCell>
+        <TableCell>{formatNumberToRupiah(data.book_price)}</TableCell>
       )}
       <TableCell>{data.quantity}</TableCell>
       {'calc' in data && (

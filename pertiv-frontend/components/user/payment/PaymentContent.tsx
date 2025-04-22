@@ -136,7 +136,7 @@ const PaymentContent = ({ data, token }: Props) => {
                   <div className="flex items-center justify-between font-medium">
                     <div>Total</div>
                     <div className="ml-auto">
-                      Rp {formatNumberToRupiah(data.total_price)}
+                      {formatNumberToRupiah(data.total_price)}
                     </div>
                   </div>
                   {data.status === 'pending' && (

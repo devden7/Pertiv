@@ -78,7 +78,7 @@ const TransactionItem = ({ item, mode, token }: Props) => {
       </TableCell>
       {mode !== 'bookBorrowing' && (
         <TableCell className="text-center">
-          Rp {formatNumberToRupiah((item as ITransaction).total_price)}
+          {formatNumberToRupiah((item as ITransaction).total_price)}
         </TableCell>
       )}
       <TableCell className="w-[7%]">

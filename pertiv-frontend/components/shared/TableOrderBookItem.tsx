@@ -39,7 +39,7 @@ const TableOrderBookItem = ({
       )}
       {mode !== 'bookBorrowing' && (
         <TableCell className="text-center">
-          Rp {formatNumberToRupiah(book_price)}
+          {formatNumberToRupiah(book_price)}
         </TableCell>
       )}
     </TableRow>
