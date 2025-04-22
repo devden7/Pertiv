@@ -76,7 +76,19 @@ const AreaChartContent = ({ data, timePeriod }: Props) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Transaction History</CardTitle>
+        <div className="flex justify-between">
+          <CardTitle>Transaction History</CardTitle>
+          <div>
+            <div className="flex items-center gap-1">
+              <div className="size-3 rounded-sm bg-blue-600"></div>
+              <span className="text-xs">Book Selling</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="size-3 rounded-sm bg-blue-400"></div>
+              <span className="text-xs">Book Borrowing</span>
+            </div>
+          </div>
+        </div>
         <CardDescription>Showing all transaction history</CardDescription>
       </CardHeader>
       <CardContent>
