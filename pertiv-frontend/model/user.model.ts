@@ -166,7 +166,7 @@ export interface IBookForBorrowing {
 }
 
 export interface IUserInfo {
-  penalty: IPenaltyType[];
+  penalty: IPenaltyType;
   membership: IMembershipType[];
 }
 

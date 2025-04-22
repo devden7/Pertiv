@@ -10,20 +10,55 @@ import {
 import { deleteCookie } from '@/lib/actions/auth.action';
 import { BookMarked, ShoppingCart } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AuthUser } from '@/model/auth.model';
 import { formatDateTime } from '@/utils/formatDateTime';
 import { IUserInfo } from '@/model/user.model';
 import { Badge } from '../ui/badge';
 import { format } from 'date-fns';
+import { supabase } from '@/lib/actions/supabase';
 
 interface Props {
   userInfo: IUserInfo;
   auth: AuthUser | null | undefined;
 }
 const UserNavbar = ({ userInfo, auth }: Props) => {
+  const [data, setData] = useState(userInfo);
   const [isOpenNavbar, setIsOpenNavbar] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const channel = supabase
+      .channel(`Penalty user}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'Penalty',
+        },
+        async (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setData((prev) => ({
+              ...prev,
+              penalty: {
+                ...prev.penalty,
+                id: payload.new.id,
+                type: payload.new.type,
+                price: payload.new.price,
+                start_date: payload.new.start_date,
+                end_date: payload.new.end_date,
+              },
+            }));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [userInfo]);
 
   const logoutHandler = async () => {
     await deleteCookie();
@@ -32,11 +67,11 @@ const UserNavbar = ({ userInfo, auth }: Props) => {
 
   return (
     <>
-      {auth && userInfo.penalty.length > 0 && (
+      {auth && data.penalty.id && (
         <div className="h-30 bg-red-500">
           <p className="text-white text-center font-semibold py-2 text-sm">
             Your account have an active penalty until{' '}
-            {formatDateTime(userInfo.penalty[0].end_date)}
+            {formatDateTime(data.penalty.end_date)}
           </p>
         </div>
       )}
@@ -92,15 +127,12 @@ const UserNavbar = ({ userInfo, auth }: Props) => {
                       </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      {userInfo.membership.length > 0 && (
+                      {data.membership.length > 0 && (
                         <DropdownMenuItem className="hover:bg-white flex flex-col">
                           <Badge variant="outline">Membership</Badge>
                           <span className="text-xs">
                             Until :{' '}
-                            {format(
-                              userInfo.membership[0].end_date,
-                              'dd MMM yyyy'
-                            )}
+                            {format(data.membership[0].end_date, 'dd MMM yyyy')}
                           </span>
                         </DropdownMenuItem>
                       )}

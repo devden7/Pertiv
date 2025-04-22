@@ -157,9 +157,6 @@ const userInfo = async (req, res, next) => {
         start_date: true,
         end_date: true,
       },
-      orderBy: {
-        start_date: 'desc',
-      },
     });
 
     if (findPenaltyQuery.length > 0) {
@@ -213,8 +210,7 @@ const userInfo = async (req, res, next) => {
       success: true,
       statusCode: 200,
       data: {
-        penalty:
-          findPenaltyQuery.length > 0 ? findPenaltyQuery[0] : findPenaltyQuery,
+        penalty: findPenaltyQuery.length > 0 ? findPenaltyQuery[0] : [],
         membership: findUserMembership,
       },
     });

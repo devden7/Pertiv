@@ -1,6 +1,6 @@
 const logger = require('../../lib/winston/winstonLogger');
 const prisma = require('../../utils/prismaConnection');
-const { formatISO, addDays, format } = require('date-fns');
+const { formatISO, addDays } = require('date-fns');
 const getMemberships = async (req, res, next) => {
   try {
     logger.info('Controller getMemberships | Get all membership type');
@@ -55,16 +55,14 @@ const subscribeMembership = async (req, res, next) => {
           type: 'active',
         },
       },
-      orderBy: {
-        penalty: {
-          start_date: 'desc',
-        },
+      include: {
+        penalty: true,
       },
     });
 
     if (findPenaltyQuery) {
       const dateNow = formatISO(new Date());
-      const dateDueReturn = formatISO(findPenaltyQuery.ended_at);
+      const dateDueReturn = formatISO(findPenaltyQuery.penalty.end_date);
       if (dateDueReturn > dateNow) {
         const error = new Error('Your account have an active penalty.');
         error.success = false;

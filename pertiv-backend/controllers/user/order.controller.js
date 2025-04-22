@@ -592,17 +592,15 @@ const createBorrowBook = async (req, res, next) => {
           type: 'active',
         },
       },
-      orderBy: {
-        penalty: {
-          start_date: 'desc',
-        },
+      include: {
+        penalty: true,
       },
     });
 
     //handling if user have an active penalty
     if (findPenaltyQuery) {
       const dateNow = formatISO(new Date());
-      const dateDueReturn = formatISO(findPenaltyQuery.ended_at);
+      const dateDueReturn = formatISO(findPenaltyQuery.penalty.end_date);
       if (dateDueReturn > dateNow) {
         const error = new Error('Your account have an active penalty.');
         error.success = false;
