@@ -7,6 +7,7 @@ import { formatNumberToRupiah } from '@/utils/formatRupiah';
 import CartBtn from './CartBtn';
 import { bookItemBorrowing, bookItemSelling } from '@/model/user.model';
 import CartLoanBtn from './CartLoanBtn';
+import { Crown } from 'lucide-react';
 
 interface Props {
   token?: string;
@@ -20,6 +21,12 @@ const BooksItem = ({ token, book, detailUrl, type }: Props) => {
     <div>
       <Link href={`${detailUrl}/${book.id}`}>
         <div className="relative w-9/12 aspect-[2/3] mx-auto overflow-hidden">
+          {type === '/books-borrowing' &&
+            (book as bookItemBorrowing).is_member && (
+              <div className="absolute z-50 top-[5%] left-[7%]">
+                <Crown color="gold" />
+              </div>
+            )}
           <Image
             src={ImageHandler(book.imageUrl)}
             alt={book.title}

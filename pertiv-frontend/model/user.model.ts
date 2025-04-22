@@ -127,6 +127,7 @@ export type bookItemBorrowing = {
   id: string;
   title: string;
   imageUrl: string | null;
+  is_member: boolean;
   category: { categories: { name: string } }[];
   totalItemBorrow: number;
 };

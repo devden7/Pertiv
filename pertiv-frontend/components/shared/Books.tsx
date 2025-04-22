@@ -12,6 +12,7 @@ import CartBtn from './CartBtn';
 import CartLoanBtn from './CartLoanBtn';
 import { PaginationWithLinks } from '../ui/pagination-with-links';
 import SearchInput from './SearchInput';
+import { Crown } from 'lucide-react';
 
 interface Props {
   titlePage: string;
@@ -50,6 +51,12 @@ const Books = ({
             <div key={book.id}>
               <Link href={`${detailUrl}/${book.id}`}>
                 <div className="relative w-9/12 aspect-[2/3] mx-auto overflow-hidden">
+                  {type === '/books-borrowing' &&
+                    (book as IBookForBorrowing).is_member && (
+                      <div className="absolute z-50 top-[5%] left-[7%]">
+                        <Crown color="gold" />
+                      </div>
+                    )}
                   <Image
                     src={ImageHandler(book.imageUrl)}
                     alt={book.title}

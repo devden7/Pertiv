@@ -504,14 +504,27 @@ const createBorrowBook = async (req, res, next) => {
     const findUserMembership = await prisma.membershipTransaction.findMany({
       where: {
         user_id: id,
+        status: 'active',
       },
     });
 
-    //handling max borrowed book (member premium 5 books and non member 2 books)
+    //handling book for member only
+    if (findUserMembership.length === 0) {
+      for (const book of findBooksBorrowingQuery) {
+        if (book.is_member) {
+          const error = new Error('This book is for member only');
+          error.success = false;
+          error.statusCode = 400;
+          throw error;
+        }
+      }
+    }
+
     if (findUserMembership.length > 0) {
       const dateNow = formatISO(new Date());
       const endDate = formatISO(findUserMembership[0].end_date);
       if (endDate > dateNow) {
+        //handling max borrowed book (member premium 5 books and non member 2 books)
         if (
           calcBorrowedUser.length + findBooksBorrowingQuery.length >
           findUserMembership[0].maxBorrow
