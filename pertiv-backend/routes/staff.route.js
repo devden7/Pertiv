@@ -63,9 +63,9 @@ router.post(
       .withMessage('Title must be at least 3 characters & max 255 characters'),
     body('description')
       .trim()
-      .isLength({ min: 3, max: 255 })
+      .isLength({ min: 3, max: 5000 })
       .withMessage(
-        'Description must be at least 3 characters & max 255 characters'
+        'Description must be at least 3 characters & max 5000 characters'
       ),
     body('language')
       .trim()
@@ -131,9 +131,9 @@ router.put(
       .withMessage('Title must be at least 3 characters & max 255 characters'),
     body('description')
       .trim()
-      .isLength({ min: 3, max: 255 })
+      .isLength({ min: 3, max: 5000 })
       .withMessage(
-        'Description must be at least 3 characters & max 255 characters'
+        'Description must be at least 3 characters & max 5000 characters'
       ),
     body('language')
       .trim()
@@ -200,9 +200,9 @@ router.post(
       .withMessage('Title must be at least 3 characters & max 255 characters'),
     body('description')
       .trim()
-      .isLength({ min: 3, max: 255 })
+      .isLength({ min: 3, max: 5000 })
       .withMessage(
-        'Description must be at least 3 characters & max 255 characters'
+        'Description must be at least 3 characters & max 5000 characters'
       ),
     body('bookPosition')
       .trim()
@@ -266,9 +266,9 @@ router.put(
       .withMessage('Title must be at least 3 characters & max 255 characters'),
     body('description')
       .trim()
-      .isLength({ min: 3, max: 255 })
+      .isLength({ min: 3, max: 5000 })
       .withMessage(
-        'Description must be at least 3 characters & max 255 characters'
+        'Description must be at least 3 characters & max 5000 characters'
       ),
     body('bookPosition')
       .trim()

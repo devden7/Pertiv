@@ -186,7 +186,7 @@ export const booksSellingFormSchema = z.object({
   description: z
     .string()
     .min(3, { message: 'description must be at least 3 characters' })
-    .max(255, { message: 'description must be max 255 characters' }),
+    .max(5000, { message: 'description must be max 5000 characters' }),
   price: z.coerce
     .number()
     .int()

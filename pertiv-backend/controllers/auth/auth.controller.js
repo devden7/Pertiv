@@ -150,6 +150,13 @@ const userInfo = async (req, res, next) => {
         },
         type: 'active',
       },
+      select: {
+        id: true,
+        type: true,
+        price: true,
+        start_date: true,
+        end_date: true,
+      },
       orderBy: {
         start_date: 'desc',
       },
@@ -174,16 +181,6 @@ const userInfo = async (req, res, next) => {
         });
       }
     }
-
-    const penaltyResult = findPenaltyQuery.map((penalty) => {
-      return {
-        id: penalty.id,
-        type: penalty.type,
-        price: penalty.price,
-        start_date: penalty.start_date,
-        end_date: penalty.end_date,
-      };
-    });
 
     let findUserMembership = await prisma.membershipTransaction.findMany({
       where: {
@@ -215,7 +212,11 @@ const userInfo = async (req, res, next) => {
     res.status(200).json({
       success: true,
       statusCode: 200,
-      data: { penalty: penaltyResult, membership: findUserMembership },
+      data: {
+        penalty:
+          findPenaltyQuery.length > 0 ? findPenaltyQuery[0] : findPenaltyQuery,
+        membership: findUserMembership,
+      },
     });
   } catch (error) {
     logger.error(`Controller userInfo | ${error}`);
