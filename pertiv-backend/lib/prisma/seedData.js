@@ -16,6 +16,13 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+function getRandomPrice(min = 1000, max = 200000) {
+  const minThousands = Math.ceil(min / 1000);
+  const maxThousands = Math.floor(max / 1000);
+  const randomThousands = getRandomInt(minThousands, maxThousands);
+  return randomThousands * 1000;
+}
+
 function slugify(str) {
   return str
     .toLowerCase()
@@ -122,6 +129,7 @@ const create100StaffAccount = async () => {
 async function resetAllTables() {
   console.log('RESETTING ALL TABLES');
   await prisma.membershipTransaction.deleteMany();
+  await prisma.membership.deleteMany();
   await prisma.penalty.deleteMany();
   await prisma.itemBorrowed.deleteMany();
   await prisma.bookBorrowed.deleteMany();
@@ -198,7 +206,7 @@ const createBooks = async () => {
     'Bumi Manusia',
     'Perahu Kertas',
     'Negeri 5 Menara',
-    'Dilan 1990',
+    'The Mountain Is You',
     'Koala Kumal',
     'Cinta Brontosaurus',
     'Sang Pemimpi',
@@ -216,8 +224,8 @@ const createBooks = async () => {
     'Hacktivate Yourself',
     'Senyum Kode',
     'Critical Eleven',
-    'Dear Nathan',
-    'Twivortiare',
+    'Thinking Fast And Slow',
+    'The Power Of habit',
     'Habits of highly productive people',
   ];
 
@@ -228,7 +236,7 @@ const createBooks = async () => {
     'Negeri Para Bedebah',
     'Garis Waktu',
     'Think Again',
-    'Increase selft motivation',
+    'The Power Of Now',
     'Zero to One',
     'Start With Why',
     'The Subtle Art of Not Giving a F*ck',
@@ -241,8 +249,8 @@ const createBooks = async () => {
     'Bulan',
     'Melbourne: Rewind',
     'Surat Kecil untuk Tuhan',
-    'Geez & Ann',
-    'Dikta & Hukum',
+    'Indigo Tapi Penakut',
+    'KKN di desa penari',
     'Sunset Bersama Rosie',
     'Assalamualaikum Beijing',
     'Sang Pemimpi Reborn',
@@ -310,7 +318,7 @@ const createBooks = async () => {
             description,
             language: language.toLowerCase(),
             stock,
-            price: getRandomInt(50000, 150000),
+            price: getRandomPrice(),
             imageUrl: null,
             user_id: user.id,
             publisher_id: publisher.id,

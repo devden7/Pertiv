@@ -25,7 +25,12 @@ const userMiddleware = (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    logger.error(`ERROR Middleware userMiddleware - ${error}`);
+    if (error.name === 'JsonWebTokenError') {
+      error.message = 'Invalid token';
+      error.success = false;
+      error.statusCode = 400;
+    }
+    logger.error(`User middleware | ${error.message}`);
     next(error);
   }
 };

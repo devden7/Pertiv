@@ -52,6 +52,15 @@ const BookDetail = ({ type, book, token }: Props) => {
   const router = useRouter();
 
   const orderHandler = async (typeTransction: string) => {
+    if (!token) {
+      return toast({
+        description: `Please login Before ${
+          type === 'Borrowing' ? 'borrow' : 'order'
+        } this book`,
+        duration: 2000,
+      });
+    }
+
     setIsLoading(true);
     const cartItem = [];
 
