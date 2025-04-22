@@ -30,6 +30,12 @@ const transactions = async (req, res, next) => {
               },
             },
             {
+              status: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
+            {
               item_orders: {
                 some: {
                   book_title: {
@@ -256,6 +262,12 @@ const borrowtransactions = async (req, res, next) => {
             },
             {
               id: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
+            {
+              status: {
                 contains: search,
                 mode: 'insensitive',
               },

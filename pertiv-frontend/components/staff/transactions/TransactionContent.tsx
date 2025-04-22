@@ -141,7 +141,7 @@ const TransactionContent = ({
           <FormConfirmBook token={token} />
         </div>
         <SearchInput
-          placeholder="Search by Order ID, Customer name, or Book"
+          placeholder="Search by Order ID, Customer name, Status or Book"
           path={
             mode && (mode === 'bookBorrowing' || mode === 'bookSelling')
               ? `/staff/transactions?mode=${mode}`
