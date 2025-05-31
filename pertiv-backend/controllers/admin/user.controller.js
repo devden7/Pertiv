@@ -1,8 +1,13 @@
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const logger = require('../../lib/winston/winstonLogger');
-const prisma = require('../../utils/prismaConnection');
 const { Prisma } = require('@prisma/client');
+const {
+  createUser,
+  getAllStaff,
+  updateStaff,
+  deleteStaff,
+} = require('../../services/admin/user.service');
 
 const createStaffAccount = async (req, res, next) => {
   try {
@@ -27,13 +32,11 @@ const createStaffAccount = async (req, res, next) => {
       throw error;
     }
 
-    await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: bcrypt.hashSync(password, 10),
-        role: 'staff',
-      },
+    await createUser({
+      name,
+      email,
+      password: bcrypt.hashSync(password, 10),
+      role: 'staff',
     });
 
     res.status(201).json({
@@ -66,13 +69,14 @@ const createStaffAccount = async (req, res, next) => {
 const getStaffAccounts = async (req, res, next) => {
   try {
     const { id } = req.user;
+    const { search } = req.query;
+
     logger.info(
       `Controller getStaffAccounts | Admin with ID : ${id} | Get all staff accounts`
     );
-    const { search } = req.query;
+
     const page = parseInt(req.query.page) || 1;
     const LIMIT = 10;
-    const skip = (page - 1) * LIMIT;
     const keyword = search
       ? {
           role: 'staff',
@@ -96,29 +100,15 @@ const getStaffAccounts = async (req, res, next) => {
           role: 'staff',
           is_deleted: false,
         };
+    const skip = (page - 1) * LIMIT;
 
-    const findDataQuery = await prisma.user.findMany({
-      where: keyword,
-      skip,
-      take: LIMIT,
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        image: true,
-      },
-    });
-
-    const countOrder = await prisma.user.count({
-      where: keyword,
-    });
+    const { data, count } = await getAllStaff(skip, LIMIT, keyword);
 
     res.status(200).json({
       success: true,
       statusCode: 200,
-      data: findDataQuery,
-      totalCount: countOrder,
+      data,
+      totalCount: count,
     });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientValidationError) {
@@ -132,48 +122,6 @@ const getStaffAccounts = async (req, res, next) => {
       logger.error(`Controller getStaffAccounts | -  ${error.message}`);
     } else {
       logger.error(`Controller getStaffAccounts`);
-    }
-    next(error);
-  }
-};
-
-const getStaffAccountDetail = async (req, res, next) => {
-  try {
-    const paramsId = req.params.id;
-
-    logger.info(
-      `Controller getStaffAccountDetail - Get staff account detail ID : ${paramsId}`
-    );
-
-    const staffDetailQuery = await prisma.user.findUnique({
-      where: { id: paramsId },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        image: true,
-        is_penalty: true,
-      },
-    });
-
-    if (!staffDetailQuery) {
-      const error = new Error('Staff account not found');
-      error.success = false;
-      error.statusCode = 404;
-      throw error;
-    }
-
-    res.status(200).json({
-      success: true,
-      statusCode: 200,
-      data: staffDetailQuery,
-    });
-  } catch (error) {
-    logger.error(`ERROR Controller getStaffAccountDetail - ${error}`);
-    if (!error.statusCode) {
-      error.statusCode = 500;
-      error.message = 'Internal Server Error';
     }
     next(error);
   }
@@ -202,33 +150,7 @@ const updateStaffAccount = async (req, res, next) => {
       throw error;
     }
 
-    const findStaffQuery = await prisma.user.findUnique({
-      where: { id: paramsId },
-    });
-
-    if (!findStaffQuery) {
-      const error = new Error('Staff account not found');
-      error.success = false;
-      error.statusCode = 404;
-      throw error;
-    }
-
-    const checkPassword = await bcrypt.compare(
-      password,
-      findStaffQuery.password
-    );
-
-    await prisma.user.update({
-      where: { id: paramsId },
-      data: {
-        name,
-        password:
-          password !== '' && !checkPassword
-            ? bcrypt.hashSync(password, 10)
-            : findStaffQuery.password,
-        role: 'staff',
-      },
-    });
+    await updateStaff(paramsId, { name, password });
 
     res.status(201).json({
       success: true,
@@ -266,33 +188,20 @@ const deleteStaffAccount = async (req, res, next) => {
   try {
     const { id } = req.user;
     const paramsId = req.params.id;
+
     logger.info(
       `Controller deleteStaffAccount | Admin with ID : ${id} | Deleting staff account with ID : ${paramsId}`
     );
 
-    const findStaffQuery = await prisma.user.findUnique({
-      where: { id: paramsId },
-    });
+    await deleteStaff(paramsId);
 
-    if (!findStaffQuery) {
-      const error = new Error('Staff account not found');
-      error.success = false;
-      error.statusCode = 404;
-      throw error;
-    }
-
-    await prisma.user.update({
-      where: { id: paramsId },
-      data: {
-        is_deleted: true,
-      },
-    });
-    findStaffQuery.password = res.status(201).json({
+    res.status(201).json({
       success: true,
       statusCode: 201,
       message: 'Staff account deleted successfully',
     });
   } catch (error) {
+    console.log(error);
     if (error instanceof Prisma.PrismaClientValidationError) {
       error.message = 'Internal Server Error';
       return logger.error(
@@ -312,7 +221,6 @@ const deleteStaffAccount = async (req, res, next) => {
 module.exports = {
   createStaffAccount,
   getStaffAccounts,
-  getStaffAccountDetail,
   updateStaffAccount,
   deleteStaffAccount,
 };

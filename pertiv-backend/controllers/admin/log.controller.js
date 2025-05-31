@@ -1,6 +1,6 @@
 const { Prisma } = require('@prisma/client');
 const logger = require('../../lib/winston/winstonLogger');
-const prisma = require('../../utils/prismaConnection');
+const { getLog } = require('../../services/log.service');
 
 const getActivityLogs = async (req, res, next) => {
   try {
@@ -27,29 +27,19 @@ const getActivityLogs = async (req, res, next) => {
           ],
         }
       : {};
+
     logger.info(
       `Controller getActivityLogs | Admin with ID : ${id} | Get activity logs`
     );
 
-    const data = await prisma.log.findMany({
-      skip,
-      take: LIMIT,
-      orderBy: {
-        createdAt: 'desc',
-      },
-      where: keyword,
-    });
-
-    const countLogs = await prisma.log.count({
-      where: keyword,
-    });
+    const { data, count } = await getLog(skip, LIMIT, keyword);
 
     res.status(200).json({
       success: true,
       statusCode: 200,
       message: 'Access activity logs successfully',
       data,
-      totalCount: countLogs,
+      totalCount: count,
     });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientValidationError) {

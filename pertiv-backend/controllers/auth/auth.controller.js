@@ -1,11 +1,10 @@
-const jwt = require('jsonwebtoken');
 const logger = require('../../lib/winston/winstonLogger');
 const bcrypt = require('bcryptjs');
-const { JWT_SECRET } = require('../../config/env');
 const { validationResult } = require('express-validator');
 const prisma = require('../../utils/prismaConnection');
 const { formatISO } = require('date-fns');
 const { Prisma } = require('@prisma/client');
+const { login, register, accountInfo } = require('../../services/auth.service');
 
 const loginAuth = async (req, res, next) => {
   try {
@@ -23,39 +22,7 @@ const loginAuth = async (req, res, next) => {
       throw error;
     }
 
-    const findUserQuery = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (!findUserQuery) {
-      const error = new Error('Email not registered');
-      error.success = false;
-      error.statusCode = 401;
-      throw error;
-    }
-
-    const isMatch = await bcrypt.compare(password, findUserQuery.password);
-
-    if (!isMatch) {
-      const error = new Error('Your password is wrong');
-      error.success = false;
-      error.statusCode = 401;
-      throw error;
-    }
-
-    const token = jwt.sign(
-      {
-        id: findUserQuery.id,
-        email: findUserQuery.email,
-        name: findUserQuery.name,
-        role: findUserQuery.role,
-        image: findUserQuery.image,
-      },
-      JWT_SECRET,
-      {
-        expiresIn: '1d',
-      }
-    );
+    const { findUserQuery, token } = await login({ email, password });
 
     res.status(201).json({
       success: true,
@@ -96,14 +63,10 @@ const registerAccount = async (req, res, next) => {
       `Controller registerAccount | Registration information email : ${email}`
     );
 
-    await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: bcrypt.hashSync(password, 10),
-        role: 'user',
-        image: null,
-      },
+    await register({
+      name,
+      email,
+      password: bcrypt.hashSync(password, 10),
     });
 
     res.status(201).json({
@@ -141,77 +104,17 @@ const registerAccount = async (req, res, next) => {
 const userInfo = async (req, res, next) => {
   try {
     const { id } = req.user;
+
     logger.info(`Controller userInfo | userInfo account : ${id}`);
 
-    let findPenaltyQuery = await prisma.penalty.findMany({
-      where: {
-        bookBorrowed: {
-          userId: id,
-        },
-        type: 'active',
-      },
-      select: {
-        id: true,
-        type: true,
-        price: true,
-        start_date: true,
-        end_date: true,
-      },
-    });
-
-    if (findPenaltyQuery.length > 0) {
-      const dateNow = formatISO(new Date());
-      const dateDuePenalty = formatISO(findPenaltyQuery[0].end_date);
-
-      if (dateNow > dateDuePenalty) {
-        findPenaltyQuery = await prisma.penalty.update({
-          where: {
-            id: findPenaltyQuery[0].id,
-            bookBorrowed: {
-              userId: id,
-            },
-            type: 'active',
-          },
-          data: {
-            type: 'inactive',
-          },
-        });
-      }
-    }
-
-    let findUserMembership = await prisma.membershipTransaction.findMany({
-      where: {
-        user_id: id,
-        status: 'active',
-      },
-      orderBy: {
-        start_date: 'desc',
-      },
-    });
-
-    if (findUserMembership.length > 0) {
-      const dateNow = formatISO(new Date());
-      const dateEndMembership = formatISO(findUserMembership[0].end_date);
-
-      if (dateNow > dateEndMembership) {
-        findUserMembership = await prisma.membershipTransaction.update({
-          where: {
-            id: findUserMembership[0].id,
-            status: 'active',
-          },
-          data: {
-            status: 'inactive',
-          },
-        });
-      }
-    }
+    const { penaltyAccount, membershipAccount } = await accountInfo(id);
 
     res.status(200).json({
       success: true,
       statusCode: 200,
       data: {
-        penalty: findPenaltyQuery.length > 0 ? findPenaltyQuery[0] : [],
-        membership: findUserMembership,
+        penalty: penaltyAccount.length > 0 ? penaltyAccount[0] : [],
+        membership: membershipAccount,
       },
     });
   } catch (error) {

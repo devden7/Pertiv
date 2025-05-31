@@ -47,7 +47,6 @@ router.post(
 );
 
 router.get('/staffs', adminMiddleware, getStaffAccounts);
-router.get('/staff/:id', adminMiddleware, getStaffAccountDetail);
 
 router.put(
   '/update-staff/:id',
