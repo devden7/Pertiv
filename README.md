@@ -1,81 +1,157 @@
-# Pertiv (Perpustakaan kreativ)🚀
+# 📚 Pertiv - Inventory & Sales Book Management System
 
-Pertiv is a web application that allows users to borrow and buy books. this is my final project at Bootcamp Geeksfarm Batch 13.
+**Pertiv** is a web-based application for managing book inventory, sales, and borrowing systems. It supports user memberships, logging, and includes different roles: **Admin**, **Staff**, and **User**.
 
-## 🛠️Tech Stack
+## 🧱 Tech Stack
 
-**Frontend:**
+### 🖥️ Frontend
 
-- Next JS 14
-- Tailwind CSS
-- Shadcn
-- React hook form
-- Zod
-- Jose
+- **Next.js 14**
+- **Tailwind CSS**
+- **Shadcn UI**
+- **React Hook Form**
+- **Zod**
+- **Jose**
 
-**Backend:**
+### ⚙️ Backend
 
-- Node JS & Express JS
-- Prisma ORM
-- Multer
-- Express validator
-- Cors
-- Dotenv
-- Swagger
-- Winston logger
-- JSON web token
-- Nodemon
+- **Node.js + Express.js**
+- **Prisma ORM**
+- **Multer**
+- **Express Validator**
+- **CORS**
+- **Dotenv**
+- **Swagger**
+- **Winston Logger**
+- **JSON Web Token (JWT)**
 
-## 📦 Getting Started
+## 👥 Role & Feature Breakdown
 
-### Prerequisites
+### 🔐 Admin
 
-- Node.js (v22)
+- ✅ Manage Staff accounts (CRUD)
+- 📊 Monitor system activity logs
+
+### 🧑‍💻 Staff
+
+- 📚 Manage book data (CRUD)
+- 📦 Manage stock & categories
+- 💼 Manage borrow and purchase transactions
+- 👥 Manage package memberships
+- 📈 Access system performance dashboard
+
+### 🙋‍♂️ User
+
+- 📖 Borrow and return books
+- 🚩 Penalty applies for late returns
+- 🛒 Purchase books
+- 🧾 Join membership program
+
+## 📂 Project Structure
+
+### 📁 `backend/` — Express.js Application
+
+#### 🔧 Configuration & Utilities
+
+- `config/env.js` — environment configuration
+- `middleware/` — role-based authorization & error handling
+- `lib/prisma/` — database schema, migrations & seed
+- `lib/winston/` — logging configuration
+- `lib/multer/` — file upload setup
+
+#### 📦 Features & Controllers
+
+- **Admin**
+  - `log.controller.js` — activity logs
+  - `user.controller.js` — manage staff
+- **Auth**
+  - `auth.controller.js` — authentication flow
+- **Staff**
+  - `books.controller.js` — manage books
+  - `dashboard.controller.js` — dashboard insights
+  - `order.controller.js` — manage transactions
+  - `membership.controller.js` — manage memberships package
+- **User**
+  - `books.controller.js` — explore books
+  - `cart.controller.js` — shopping cart
+  - `membership.controller.js` — membership features
+  - `order.controller.js` — order transaction
+
+#### 🛣️ Routing
+
+- `admin.route.js`
+- `auth.route.js`
+- `staff.route.js`
+- `user.route.js`
+
+#### 💡 Others
+
+- `repositories/` — DB access layer
+- `services/` — business logic
+- `utils/` — utility functions
+
+---
+
+### 📁 `frontend/` — Next.js 14 Application
+
+- `app/` — App Router pages
+- `components/` — reusable UI components
+- `hooks/` — custom React hooks
+- `lib/` — API clients and shared libraries
+- `model/` — type definitions and interfaces
+- `public/` — static assets
+- `utils/` — helpers and utilities
+- `middleware.ts` — frontend route protection
+
+## 🚀 Getting Started
+
+### ✅ Prerequisites
+
+- Node.js `v22+`
 - npm
 
-### Installation
-
-1. **Clone the repository**
+### 1️⃣ Clone Repository
 
 ```bash
-Clone using HTTPS
-
 git clone https://github.com/devden7/Pertiv.git
-cd pertiv
+cd Pertiv
 ```
 
-2. **Configure Environment Variables**
-   Copy paste from `.env.example` and set up your `.env` file with the required environment variables
+### 2️⃣ Configure Environment Variables
 
-- Backend :
+🔙 Backend
 
 ```bash
 cd pertiv-backend
+cp .env.example .env
 ```
 
-`PORT_LISTEN= # YOUR BACKEND PORT`
+Edit .env:
 
-`ORIGIN_URL="" # YOUR FRONTEND URL`
+```env
+PORT_LISTEN=5000
+ORIGIN_URL=http://localhost:3000
+DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/pertivdb
+EMAIL_ADMIN=admin@email.com
+PASSWORD_ADMIN=admin123
+JWT_SECRET=your_jwt_secret
+```
 
-`DATABASE_URL="" # YOUR DATABASE URL  : postgresql://USER:PASSWORD@localhost:5432/DATABASE_NAME`
-
-`EMAIL_ADMIN="" # SET YOUR EMAIL FOR ADMIN`
-
-`PASSWORD_ADMIN="" # SET YOUR PASSWORD FOR ADMIN`
-
-`JWT_SECRET="" # SET YOUR JWT SECRET KEY`
-
-- Frontend :
+🖥️ Frontend
 
 ```bash
 cd pertiv-frontend
+cp .env.example .env
 ```
 
-`NEXT_PUBLIC_API_URL= # YOUR BACKEND URL`
+Edit .env:
 
-`JWT_SECRET= # SET YOUR JWT SECRET KEY (SHOULD BE THE SAME WITH THE JWT KEY IN BACKEND)`
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000
+JWT_SECRET=your_jwt_secret
+```
 
-3. **Install Dependencies**
+### 3️⃣ Install Dependencies
 
 - Backend
 
@@ -91,13 +167,14 @@ cd pertiv-frontend
 npm install
 ```
 
-4. **Start seed for creating `Admin` account**
+### 4️⃣ Seed Admin Account
 
 ```bash
+cd pertiv-backend
 npm run seedAdmin
 ```
 
-5. **Running the application**
+### 5️⃣ Run the Application
 
 - Backend
 
@@ -111,29 +188,17 @@ npm start
 npm run dev
 ```
 
-## ✨ Features
+## 📄 API Documentation
 
-### Role
+This project includes a built-in Swagger documentation interface for API testing.
 
-**Admin**
+### 🔗 Access via:
 
-- manage Staff account (CRUD)
+```text
+http://localhost:5000/api-docs
+```
 
-**Staff**
+Features:
 
-- Manage borrow and buy books like a stock, category (CRUD)
-- Manage borrow and buy books transaction
-- Access Dashboard
-
-**User**
-
-- Borrow & buying a book
-
-### Core Application
-
-- Login & Register
-- Borrow and buying books
-- Cart for buying
-- Collection for borrow
-- Manage order transaction
-- Dashboard
+- All available endpoints
+- Sample input/output
