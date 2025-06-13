@@ -258,10 +258,9 @@ const areaChart = async (start, end, filter) => {
 };
 
 const topTenBook = async (start, end) => {
-  const topTenBookSelling = await topTenBookSelling(start, end);
-  console.log(bookSellingSales, 'TOPTENNNN');
-  const topTenBookBorrowing = await topTenBookBorrowing(start, end);
-  return { topTenBookSelling, topTenBookBorrowing };
+  const topBookSelling = await topTenBookSelling(start, end);
+  const topBookBorrowing = await topTenBookBorrowing(start, end);
+  return { topBookSelling, topBookBorrowing };
 };
 
 const topTenStaff = async (start, end) => {

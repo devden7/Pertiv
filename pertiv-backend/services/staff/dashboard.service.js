@@ -7,7 +7,7 @@ const getDashboardData = async (start, end, filter) => {
   const { transactionsBookSelling, transactionBookBorrowing } =
     await dashboardRepository.areaChart(start, end, filter);
 
-  const { topTenBookSelling, topTenBookBorrowing } =
+  const { topBookSelling, topBookBorrowing } =
     await dashboardRepository.topTenBook(start, end);
 
   const {
@@ -20,8 +20,8 @@ const getDashboardData = async (start, end, filter) => {
     bookBorrowingSuccess,
     transactionsBookSelling,
     transactionBookBorrowing,
-    topTenBookSelling,
-    topTenBookBorrowing,
+    topBookSelling,
+    topBookBorrowing,
     topStaffHandlingSelling,
     topStaffHandlingLoan,
     topStaffHandlingReturn,
